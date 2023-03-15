@@ -3,7 +3,7 @@
 For each task or sub-task, record who is responsible, the deadline, and any dependencies.
 Use the entries below as an example.
 
-Everyone: Weekly meeting - meeting 9:00 
+Everyone: Weekly meeting - meeting 9:00am Wednesday
 
 ## Week 4
 
