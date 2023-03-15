@@ -7,6 +7,8 @@ Everyone: Weekly meeting - meeting 9:00am Wednesday
 
 ## Week 4
 
+Everyone: create application skeleton - meeting Friday 2:00 pm
+
 
 ## Week 5
 
