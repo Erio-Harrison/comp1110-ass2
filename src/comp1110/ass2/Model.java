@@ -1,6 +1,6 @@
 package comp1110.ass2;
 
-public class Game {
+public class Model {
 
     // the num of players in the game
     int numOfPlayers;
@@ -14,6 +14,9 @@ public class Game {
     // numOfTurns before gameEnds
     int numOfTurns;
 
+    //Board
+    Board board;
+
     // returns which player has the most points
     public static int declareWinner() {
         return 0;
@@ -26,7 +29,7 @@ public class Game {
         //          board.checkEnd()  --> (if true, breaks out of loop)
         //          increment player by 1
         //     board.countAll()       --> (counts all points accumulated by players adding it to allPoints)
-        //     if numOfTurns has reached:
+        //     if numOfTurn s has reached:
         //            declareWinner()
         //            break loop
         //     else:

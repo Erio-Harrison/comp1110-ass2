@@ -44,6 +44,10 @@ public class Board {
         return 0;
     }
 
+    public static int count4(int player, int gamestate) {return 0;}
+    public static int count3(int player, int gamestate) {return 0;}
+    public static int count2(int player, int gamestate) {return 0;}
+
     // returns an integer array of all points of each player
     public static int[] countAll() {
         return new int[]{0};
