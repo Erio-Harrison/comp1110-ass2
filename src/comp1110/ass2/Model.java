@@ -22,7 +22,14 @@ public class Model {
         return 0;
     }
 
+
+
+
+
     public static void main(String[] args) {
+
+
+
         // while true:
         //    while true:
         //          board.setSettler(current player)
@@ -35,5 +42,7 @@ public class Model {
         //     else:
         //            board.reset()          --> (resets board and changes to next state)
         //
+
+
     }
 }

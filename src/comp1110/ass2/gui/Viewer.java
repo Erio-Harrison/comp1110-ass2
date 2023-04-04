@@ -21,6 +21,8 @@ public class Viewer extends Application {
     private TextField stateTextField;
 
 
+
+
     /**
      * Given a state string, draw a representation of the state
      * on the screen.
@@ -31,7 +33,60 @@ public class Viewer extends Application {
      */
     void displayState(String stateString) {
         // FIXME Task 5
+
+        // gameState = gameArrangementStatement, " ",
+        // currentStateStatement, {" ", islandStatement},
+        // " ", stonesStatement, " ",
+        // unclaimedResourcesAndStatuettesStatement,
+        // {" ", playerStatement}
+
     }
+
+    private void displayArrangement(String gameArrangementStatement) {
+
+    }
+    private void displayStones(String stonesStatement) {
+
+    }
+
+    private void displayIsland(String islandStatement) {
+
+    }
+
+    private void displayResources(String resourcesStatement) {
+
+    }
+
+    private void displayPlayers(String playersStatement) {
+
+    }
+
+
+
+
+    private static String getStatement(String stateString, char a) {
+        int startIndex = 0;
+        int endIndex = 0;
+        for (int i = 0; i < stateString.length(); i++) {
+            if (stateString.charAt(i) == a) {
+                startIndex = i;
+
+                for (int j = i; j < stateString.length(); j++) {
+                    if (stateString.charAt(j) == ';') {
+                        endIndex = j + 1;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        String result = stateString.substring(startIndex, endIndex);
+        return result;
+    }
+
+
+
+
 
     /**
      * Create a basic text field for input and a refresh button.
@@ -43,8 +98,7 @@ public class Viewer extends Application {
         Button button = new Button("Refresh");
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent e) {
-                displayState(stateTextField.getText());
+            public void handle(ActionEvent e) {displayState(stateTextField.getText());
             }
         });
         HBox hb = new HBox();
