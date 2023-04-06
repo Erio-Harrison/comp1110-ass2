@@ -9,6 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Viewer extends Application {
@@ -19,6 +23,7 @@ public class Viewer extends Application {
     private final Group root = new Group();
     private final Group controls = new Group();
     private TextField stateTextField;
+
 
 
 
@@ -43,13 +48,27 @@ public class Viewer extends Application {
     }
 
     private void displayArrangement(String gameArrangementStatement) {
+        String[] arrangements = gameArrangementStatement.split(" ");
+        Text layout = new Text("Layout: " + arrangements[1]);
+        layout.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 40));
+        layout.setFill(Color.BLACK);
+        layout.setLayoutX(0);
+        layout.setLayoutY(100);
+
+        Text players = new Text("Players: " + arrangements[2].charAt(0));
+        players.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 40));
+        players.setFill(Color.BLACK);
+        players.setLayoutX(0);
+        players.setLayoutY(50);
+        Text[] arragenmentText = new Text[] {layout,players};
+        root.getChildren().addAll(arragenmentText);
 
     }
     private void displayStones(String stonesStatement) {
 
     }
 
-    private void displayIsland(String islandStatement) {
+    private void displayIslands(String islandStatement) {
 
     }
 
@@ -57,8 +76,8 @@ public class Viewer extends Application {
 
     }
 
-    private void displayPlayers(String playersStatement) {
-
+    private Text[] displayPlayers(String playersStatement) {
+    return null;
     }
 
 
@@ -118,6 +137,7 @@ public class Viewer extends Application {
 
         makeControls();
 
+        displayArrangement("a 13 2;");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
