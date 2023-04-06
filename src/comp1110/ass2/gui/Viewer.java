@@ -49,20 +49,19 @@ public class Viewer extends Application {
 
     private void displayArrangement(String gameArrangementStatement) {
         String[] arrangements = gameArrangementStatement.split(" ");
-        Text layout = new Text("Layout: " + arrangements[1]);
-        layout.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 40));
+        Text layout = new Text("Layout: " + arrangements[1] + " high");
+        layout.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 20));
         layout.setFill(Color.BLACK);
         layout.setLayoutX(0);
-        layout.setLayoutY(100);
+        layout.setLayoutY(40);
 
         Text players = new Text("Players: " + arrangements[2].charAt(0));
-        players.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 40));
+        players.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 20));
         players.setFill(Color.BLACK);
         players.setLayoutX(0);
-        players.setLayoutY(50);
+        players.setLayoutY(20);
         Text[] arragenmentText = new Text[] {layout,players};
         root.getChildren().addAll(arragenmentText);
-
     }
     private void displayStones(String stonesStatement) {
 
@@ -76,8 +75,22 @@ public class Viewer extends Application {
 
     }
 
-    private Text[] displayPlayers(String playersStatement) {
-    return null;
+    private void displayPlayers(String playersStatement) {
+
+    }
+
+    private void currentState(String currentStateStatement) {
+        String[] statement = currentStateStatement.split(" ");
+        String phase;
+        if (statement[2].equals("E;")) {
+            phase = "Exploration";
+        } else phase = "Settlement";
+        Text state = new Text("Player to Move: " + statement[1] + " , Phase: " + phase);
+        state.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 20));
+        state.setFill(Color.BLACK);
+        state.setLayoutX(0);
+        state.setLayoutY(60);
+        root.getChildren().add(state);
     }
 
 
@@ -138,6 +151,7 @@ public class Viewer extends Application {
         makeControls();
 
         displayArrangement("a 13 2;");
+        currentState("c 0 E;");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
