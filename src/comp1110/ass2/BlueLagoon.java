@@ -20,6 +20,8 @@ public class BlueLagoon {
      * (represents a state that players could reach in game play),
      * only that the string representation is syntactically well-formed.+
      * <p>
+     * only that the string representation is syntactically well-formed.
+     * <p>.
      * A description of the state string will be included in README.md
      * in an update of the project after D2B is complete.
      *
