@@ -1,7 +1,8 @@
 package comp1110.ass2;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class BlueLagoon {
     // The Game Strings for five maps have been created for you.
@@ -17,7 +18,7 @@ public class BlueLagoon {
      * Check if the string encoding of the game state is well-formed.
      * Note that this does not mean checking that the state is valid
      * (represents a state that players could reach in game play),
-     * only that the string representation is syntactically well-formed.
+     * only that the string representation is syntactically well-formed.+
      * <p>
      * A description of the state string will be included in README.md
      * in an update of the project after D2B is complete.
@@ -26,7 +27,76 @@ public class BlueLagoon {
      * @return true if stateString is well-formed and false otherwise
      */
     public static boolean isStateStringWellFormed(String stateString){
-         return false; // FIXME Task 3
+        var count = 0;
+        for (int i = 0; i < stateString.length(); i++) {
+            if (stateString.charAt(i) == ';') {
+                count++;
+            }
+        }
+
+        System.out.println("=====================================");
+        String[] statelist = stateString.split("; ", count);
+        if (statelist.length <= 5) {
+            return false;
+        }
+
+        System.out.println("StateString" + stateString);
+        String gArrangement = statelist[0];
+        System.out.println("Game Arrangement:" + gArrangement);
+        //System.out.println(gArrangement.substring(0,1));
+        if (!gArrangement.matches("^a \\d{1,} \\d{1,}")) {
+            return false;
+        }
+
+        String csState = statelist[1];
+        System.out.println("Current State Statement:" + csState);
+        if (!csState.matches("^c \\d{1,} [ES]")) {
+            return false;
+        }
+
+        ArrayList iState = (ArrayList) Arrays.stream(statelist)
+                .collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i'))
+                .values().toArray()[1];
+        System.out.println("Island Statement:" + iState);
+        int k = 0;
+        for (k = 0; k < iState.size(); k++) {
+            //System.out.println(iState.get(k));
+            if (!((String) iState.get(k)).matches("^i \\d{1,}( \\d{1,},\\d{1,})+")) {
+                return false;
+            }
+        }
+
+        String stoneState = (statelist[iState.size() + 2]);
+        System.out.println("Stone Statement:" + stoneState);
+        if (!stoneState.matches("^s( \\d{1,},\\d{1,})+")) {
+            return false;
+        }
+
+        String ucrState = (statelist[iState.size() + 3]);
+        System.out.println("Unclaimed Resources Statement:" + ucrState);
+        // "r C 1,1 B 1,2 W P 1,4 S;"
+        if (!ucrState.matches("^r C( \\d{1,},\\d{1,}){0,} B( \\d{1,},\\d{1,}){0,} W( \\d{1,},\\d{1,}){0,} P( \\d{1,},\\d{1,}){0,} S( \\d{1,},\\d{1,}){0,}")) {
+            return false;
+        }
+
+        System.out.println("playernum:" + gArrangement.split(" ")[2]);
+        ArrayList playState = (ArrayList) Arrays.stream(statelist)
+                .collect(Collectors.partitioningBy(n -> n.charAt(0) == 'p'))
+                .values().toArray()[1];
+        if (playState.size() != Integer.parseInt(gArrangement.split(" ")[2])) {
+            return false;
+        }
+        for (k = 0; k < playState.size(); k++) {
+            System.out.println(playState.get(k) + "||");
+            if (!(((String) playState.get(k)).matches("^p [0-9](( [1-9][0-9]?[0-9]?)|( 0)){1,} S( \\d{1,},\\d{1,}){0,} T( \\d{1,},\\d{1,}){0,};?"))) {
+                return false;
+            }
+        }
+
+        System.out.println("=====================================");
+
+
+        return true; // FIXME Task 3
     }
 
     /**
