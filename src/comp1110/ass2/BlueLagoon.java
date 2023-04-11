@@ -30,74 +30,61 @@ public class BlueLagoon {
      */
     public static boolean isStateStringWellFormed(String stateString){
         var count = 0;
+        int k = 0;
         for (int i = 0; i < stateString.length(); i++) {
             if (stateString.charAt(i) == ';') {
                 count++;
             }
         }
 
-        System.out.println("=====================================");
         String[] statelist = stateString.split("; ", count);
         if (statelist.length <= 5) {
             return false;
         }
 
-        System.out.println("StateString" + stateString);
+
+        // Game Arrangement Statement
         String gArrangement = statelist[0];
-        System.out.println("Game Arrangement:" + gArrangement);
-        //System.out.println(gArrangement.substring(0,1));
         if (!gArrangement.matches("^a \\d{1,} \\d{1,}")) {
             return false;
         }
 
+        // Current State Statement
         String csState = statelist[1];
-        System.out.println("Current State Statement:" + csState);
         if (!csState.matches("^c \\d{1,} [ES]")) {
             return false;
         }
 
-        ArrayList iState = (ArrayList) Arrays.stream(statelist)
-                .collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i'))
-                .values().toArray()[1];
-        System.out.println("Island Statement:" + iState);
-        int k = 0;
+        // Island State Statement
+        ArrayList iState = (ArrayList) Arrays.stream(statelist).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
         for (k = 0; k < iState.size(); k++) {
-            //System.out.println(iState.get(k));
             if (!((String) iState.get(k)).matches("^i \\d{1,}( \\d{1,},\\d{1,})+")) {
                 return false;
             }
         }
 
+        // Stones Statement
         String stoneState = (statelist[iState.size() + 2]);
-        System.out.println("Stone Statement:" + stoneState);
         if (!stoneState.matches("^s( \\d{1,},\\d{1,})+")) {
             return false;
         }
 
+        // Unclaimed Resources Statement
         String ucrState = (statelist[iState.size() + 3]);
-        System.out.println("Unclaimed Resources Statement:" + ucrState);
-        // "r C 1,1 B 1,2 W P 1,4 S;"
         if (!ucrState.matches("^r C( \\d{1,},\\d{1,}){0,} B( \\d{1,},\\d{1,}){0,} W( \\d{1,},\\d{1,}){0,} P( \\d{1,},\\d{1,}){0,} S( \\d{1,},\\d{1,}){0,}")) {
             return false;
         }
 
-        System.out.println("playernum:" + gArrangement.split(" ")[2]);
-        ArrayList playState = (ArrayList) Arrays.stream(statelist)
-                .collect(Collectors.partitioningBy(n -> n.charAt(0) == 'p'))
-                .values().toArray()[1];
+        // Players Statement
+        ArrayList playState = (ArrayList) Arrays.stream(statelist).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'p')).values().toArray()[1];
         if (playState.size() != Integer.parseInt(gArrangement.split(" ")[2])) {
             return false;
         }
         for (k = 0; k < playState.size(); k++) {
-            System.out.println(playState.get(k) + "||");
             if (!(((String) playState.get(k)).matches("^p [0-9](( [1-9][0-9]?[0-9]?)|( 0)){1,} S( \\d{1,},\\d{1,}){0,} T( \\d{1,},\\d{1,}){0,};?"))) {
                 return false;
             }
         }
-
-        System.out.println("=====================================");
-
-
         return true; // FIXME Task 3
     }
 
@@ -133,7 +120,65 @@ public class BlueLagoon {
      * @return a string of the game state with resources randomly distributed
      */
     public static String distributeResources(String stateString){
-         return ""; // FIXME Task 6
+        var count = 0;
+        int k = 0;
+        for (int i = 0; i < stateString.length(); i++) {
+            if (stateString.charAt(i) == ';') {
+                count++;
+            }
+        }
+
+        String[] statelist = stateString.split("; ", count);
+        // Game Arrangement Statement
+        String gArrangement = statelist[0];
+
+        // Current State Statement
+        String csState = statelist[1];
+
+        // Island State Statement
+        ArrayList iState = (ArrayList) Arrays.stream(statelist).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
+        String iString= "i" + stateString.split("i", 2)[1].split("s", 2)[0];
+
+        // Stones Statement
+        String stoneState = (statelist[iState.size() + 2]);
+
+        // Players Statement
+        String playString = "p" + stateString.split("p", 2)[1];
+
+        //assign rsrcs
+        ArrayList stoneCoords = new ArrayList(Arrays.asList(stoneState.split(" ")));
+        ArrayList rsrcs = new ArrayList();
+        stoneCoords.remove(0);
+        while (stoneCoords.size() > 0) {
+            var num = 6;
+            if (stoneCoords.size() == 8) {
+                num = 8;
+            }
+
+            String[] rscrsSub = new String[num];
+            for (k = 0; k < num; k ++) {
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[k] = (String) stoneCoords.get(random);
+                stoneCoords.remove(random);
+            }
+            rsrcs.add(rscrsSub);
+        }
+
+        // accumulate coordinates into rsrcs string
+        String rsrcAccum = "r ";
+        int j = 0;
+        char[] symbols = new char[] {'C', 'B', 'W', 'P', 'S'};
+        for (k = 0; k < rsrcs.size(); k ++) {
+            rsrcAccum += symbols[k];
+            var current = (String[]) rsrcs.get(k);
+            for (j = 0; j < current.length; j++) {
+                rsrcAccum += " " + current[j];
+            }
+            if (k!= 4) {
+                rsrcAccum += " ";
+            }
+        }
+        return gArrangement + "; " + csState + "; " + iString + stoneState + "; " + rsrcAccum + "; " + playString; // FIXME Task 6
     }
 
     /**
