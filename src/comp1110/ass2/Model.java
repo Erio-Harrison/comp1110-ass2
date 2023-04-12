@@ -48,12 +48,10 @@ public class Model {
 
 
     public static void main(String[] args) {
-        String string = getStatement("p 1 42 1 2 3 4 5 S 5,6 8,7 T 1,2;", 'S', 'T');
+        String string = getStatement("s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11;", 's', ';');
         String[] strings = string.split(" ");
-        for (int i = 0;  i < strings.length; i++) {
-            strings[i] = "(" + strings[i] + ")";
-        }
-        System.out.println(Arrays.toString(strings));
+        String[] test = strings[5].split(",");
+        System.out.println(Integer.parseInt(test[1]));
         // while true:
         //    while true:
         //          board.setSettler(current player)
