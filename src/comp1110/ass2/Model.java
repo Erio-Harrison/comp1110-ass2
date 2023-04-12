@@ -1,5 +1,7 @@
 package comp1110.ass2;
 
+import java.util.Arrays;
+
 public class Model {
 
     // the num of players in the game
@@ -24,13 +26,34 @@ public class Model {
 
 
 
+    private static String getStatement(String stateString, char start, char end) {
+        int startIndex = 0;
+        int endIndex = 0;
+        for (int i = 0; i < stateString.length(); i++) {
+            if (stateString.charAt(i) == start) {
+                startIndex = i+2;
+
+                for (int j = i; j < stateString.length(); j++) {
+                    if (stateString.charAt(j) == end) {
+                        endIndex = j;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        String result = stateString.substring(startIndex, endIndex);
+        return result;
+    }
 
 
     public static void main(String[] args) {
-       String player = "p 1 42 1 2 3 4 5 S 5,6 8,7 T 1,2;";
-       String[] statement = player.split(" ");
-        System.out.println(statement[1]);
-
+        String string = getStatement("p 1 42 1 2 3 4 5 S 5,6 8,7 T 1,2;", 'S', 'T');
+        String[] strings = string.split(" ");
+        for (int i = 0;  i < strings.length; i++) {
+            strings[i] = "(" + strings[i] + ")";
+        }
+        System.out.println(Arrays.toString(strings));
         // while true:
         //    while true:
         //          board.setSettler(current player)

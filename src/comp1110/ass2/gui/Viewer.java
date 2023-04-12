@@ -15,6 +15,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
+
 public class Viewer extends Application {
 
     private static final int VIEWER_WIDTH = 1200;
@@ -86,7 +88,37 @@ public class Viewer extends Application {
         root.getChildren().add(resource);
         y += 20;
     }
+
+    Text settler = new Text("Placed Settler At:");
+    String settlers = getStatement(playersStatement, 'S', 'T');
+    String[] settlersList = settlers.split(" ");
+    for (int i = 0; i < settlersList.length;i++) {
+        settlersList[i] = "(" + settlersList[i] + ")";
     }
+    Text setCoordinates = new Text(Arrays.toString(settlersList));
+    setCoordinates.setLayoutX(0);
+    setCoordinates.setLayoutY(y + 20);
+    settler.setLayoutX(0);
+    settler.setLayoutY(y);
+    root.getChildren().addAll(new Text[]{setCoordinates, settler});
+    y += 40;
+
+    Text village = new Text("Place Villages At:");
+    String villages = getStatement(playersStatement, 'T', ';');
+        String[] villagesList = villages.split(" ");
+        for (int i = 0; i < villagesList.length;i++) {
+            villagesList[i] = "(" + villagesList[i] + ")";
+        }
+        Text vilCord = new Text(Arrays.toString(villagesList));
+        vilCord.setLayoutX(0);
+        vilCord.setLayoutY(y + 20);
+        village.setLayoutX(0);
+        village.setLayoutY(y);
+        root.getChildren().addAll(new Text[]{vilCord, village});
+
+    }
+
+
 
     private void currentState(String currentStateStatement) {
         String[] statement = currentStateStatement.split(" ");
@@ -103,16 +135,16 @@ public class Viewer extends Application {
 
 
 
-    private static String getStatement(String stateString, char a) {
+    private static String getStatement(String stateString, char start, char end) {
         int startIndex = 0;
         int endIndex = 0;
         for (int i = 0; i < stateString.length(); i++) {
-            if (stateString.charAt(i) == a) {
+            if (stateString.charAt(i) == start) {
                 startIndex = i;
 
                 for (int j = i; j < stateString.length(); j++) {
-                    if (stateString.charAt(j) == ';') {
-                        endIndex = j + 1;
+                    if (stateString.charAt(j) == end) {
+                        endIndex = j;
                         break;
                     }
                 }
@@ -122,6 +154,7 @@ public class Viewer extends Application {
         String result = stateString.substring(startIndex, endIndex);
         return result;
     }
+
 
 
 
@@ -159,7 +192,7 @@ public class Viewer extends Application {
 
         displayArrangement("a 13 2;");
         currentState("c 0 E;");
-        displayPlayers("p 0 0 0 0 0 0 0 S T");
+        displayPlayers("p 1 42 1 2 3 4 5 S 5,6 8,7 T 1,2;");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
