@@ -31,7 +31,7 @@ public class Model {
         int endIndex = 0;
         for (int i = 0; i < stateString.length(); i++) {
             if (stateString.charAt(i) == start) {
-                startIndex = i+2;
+                startIndex = i;
 
                 for (int j = i; j < stateString.length(); j++) {
                     if (stateString.charAt(j) == end) {
@@ -48,10 +48,12 @@ public class Model {
 
 
     public static void main(String[] args) {
-        String string = getStatement("s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11;", 's', ';');
-        String[] strings = string.split(" ");
-        String[] test = strings[5].split(",");
-        System.out.println(Integer.parseInt(test[1]));
+        String string1 = "r C 1,1 B 1,2 W P 1,4 S;";
+        String[] strings = string1.split(" ");
+        String string = getStatement("r C 1,1 2,2 B 2,2 W 3,3 P S;", 'W', 'P');
+        String[] strings2 = string.split(" ");
+
+        System.out.println(Arrays.toString(strings2[1].split(",")));
         // while true:
         //    while true:
         //          board.setSettler(current player)

@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Viewer extends Application {
 
@@ -151,8 +152,40 @@ public class Viewer extends Application {
     }
 
 
-    private void displayResources(String resourcesStatement) {
+    private void displayUnclaimedResources(String resourcesStatement) {
+        String resources = "CBWPS";
+        Color[] colours = new Color[]{Color.WHITE, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN};
+        for (int i = 0; i < resources.length(); i++) {
+            String coords = getUnclaimedResources(resourcesStatement, resources.charAt(i));
+            String[] coordsList = coords.split(" ");
+            if (coordsList.length > 1) {
+                for (int j = 1; j < coordsList.length; j++) {
+                    String[] coordinate = coordsList[j].split(",");
+                    int y = Integer.parseInt(coordinate[0]);
+                    int x = Integer.parseInt(coordinate[1]);
+                    Tile islandCord = new Tile((x * 45) + (VIEWER_WIDTH / 4),(y * 45) + 40,43, colours[i]);
+                    root.getChildren().add(islandCord);
 
+                }
+            }
+        }
+
+    }
+
+
+
+    private static String getUnclaimedResources(String statement, char resource) {
+        String string = "";
+        if (resource == 'C') {
+            string += getStatement(statement, 'C', 'B');
+        } else if (resource == 'B') {
+            string += getStatement(statement, 'B', 'W');
+        } else if (resource == 'W') {
+            string += getStatement(statement, 'W', 'P');
+        } else if (resource == 'P') {
+            string += getStatement(statement,'P','S');
+        } else string += getStatement(statement,'S',';');
+        return string;
     }
 
     private void displayPlayers(String playersStatement, int x, int y) {
@@ -278,6 +311,7 @@ public class Viewer extends Application {
         displayIsland("i 6 0,0 0,1 0,2 0,3 1,0 1,1 1,2 1,3 1,4 2,0 2,1;", 20,0);
         displayIsland("i 6 0,5 0,6 0,7 1,6 1,7 1,8 2,6 2,7 2,8 3,7 3,8;", 20, 0);
         displayStones("s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11;");
+        displayUnclaimedResources("r C 1,1 B 1,2 W P 1,4 S;");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
