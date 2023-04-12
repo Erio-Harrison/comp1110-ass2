@@ -27,8 +27,9 @@ public class Model {
 
 
     public static void main(String[] args) {
-
-
+       String player = "p 1 42 1 2 3 4 5 S 5,6 8,7 T 1,2;";
+       String[] statement = player.split(" ");
+        System.out.println(statement[1]);
 
         // while true:
         //    while true:

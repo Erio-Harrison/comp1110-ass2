@@ -50,14 +50,10 @@ public class Viewer extends Application {
     private void displayArrangement(String gameArrangementStatement) {
         String[] arrangements = gameArrangementStatement.split(" ");
         Text layout = new Text("Layout: " + arrangements[1] + " high");
-        layout.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 20));
-        layout.setFill(Color.BLACK);
         layout.setLayoutX(0);
         layout.setLayoutY(40);
 
         Text players = new Text("Players: " + arrangements[2].charAt(0));
-        players.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 20));
-        players.setFill(Color.BLACK);
         players.setLayoutX(0);
         players.setLayoutY(20);
         Text[] arragenmentText = new Text[] {layout,players};
@@ -76,7 +72,20 @@ public class Viewer extends Application {
     }
 
     private void displayPlayers(String playersStatement) {
-
+    String[] statement = playersStatement.split(" ");
+    Text player = new Text("Player " + statement[1] + " Statistics:");
+    player.setLayoutX(0);
+    player.setLayoutY(80);
+    root.getChildren().add(player);
+    String[] resources = new String[]{"Coconuts ", "Bamboo ", "Water ", "Precious Stone ", "Statuettes "};
+    int y = 100;
+    for (int i = 0; i < resources.length; i++) {
+        Text resource = new Text(resources[i] + statement[i+2]);
+        resource.setLayoutX(0);
+        resource.setLayoutY(y);
+        root.getChildren().add(resource);
+        y += 20;
+    }
     }
 
     private void currentState(String currentStateStatement) {
@@ -86,8 +95,6 @@ public class Viewer extends Application {
             phase = "Exploration";
         } else phase = "Settlement";
         Text state = new Text("Player to Move: " + statement[1] + " , Phase: " + phase);
-        state.setFont(Font.font("Tahoma", FontWeight.EXTRA_BOLD, 20));
-        state.setFill(Color.BLACK);
         state.setLayoutX(0);
         state.setLayoutY(60);
         root.getChildren().add(state);
@@ -152,6 +159,7 @@ public class Viewer extends Application {
 
         displayArrangement("a 13 2;");
         currentState("c 0 E;");
+        displayPlayers("p 0 0 0 0 0 0 0 S T");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
