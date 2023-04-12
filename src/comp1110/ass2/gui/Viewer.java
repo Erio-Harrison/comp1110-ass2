@@ -1,5 +1,6 @@
 package comp1110.ass2.gui;
 
+import comp1110.ass2.BlueLagoon;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,11 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
 
 public class Viewer extends Application {
 
@@ -47,13 +46,27 @@ public class Viewer extends Application {
      */
     void displayState(String stateString) {
         // FIXME Task 5
+        int x = 0;
+        int y = 20;
+        if (BlueLagoon.isStateStringWellFormed(stateString)) {
 
-        // gameState = gameArrangementStatement, " ",
-        // currentStateStatement, {" ", islandStatement},
-        // " ", stonesStatement, " ",
-        // unclaimedResourcesAndStatuettesStatement,
-        // {" ", playerStatement}
-
+            String[] substring = stateString.split("; ");
+            displayArrangement(substring[0],0,80);
+            currentState(substring[1] + ";", x, y);
+            displayPlayers(substring[substring.length-1], 1000,y + 300);
+            for (int i = 2; i < substring.length-1; i++) {
+                String curr = substring[i] + ";";
+                if (curr.charAt(0) == 'i') {
+                    displayIsland(curr,0,y + 60);
+                } else if (curr.charAt(0) == 's') {
+                    displayStones(curr);
+                } else if (curr.charAt(0) == 'r') {
+                    displayUnclaimedResources(curr);
+                } else if (curr.charAt(0) == 'p') {
+                    displayPlayers(curr,1000,y + 100);
+                }
+            }
+        }
     }
 
 
@@ -119,7 +132,7 @@ public class Viewer extends Application {
         bonus.setLayoutY(y);
         root.getChildren().add(bonus);
 
-        String islands = getCoords(islandStatement,'i',';');
+        String islands = getCoords(islandStatement,',',';');
         String[] islandsArray = islands.split(" ");
         for (int i = 0; i < islandsArray.length; i++) {
             String[] coordinates = islandsArray[i].split(",");
@@ -136,7 +149,7 @@ public class Viewer extends Application {
         int endIndex = 0;
         for (int i = 0; i < stateString.length(); i++) {
             if (stateString.charAt(i) == start) {
-                startIndex = i + 4;
+                startIndex = i - 1;
 
                 for (int j = i; j < stateString.length(); j++) {
                     if (stateString.charAt(j) == end) {
@@ -154,7 +167,7 @@ public class Viewer extends Application {
 
     private void displayUnclaimedResources(String resourcesStatement) {
         String resources = "CBWPS";
-        Color[] colours = new Color[]{Color.WHITE, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN};
+        Color[] colours = new Color[]{Color.WHITE, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
         for (int i = 0; i < resources.length(); i++) {
             String coords = getUnclaimedResources(resourcesStatement, resources.charAt(i));
             String[] coordsList = coords.split(" ");
@@ -305,13 +318,6 @@ public class Viewer extends Application {
 
         makeControls();
 
-        displayArrangement("a 13 2;",0, 20);
-        currentState("c 0 E;",0, 60);
-        displayPlayers("p 1 42 1 2 3 4 5 S 5,6 8,7 T 1,2;",0,80);
-        displayIsland("i 6 0,0 0,1 0,2 0,3 1,0 1,1 1,2 1,3 1,4 2,0 2,1;", 20,0);
-        displayIsland("i 6 0,5 0,6 0,7 1,6 1,7 1,8 2,6 2,7 2,8 3,7 3,8;", 20, 0);
-        displayStones("s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11;");
-        displayUnclaimedResources("r C 1,1 B 1,2 W P 1,4 S;");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

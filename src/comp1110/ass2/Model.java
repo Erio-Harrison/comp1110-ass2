@@ -46,14 +46,28 @@ public class Model {
         return result;
     }
 
+    private static String getCoords(String stateString, char start, char end) {
+        int startIndex = 0;
+        int endIndex = 0;
+        for (int i = 0; i < stateString.length(); i++) {
+            if (stateString.charAt(i) == start) {
+                startIndex = i-1;
+
+                for (int j = i; j < stateString.length(); j++) {
+                    if (stateString.charAt(j) == end) {
+                        endIndex = j;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        String result = stateString.substring(startIndex, endIndex);
+        return result;
+    }
 
     public static void main(String[] args) {
-        String string1 = "r C 1,1 B 1,2 W P 1,4 S;";
-        String[] strings = string1.split(" ");
-        String string = getStatement("r C 1,1 2,2 B 2,2 W 3,3 P S;", 'W', 'P');
-        String[] strings2 = string.split(" ");
 
-        System.out.println(Arrays.toString(strings2[1].split(",")));
         // while true:
         //    while true:
         //          board.setSettler(current player)
