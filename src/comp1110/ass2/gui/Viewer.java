@@ -14,6 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.w3c.dom.css.Rect;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -48,6 +51,11 @@ public class Viewer extends Application {
         // FIXME Task 5
         int x = 0;
         int y = 20;
+        root.getChildren().clear();
+        root.getChildren().add(controls);
+        legend();
+        makeControls();
+
         if (BlueLagoon.isStateStringWellFormed(stateString)) {
 
             String[] substring = stateString.split("; ");
@@ -69,6 +77,25 @@ public class Viewer extends Application {
         }
     }
 
+    private void legend() {
+        String[] legend = new String[]{"Water", "Island", "Stones", "Coconuts", "Bamboo", "Water", "Precious Stone", "Statuettes"};
+        Color[] colours = new Color[]{Color.BLUE,Color.GREEN,Color.GREY, Color.WHEAT, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
+        int y = 20;
+        for (int i = 0; i < legend.length; i++) {
+            Text text = new Text(legend[i]);
+            text.setLayoutX(1050);
+            text.setLayoutY(y + 10);
+            root.getChildren().add(text);
+
+            Tile rectangle = new Tile(1150,y, 10 , colours[i]);
+            root.getChildren().add(rectangle);
+            y += 20;
+        }
+        Text note = new Text("Integer above island means bonus for that island");
+        note.setLayoutX(900);
+        note.setLayoutY(y + 10);
+        root.getChildren().add(note);
+    }
 
     private void displayArrangement(String gameArrangementStatement, int x, int y) {
         String[] arrangements = gameArrangementStatement.split(" ");
@@ -111,10 +138,10 @@ public class Viewer extends Application {
             int y1 = Integer.parseInt(coordinates[0]);
             int offset = 15;
             if (y1 % 2 == 0) {
-                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + offset + 2,(y1 * 30) + 35 + 3,10, Color.GRAY);
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + offset,(y1 * 30) + 35,10, Color.GRAY);
                 root.getChildren().add(islandCord);
             } else {
-                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + 2,(y1 * 30) + 35 + 3,10, Color.GRAY);
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3),(y1 * 30) + 35,10, Color.GRAY);
                 root.getChildren().add(islandCord);
             }
 
@@ -124,7 +151,7 @@ public class Viewer extends Application {
 
     private void displayUnclaimedResources(String resourcesStatement) {
         String resources = "CBWPS";
-        Color[] colours = new Color[]{Color.WHITE, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
+        Color[] colours = new Color[]{Color.WHEAT, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
         for (int i = 0; i < resources.length(); i++) {
             String coords = getUnclaimedResources(resourcesStatement, resources.charAt(i));
             String[] coordsList = coords.split(" ");
@@ -133,7 +160,7 @@ public class Viewer extends Application {
                     String[] coordinate = coordsList[j].split(",");
                     int y = Integer.parseInt(coordinate[0]);
                     int x = Integer.parseInt(coordinate[1]);
-                    Tile islandCord = new Tile((x * 30) + (VIEWER_WIDTH / 3),(y * 30) + 35,43, colours[i]);
+                    Tile islandCord = new Tile((x * 30) + (VIEWER_WIDTH / 3),(y * 30) + 35,10, colours[i]);
                     root.getChildren().add(islandCord);
 
                 }
@@ -144,28 +171,36 @@ public class Viewer extends Application {
 
     private void displayIsland(String islandStatement,int x, int y) {
         String[] statement = islandStatement.split(" ");
-        Text bonus = new Text(statement[1]);
-        //bonus.setLayoutX(x);
-        //bonus.setLayoutY(y);
-        //root.getChildren().add(bonus);
+        String bonus = statement[1];
+
 
         String islands = getCoords(islandStatement,';');
         String[] islandsArray = islands.split(" ");
         ArrayList<Tile> tiles = new ArrayList<>();
+        ArrayList<Text> bonusTexts = new ArrayList<>();
         for (int i = 1; i < islandsArray.length; i++) {
             String[] coordinates = islandsArray[i].split(",");
             int x1 = Integer.parseInt(coordinates[1]);
             int y1 = Integer.parseInt(coordinates[0]);
             int offset = 28/2;
             if (y1 % 2 == 0) {
-                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + offset + 2,(y1 * 30) + 35 + 2,25, Color.GREEN);
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + offset,(y1 * 30) + 35,25, Color.GREEN);
                 tiles.add(islandCord);
+                Text bonusText = new Text(bonus);
+                bonusText.setLayoutX((x1 * 30) + (VIEWER_WIDTH / 3) + offset + 11);
+                bonusText.setLayoutY((y1 * 30) + 35 + 11);
+                bonusTexts.add(bonusText);
             } else {
-                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + 2,(y1 * 30) + 35 + 2,25, Color.GREEN);
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3),(y1 * 30) + 35,25, Color.GREEN);
                 tiles.add(islandCord);
+                Text bonusText = new Text(bonus);
+                bonusText.setLayoutX((x1 * 30) + (VIEWER_WIDTH / 3) + 11);
+                bonusText.setLayoutY((y1 * 30) + 35 + 11);
+                bonusTexts.add(bonusText);
             }
         }
         root.getChildren().addAll(tiles);
+        root.getChildren().addAll(bonusTexts);
     }
     private static String stoneCoords(String stateString, char start, char end) {
         int startIndex = 0;
@@ -341,7 +376,7 @@ public class Viewer extends Application {
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
 
         root.getChildren().add(controls);
-
+        legend();
         makeControls();
         primaryStage.setScene(scene);
         primaryStage.show();
