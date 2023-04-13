@@ -28,8 +28,8 @@ public class Viewer extends Application {
     private TextField stateTextField;
 
     class Tile extends Rectangle {
-        public Tile(double v, double v1, double v2, Color color) {
-            super(v, v1, v2, v2);
+        public Tile(double x, double y, double size, Color color) {
+            super(x, y, size, size);
             this.setFill(color);
         }
     }
@@ -51,9 +51,9 @@ public class Viewer extends Application {
         if (BlueLagoon.isStateStringWellFormed(stateString)) {
 
             String[] substring = stateString.split("; ");
-            displayArrangement(substring[0],0,80);
-            currentState(substring[1] + ";", x, y);
-            displayPlayers(substring[substring.length-1], 1000,y + 300);
+            displayArrangement(substring[0],0,y);
+            currentState(substring[1] + ";", x, y + 40);
+            displayPlayers(substring[substring.length-1], 0,y + 300);
             for (int i = 2; i < substring.length-1; i++) {
                 String curr = substring[i] + ";";
                 if (curr.charAt(0) == 'i') {
@@ -63,7 +63,7 @@ public class Viewer extends Application {
                 } else if (curr.charAt(0) == 'r') {
                     displayUnclaimedResources(curr);
                 } else if (curr.charAt(0) == 'p') {
-                    displayPlayers(curr,1000,y + 100);
+                    displayPlayers(curr,0,y + 80);
                 }
             }
         }
@@ -74,21 +74,31 @@ public class Viewer extends Application {
         String[] arrangements = gameArrangementStatement.split(" ");
         Text layout = new Text("Layout: " + arrangements[1] + " high");
         layout.setLayoutX(x);
-        layout.setLayoutY(y+20);
+        layout.setLayoutY(y);
 
         Text players = new Text("Players: " + arrangements[2].charAt(0));
         players.setLayoutX(x);
-        players.setLayoutY(y);
+        players.setLayoutY(y + 20);
         Text[] arragenmentText = new Text[] {layout,players};
         root.getChildren().addAll(arragenmentText);
 
         int boardheight = Integer.parseInt(arrangements[1]);
         ArrayList<Tile> tiles = new ArrayList<>();
-        for (int i = 0; i < boardheight; i++) {
-            for (int j = 0; j < boardheight ; j++) {
-                var BoardTile = new Tile((i * 45) + (VIEWER_WIDTH / 4),(j * 45) + 40,43, Color.BLUE);
-                tiles.add(BoardTile);
+        for (int row = 0; row < boardheight; row++) {
+            if (row % 2 == 0) {
+                for (int col = 0; col < boardheight-1; col++) {
+                    int offset = 15;
+                    var BoardTile = new Tile((col * 30) + (VIEWER_WIDTH / 3) + offset,(row * 30) + 35,30, Color.BLUE);
+                    tiles.add(BoardTile);
+                }
+            } else {
+                for (int col = 0; col < boardheight; col++) {
+                    var BoardTile = new Tile((col * 30) + (VIEWER_WIDTH / 3),(row * 30) + 35,30, Color.BLUE);
+                    tiles.add(BoardTile);
+                }
             }
+
+
         }
         root.getChildren().addAll(tiles);
     }
@@ -99,12 +109,64 @@ public class Viewer extends Application {
             String[] coordinates = statement[i].split(",");
             int x1 = Integer.parseInt(coordinates[1]);
             int y1 = Integer.parseInt(coordinates[0]);
-            Tile islandCord = new Tile((x1 * 45) + (VIEWER_WIDTH / 4),(y1 * 45) + 40,43, Color.GRAY);
-            root.getChildren().add(islandCord);
+            int offset = 15;
+            if (y1 % 2 == 0) {
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + offset + 2,(y1 * 30) + 35 + 3,10, Color.GRAY);
+                root.getChildren().add(islandCord);
+            } else {
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + 2,(y1 * 30) + 35 + 3,10, Color.GRAY);
+                root.getChildren().add(islandCord);
+            }
+
 
         }
     }
 
+    private void displayUnclaimedResources(String resourcesStatement) {
+        String resources = "CBWPS";
+        Color[] colours = new Color[]{Color.WHITE, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
+        for (int i = 0; i < resources.length(); i++) {
+            String coords = getUnclaimedResources(resourcesStatement, resources.charAt(i));
+            String[] coordsList = coords.split(" ");
+            if (coordsList.length > 1) {
+                for (int j = 1; j < coordsList.length; j++) {
+                    String[] coordinate = coordsList[j].split(",");
+                    int y = Integer.parseInt(coordinate[0]);
+                    int x = Integer.parseInt(coordinate[1]);
+                    Tile islandCord = new Tile((x * 30) + (VIEWER_WIDTH / 3),(y * 30) + 35,43, colours[i]);
+                    root.getChildren().add(islandCord);
+
+                }
+            }
+        }
+
+    }
+
+    private void displayIsland(String islandStatement,int x, int y) {
+        String[] statement = islandStatement.split(" ");
+        Text bonus = new Text(statement[1]);
+        //bonus.setLayoutX(x);
+        //bonus.setLayoutY(y);
+        //root.getChildren().add(bonus);
+
+        String islands = getCoords(islandStatement,';');
+        String[] islandsArray = islands.split(" ");
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (int i = 1; i < islandsArray.length; i++) {
+            String[] coordinates = islandsArray[i].split(",");
+            int x1 = Integer.parseInt(coordinates[1]);
+            int y1 = Integer.parseInt(coordinates[0]);
+            int offset = 28/2;
+            if (y1 % 2 == 0) {
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + offset + 2,(y1 * 30) + 35 + 2,25, Color.GREEN);
+                tiles.add(islandCord);
+            } else {
+                Tile islandCord = new Tile((x1 * 30) + (VIEWER_WIDTH / 3) + 2,(y1 * 30) + 35 + 2,25, Color.GREEN);
+                tiles.add(islandCord);
+            }
+        }
+        root.getChildren().addAll(tiles);
+    }
     private static String stoneCoords(String stateString, char start, char end) {
         int startIndex = 0;
         int endIndex = 0;
@@ -125,31 +187,13 @@ public class Viewer extends Application {
         return result;
     }
 
-    private void displayIsland(String islandStatement,int x, int y) {
-        String[] statement = islandStatement.split(" ");
-        Text bonus = new Text(statement[1]);
-        bonus.setLayoutX(x);
-        bonus.setLayoutY(y);
-        root.getChildren().add(bonus);
 
-        String islands = getCoords(islandStatement,',',';');
-        String[] islandsArray = islands.split(" ");
-        for (int i = 0; i < islandsArray.length; i++) {
-            String[] coordinates = islandsArray[i].split(",");
-            int x1 = Integer.parseInt(coordinates[1]);
-            int y1 = Integer.parseInt(coordinates[0]);
-            Tile islandCord = new Tile((x1 * 45) + (VIEWER_WIDTH / 4),(y1 * 45) + 40,43, Color.GREEN);
-            root.getChildren().add(islandCord);
-
-        }
-
-    }
-    private static String getCoords(String stateString, char start, char end) {
+    private static String getCoords(String stateString, char end) {
         int startIndex = 0;
         int endIndex = 0;
         for (int i = 0; i < stateString.length(); i++) {
-            if (stateString.charAt(i) == start) {
-                startIndex = i - 1;
+            if (Character.isDigit(stateString.charAt(i))) {
+                startIndex = i;
 
                 for (int j = i; j < stateString.length(); j++) {
                     if (stateString.charAt(j) == end) {
@@ -165,25 +209,7 @@ public class Viewer extends Application {
     }
 
 
-    private void displayUnclaimedResources(String resourcesStatement) {
-        String resources = "CBWPS";
-        Color[] colours = new Color[]{Color.WHITE, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
-        for (int i = 0; i < resources.length(); i++) {
-            String coords = getUnclaimedResources(resourcesStatement, resources.charAt(i));
-            String[] coordsList = coords.split(" ");
-            if (coordsList.length > 1) {
-                for (int j = 1; j < coordsList.length; j++) {
-                    String[] coordinate = coordsList[j].split(",");
-                    int y = Integer.parseInt(coordinate[0]);
-                    int x = Integer.parseInt(coordinate[1]);
-                    Tile islandCord = new Tile((x * 45) + (VIEWER_WIDTH / 4),(y * 45) + 40,43, colours[i]);
-                    root.getChildren().add(islandCord);
 
-                }
-            }
-        }
-
-    }
 
 
 
@@ -317,7 +343,6 @@ public class Viewer extends Application {
         root.getChildren().add(controls);
 
         makeControls();
-
         primaryStage.setScene(scene);
         primaryStage.show();
     }
