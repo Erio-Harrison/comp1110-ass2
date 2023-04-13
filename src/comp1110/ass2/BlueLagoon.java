@@ -98,6 +98,9 @@ public class BlueLagoon {
      * @return true if moveString is well-formed and false otherwise
      */
     public static boolean isMoveStringWellFormed(String moveString){
+        if (moveString.matches("^(S|T) \\d+,\\d+")) {
+            return true;
+        }
          return false; // FIXME Task 4
     }
 
@@ -146,9 +149,11 @@ public class BlueLagoon {
         String playString = "p" + stateString.split("p", 2)[1];
 
         //assign rsrcs
+        // all possible stonecoords as an ArrayList
         ArrayList stoneCoords = new ArrayList(Arrays.asList(stoneState.split(" ")));
         ArrayList rsrcs = new ArrayList();
         stoneCoords.remove(0);
+
         while (stoneCoords.size() > 0) {
             var num = 6;
             if (stoneCoords.size() == 8) {
@@ -156,6 +161,7 @@ public class BlueLagoon {
             }
 
             String[] rscrsSub = new String[num];
+            //chooses a random index and assigns it to the current resource
             for (k = 0; k < num; k ++) {
                 int random = (int)(Math.random() * stoneCoords.size());
                 rscrsSub[k] = (String) stoneCoords.get(random);
@@ -164,7 +170,7 @@ public class BlueLagoon {
             rsrcs.add(rscrsSub);
         }
 
-        // accumulate coordinates into rsrcs string
+        // forms the ucrState string
         String rsrcAccum = "r ";
         int j = 0;
         char[] symbols = new char[] {'C', 'B', 'W', 'P', 'S'};
