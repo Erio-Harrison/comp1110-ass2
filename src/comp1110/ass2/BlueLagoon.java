@@ -36,9 +36,8 @@ public class BlueLagoon {
                 count++;
             }
         }
-        String[] statelist = stateString.split("; ", count);
 
-        // Checks if the minimum number of statements are met
+        String[] statelist = stateString.split("; ", count);
         if (statelist.length <= 5) {
             return false;
         }
@@ -46,33 +45,33 @@ public class BlueLagoon {
 
         // Game Arrangement Statement
         String gArrangement = statelist[0];
-        if (!gArrangement.matches("^a \\d+ \\d+")) {
+        if (!gArrangement.matches("^a \\d{1,} \\d{1,}")) {
             return false;
         }
 
         // Current State Statement
         String csState = statelist[1];
-        if (!csState.matches("^c \\d+ [ES]")) {
+        if (!csState.matches("^c \\d{1,} [ES]")) {
             return false;
         }
 
         // Island State Statement
         ArrayList iState = (ArrayList) Arrays.stream(statelist).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
         for (k = 0; k < iState.size(); k++) {
-            if (!((String) iState.get(k)).matches("^i \\d+( \\d+,\\d+)+")) {
+            if (!((String) iState.get(k)).matches("^i \\d{1,}( \\d{1,},\\d{1,})+")) {
                 return false;
             }
         }
 
         // Stones Statement
         String stoneState = (statelist[iState.size() + 2]);
-        if (!stoneState.matches("^s( \\d+,\\d+)+")) {
+        if (!stoneState.matches("^s( \\d{1,},\\d{1,})+")) {
             return false;
         }
 
         // Unclaimed Resources Statement
         String ucrState = (statelist[iState.size() + 3]);
-        if (!ucrState.matches("^r C( \\d+,\\d+)* B( \\d+,\\d+)* W( \\d+,\\d+)* P( \\d+,\\d+)* S( \\d+,\\d+)*")) {
+        if (!ucrState.matches("^r C( \\d{1,},\\d{1,}){0,} B( \\d{1,},\\d{1,}){0,} W( \\d{1,},\\d{1,}){0,} P( \\d{1,},\\d{1,}){0,} S( \\d{1,},\\d{1,}){0,}")) {
             return false;
         }
 
@@ -82,7 +81,7 @@ public class BlueLagoon {
             return false;
         }
         for (k = 0; k < playState.size(); k++) {
-            if (!(((String) playState.get(k)).matches("^p [0-9](( [1-9][0-9]?[0-9]?)|( 0)){1,} S( \\d+,\\d+)* T( \\d+,\\d+)*;?"))) {
+            if (!(((String) playState.get(k)).matches("^p [0-9](( [1-9][0-9]?[0-9]?)|( 0)){1,} S( \\d{1,},\\d{1,}){0,} T( \\d{1,},\\d{1,}){0,};?"))) {
                 return false;
             }
         }
@@ -99,9 +98,6 @@ public class BlueLagoon {
      * @return true if moveString is well-formed and false otherwise
      */
     public static boolean isMoveStringWellFormed(String moveString){
-        if (moveString.matches("^(S|T) \\d+,\\d+")) {
-            return true;
-        }
          return false; // FIXME Task 4
     }
 
@@ -150,11 +146,9 @@ public class BlueLagoon {
         String playString = "p" + stateString.split("p", 2)[1];
 
         //assign rsrcs
-        // all possible stonecoords as an ArrayList
         ArrayList stoneCoords = new ArrayList(Arrays.asList(stoneState.split(" ")));
         ArrayList rsrcs = new ArrayList();
         stoneCoords.remove(0);
-
         while (stoneCoords.size() > 0) {
             var num = 6;
             if (stoneCoords.size() == 8) {
@@ -162,7 +156,6 @@ public class BlueLagoon {
             }
 
             String[] rscrsSub = new String[num];
-            //chooses a random index and assigns it to the current resource
             for (k = 0; k < num; k ++) {
                 int random = (int)(Math.random() * stoneCoords.size());
                 rscrsSub[k] = (String) stoneCoords.get(random);
@@ -171,7 +164,7 @@ public class BlueLagoon {
             rsrcs.add(rscrsSub);
         }
 
-        // forms the ucrState string
+        // accumulate coordinates into rsrcs string
         String rsrcAccum = "r ";
         int j = 0;
         char[] symbols = new char[] {'C', 'B', 'W', 'P', 'S'};
@@ -214,22 +207,18 @@ public class BlueLagoon {
     //0:sea
     //1:island/land
     //2:occupied settler
-    //3:occupied village
+    //3:occupied villiage
     //4:current player occupied settler
     //5:current player occupied village
-    //6:stone circle
-    public static boolean isMoveValid(String stateString, String moveString){
+    public static boolean isMoveValid(String stateString, String moveString) {
         //System.out.println(stateString);
         String[] stateArray = stateString.split("; |;"); //check
-
         String[] gameArrangeStatement = stateArray[0].split(" ");
         int numPlayers = Integer.parseInt(gameArrangeStatement[2]);//check
-
         String[] currentStateStatement = stateArray[1].split(" ");
         int length = stateArray.length;
         int currentPlayerId = Integer.parseInt(currentStateStatement[1]);//check
         String phase = (currentStateStatement[2]);//check
-
         int[][] layout = {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -262,7 +251,6 @@ public class BlueLagoon {
                 {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9}
 
         };
-
         //islandStatement
         Set<String> islandState = new HashSet<String>();//check
         int i = 2;
@@ -273,7 +261,6 @@ public class BlueLagoon {
 //       for(String e: islandState){
 //        System.out.println(e);
 //       }
-
         for (String j : islandState) {
             //System.out.println(j);
             String[] temp = j.split(" ");
@@ -298,19 +285,18 @@ public class BlueLagoon {
             playerStatement.add(stateArray[i]);
             i++;
         }
-
         for (String p : playerStatement) {
             //System.out.println(p);
             String[] scores = p.split(" ");
+            int id =Integer.parseInt(scores[1]);
             int l = 9; //'S'
-
             //System.out.println(scores[l]);unchecked
             while (!scores[l].equals("T")) {
                 //System.out.println("path");
                 String[] settlers = scores[l].split(",");
                 int x = Integer.parseInt(settlers[0]);
                 int y = Integer.parseInt(settlers[1]);
-                layout[x][y] = 2; // 2 represents occupied settlers
+                mapstatus[x][y] = id; // 2 represents occupied settlers
                 l++;
             }
             l++;//'T'
@@ -318,341 +304,241 @@ public class BlueLagoon {
                 String[] settlers = scores[l].split(",");
                 int x = Integer.parseInt(settlers[0]);
                 int y = Integer.parseInt(settlers[1]);
-                layout[x][y] = 3; // 3 represents occupied villages
+                mapstatus[x][y] = id; // 3 represents occupied villages
                 l++;
             }
         }
-
-
         String currentPlayStatement = playerStatement.get(currentPlayerId);
-
         String[] current = currentPlayStatement.split(" ");
         int z = 9;
         while (!current[z].equals("T")) {
-            String[] coord = current[z].split(",");
-            int x = Integer.parseInt(coord[0]);
-            int y = Integer.parseInt(coord[1]);
-            mapstatus[x][y] = 4; // 4 represents current settlers
+//            String[] coord = current[z].split(",");
+//            int x = Integer.parseInt(coord[0]);
+//            int y = Integer.parseInt(coord[1]);
+//            //mapstatus[x][y] = 4; // 4 represents current settlers
             z++;
         }
-
-        int restSettlerPiece;
-        if (numPlayers==2){
-            restSettlerPiece=30-z+9;
-        }
-        else if(numPlayers==3){
-            restSettlerPiece=25-z+9;
-        }
-        else{
-            restSettlerPiece=20-z+9;
-        }
-        System.out.println(restSettlerPiece);
+        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
+        //System.out.println(restSettlerPiece);
         z++;
         int acorh=z;
         while (z < current.length) {
-            String[] settlers = current[z].split(",");
-            int x = Integer.parseInt(settlers[0]);
-            int y = Integer.parseInt(settlers[1]);
-            mapstatus[x][y] = 5; // 5 represents current villages
+//            String[] settlers = current[z].split(",");
+//            int x = Integer.parseInt(settlers[0]);
+//            int y = Integer.parseInt(settlers[1]);
+//            //mapstatus[x][y] = 5; // 5 represents current villages
             z++;
         }
         int restVillagePieces= 5-z+acorh;
-        System.out.println(restVillagePieces);
+        //System.out.println(restVillagePieces);
 
-        for(int a=0;a<13;a++){
-            for(int b=0;b<13;b++){
-                System.out.print(mapstatus[a][b]);
-
-            }
-            System.out.println();
-        }
-
+//        for(int a=0;a<13;a++){
+//            for(int b=0;b<13;b++){
+//                System.out.print(mapstatus[a][b]);
+//            }
+//            System.out.println();
+//        }
         String[] mve = moveString.split(" ");
         String pieceType = mve[0];
         String[] targetCoordinate = mve[1].split(",");
         int target_x = Integer.parseInt(targetCoordinate[0]);
         int target_y = Integer.parseInt(targetCoordinate[1]);
-        System.out.print(target_x + ",");
-        System.out.print(target_y + ",");
-        System.out.print(phase + ",");
-        System.out.println(pieceType);
-
+//        System.out.print(target_x + ",");
+//        System.out.print(target_y + ",");
+//        System.out.print(phase + ",");
+//        System.out.println(pieceType);
         if (target_x < 0
                 || target_y < 0
                 || target_x > 12
                 || target_y > 12) {
-            System.out.println("Out of map boundary");
+            //System.out.println("Out of map boundary");
             return false;
         }
         else if(target_y==12&&target_x%2==0){return false;}
+        else if(mapstatus[target_x][target_y]!=8){return false;}
         else {
             if (phase.equals("E")) {
-                //System.out.println(pieceType);//check
                 if (pieceType.equals("T")) {
                     if (layout[target_x][target_y] == 0) {
-                        System.out.println("village can't be on sea");
+                        //System.out.println("village can't be on sea");
                         return false;//village can't be on sea
                     }
-                    if(restVillagePieces==0)
-                    {
+                    if (restVillagePieces == 0) {
                         return false;
                     }
                 }
-                if(pieceType.equals("S")){
+                // else if(pieceType.equals("S")) {
+                else{
                     if (layout[target_x][target_y] == 0) {
                         return true;
                     }
-                    if(restSettlerPiece==0)
+                    if (restSettlerPiece == 0)
                         return false;
                 }
-
-                if (layout[target_x][target_y] == 1) {
-                    //check if is adjacent\
-                    if (target_x == 0 && target_y == 0) {
-                        if (mapstatus[0][1] == 4 || mapstatus[0][1] == 5 ||
-                                mapstatus[1][0] == 4 || mapstatus[1][0] == 5 ||
-                                mapstatus[1][1] == 4 || mapstatus[1][1] == 4) {
+                //if (layout[target_x][target_y] == 1) {
+                if (target_x % 2 == 0) {
+                    try {
+                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else if (target_x == 0 && target_y == 11) {
-                        if (mapstatus[0][10] == 4 || mapstatus[0][10] == 5 ||
-                                mapstatus[1][11] == 4 || mapstatus[1][1] == 5 ||
-                                mapstatus[1][12] == 4 || mapstatus[1][12] == 4) {
+                    try {
+                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else if (target_x == 12 && target_y == 0) {
-                        if (mapstatus[11][0] == 4 || mapstatus[11][0] == 5 ||
-                                mapstatus[12][1] == 4 || mapstatus[12][1] == 5 ||
-                                mapstatus[11][1] == 4 || mapstatus[11][1] == 4) {
+                    try {
+                        if (mapstatus[target_x + 1][target_y + 1] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else  if (target_x == 12 && target_y == 11) {
-                        if (mapstatus[12][10] == 4 || mapstatus[12][10] == 5 ||
-                                mapstatus[11][11] == 4 || mapstatus[11][1] == 5 ||
-                                mapstatus[11][12] == 4 || mapstatus[11][12] == 4) {
+                    try {
+                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else if (target_x == 0 && target_y != 0 && target_y != 11) {
-                        if (mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5 ||
-                                mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5 ||
-                                mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5) {
+                    try {
+                        if (mapstatus[target_x - 1][target_y + 1] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else if (target_x == 12 && target_y != 0 && target_y != 11) {
-                        if (mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5 ||
-                                mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5 ||
-                                mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5) {
+                    try {
+                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
                             return true;
                         }
+                    }catch (Exception e){}
+                }
+                else {
+                    //System.out.println("enter");
+                    try {
+                        if (mapstatus[target_x - 1][target_y - 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
                     }
-                    else if (target_y == 0 && target_x != 0 && target_x != 12) {
-                        if (target_x % 2 == 0) {//shorter line
-                            if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                    mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                    mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5 ||
-                                    mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5 ||
-                                    mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5) {
-                                return true;
-                            }
-                        } else {//longer
-                            if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                    mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                    mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5) {
-                                return true;
-                            }
+                    try {
+                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
+                            return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else if(target_y == 12) {
-                        //shorter line
-                        if (mapstatus[target_x - 1][target_y - 1] == 4 || mapstatus[target_x - 1][target_y - 1] == 5 ||
-                                mapstatus[target_x + 1][target_y - 1] == 4 || mapstatus[target_x + 1][target_y - 1] == 5 ||
-                                mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5) {
+                    try {
+                        if (mapstatus[target_x + 1][target_y - 1] == currentPlayerId) {
                             return true;
                         }
-
-
+                    } catch (Exception e) {
                     }
-                    else if(target_y==11&&target_x%2==0) {//longer
-                        if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5 ||
-                                mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5 ||
-                                mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5) {
+                    try {
+                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                    else
-                    if(target_x%2==0){
-                        if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5 ||
-                                mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5 ||
-                                mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5 ||
-                                mapstatus[target_x][target_y+1]==4||mapstatus[target_x][target_y+1]==5)
-                        {
-                            return true;
-                        }}
-                    else{
-                        if (
-                                mapstatus[target_x-1][target_y-1] == 4 || mapstatus[target_x-1][target_y-1] == 5 ||
-                                        mapstatus[target_x-1][target_y] == 4 || mapstatus[target_x-1][target_y] == 5 ||
-                                        mapstatus[target_x+1][target_y-1] == 4 || mapstatus[target_x+1][target_y-1] == 5 ||
-                                        mapstatus[target_x+1][target_y] == 4 || mapstatus[target_x+1][target_y] == 5 ||
-                                        mapstatus[target_x][target_y-1] == 4 || mapstatus[target_x][target_y-1] == 5 ||
-                                        mapstatus[target_x][target_y+1] == 4 || mapstatus[target_x][target_y+1] == 5
-                        ) {
+                    try {
+                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
                     }
                 }
             }
+            //}
             else if(phase.equals("S")){
-
-
-//                System.out.println("enter process S");
-//                String[] stone=stonesStatement.split(" ");
-//                int j=0;
-//                for(j=1;j<stone.length;j++){
-//                    String[] coord = stone[j].split(",");
-//                    int x = Integer.parseInt(coord[0]);
-//                    int y = Integer.parseInt(coord[1]);
-//                    mapstatus[x][y] = 8;
-//                }
-                for(int a=0;a<13;a++){
-                    for(int b=0;b<13;b++){
-                        //if(mapstatus[a][b]==4){mapstatus[a][b]=8;}
-                        System.out.print(layout[a][b]);
-
-                    }
-                    System.out.println();
-                }
-
                 if(pieceType.equals("T")){return false;}
                 if(restSettlerPiece==0){return false;}
-                if(layout[target_x][target_y]==2||layout[target_x][target_y]==3){return false;}
-                //check if is adjacent\
-                if (target_x == 0 && target_y == 0) {
-                    if (mapstatus[0][1] == 4 || mapstatus[0][1] == 5 ||
-                            mapstatus[1][0] == 4 || mapstatus[1][0] == 5 ||
-                            mapstatus[1][1] == 4 || mapstatus[1][1] == 4) {
-                        return true;
-                    }
-                }
-                else if (target_x == 0 && target_y == 11) {
-                    if (mapstatus[0][10] == 4 || mapstatus[0][10] == 5 ||
-                            mapstatus[1][11] == 4 || mapstatus[1][1] == 5 ||
-                            mapstatus[1][12] == 4 || mapstatus[1][12] == 4) {
-                        return true;
-                    }
-                }
-                else if (target_x == 12 && target_y == 0) {
-                    if (mapstatus[11][0] == 4 || mapstatus[11][0] == 5 ||layout[11][1]==3||mapstatus[11][1]==2||
-                            mapstatus[12][1] == 4 || mapstatus[12][1] == 5 ||
-                            mapstatus[11][1] == 4 || mapstatus[11][1] == 4) {
-                        return true;
-                    }
-                }
-                else  if (target_x == 12 && target_y == 11) {
-                    if (mapstatus[12][10] == 4 || mapstatus[12][10] == 5 ||
-                            mapstatus[11][11] == 4 || mapstatus[11][1] == 5 ||
-                            mapstatus[11][12] == 4 || mapstatus[11][12] == 4) {
-                        return true;
-                    }
-                }
-                else if (target_x == 0 && target_y != 0 && target_y != 11) {
-                    if (mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5 ||
-                            mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5 ||
-                            mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                            mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5) {
-                        return true;
-                    }
-                }
-                else if (target_x == 12 && target_y != 0 && target_y != 11) {
-                    if (mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5 ||
-                            mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5 ||
-                            mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                            mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5) {
-                        return true;
-                    }
-                }
-                else if (target_y == 0 && target_x != 0 && target_x != 12) {
-                    if (target_x % 2 == 0) {//shorter line
-                        if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5 ||
-                                mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5 ||
-                                mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5) {
+                if (target_x % 2 == 0) {
+                    try {
+                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
                             return true;
                         }
-                    } else {//longer
-                        if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                                mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                                mapstatus[target_x][target_y + 1] == 4 || mapstatus[target_x][target_y + 1] == 5) {
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
                             return true;
                         }
+                    } catch (Exception e) {
                     }
-                }
-                else if(target_y == 12) {
-                    //shorter line
-                    if (mapstatus[target_x - 1][target_y - 1] == 4 || mapstatus[target_x - 1][target_y - 1] == 5 ||
-                            mapstatus[target_x + 1][target_y - 1] == 4 || mapstatus[target_x + 1][target_y - 1] == 5 ||
-                            mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5) {
-                        return true;
+                    try {
+                        if (mapstatus[target_x + 1][target_y + 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
                     }
-
-
-                }
-                else if(target_y==11&&target_x%2==0) {//longer
-                    if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                            mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                            mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5 ||
-                            mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5 ||
-                            mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5) {
-                        return true;
+                    try {
+                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
                     }
+                    try {
+                        if (mapstatus[target_x - 1][target_y + 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
+                            return true;
+                        }
+                    }catch (Exception e){}
                 }
-                else
-                if(target_x%2==0){
-                    if (mapstatus[target_x - 1][target_y] == 4 || mapstatus[target_x - 1][target_y] == 5 ||
-                            mapstatus[target_x + 1][target_y] == 4 || mapstatus[target_x + 1][target_y] == 5 ||
-                            mapstatus[target_x + 1][target_y + 1] == 4 || mapstatus[target_x + 1][target_y + 1] == 5 ||
-                            mapstatus[target_x - 1][target_y + 1] == 4 || mapstatus[target_x - 1][target_y + 1] == 5 ||
-                            mapstatus[target_x][target_y - 1] == 4 || mapstatus[target_x][target_y - 1] == 5 ||
-                            mapstatus[target_x][target_y+1]==4||mapstatus[target_x][target_y+1]==5)
-                    {
-                        return true;
-                    }}
-                else{
-                    if (
-                            mapstatus[target_x-1][target_y-1] == 4 || mapstatus[target_x-1][target_y-1] == 5 ||
-                                    mapstatus[target_x-1][target_y] == 4 || mapstatus[target_x-1][target_y] == 5 ||
-                                    mapstatus[target_x+1][target_y-1] == 4 || mapstatus[target_x+1][target_y-1] == 5 ||
-                                    mapstatus[target_x+1][target_y] == 4 || mapstatus[target_x+1][target_y] == 5 ||
-                                    mapstatus[target_x][target_y-1] == 4 || mapstatus[target_x][target_y-1] == 5 ||
-                                    mapstatus[target_x][target_y+1] == 4 || mapstatus[target_x][target_y+1] == 5
-                    ) {
-                        return true;
+                else {
+                    //System.out.println("enter");
+                    try {
+                        if (mapstatus[target_x - 1][target_y - 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x + 1][target_y - 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                    }
+                    try {
+                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
+                            return true;
+                        }
+                    } catch (Exception e) {
                     }
                 }
             }
-
-
-
-
         }
-
-
-
-        System.out.println(" final false");
+        //System.out.println(" final false");
         return false;
     }
+
     /**
      * Given a state string, generate a set containing all move strings playable
      * by the current player.
@@ -663,12 +549,20 @@ public class BlueLagoon {
      * @return a set of strings representing all moves the current player can play
      */
     public static Set<String> generateAllValidMoves(String stateString){
-        System.out.println(stateString);
 
+        HashSet<String> ms=new HashSet<String>();
+        for (int a=0;a<13;a++){
+            for(int b=0;b<13;b++){
+                //if(a%2==0&&b==12){continue;}
+                String MoveString1 ="S "+a+","+b;
+                String MoveString2 ="T "+a+","+b;
+                if(isMoveValid(stateString,MoveString1)){ms.add(MoveString1);}
+                if(isMoveValid(stateString,MoveString2)){ms.add(MoveString2);}
+            }
+        }
 
-         return new HashSet<>(); // FIXME Task 8
+        return ms; // FIXME Task 8
     }
-
     /**
      * Given a state string, determine whether it represents an end of phase state.
      * <p>
