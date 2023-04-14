@@ -93,5 +93,6 @@ public class Board {
             this.island = island;
             this.type = type;
         }
+
     }
 }
