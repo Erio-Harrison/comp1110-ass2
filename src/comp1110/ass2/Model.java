@@ -1,5 +1,8 @@
 package comp1110.ass2;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class Model {
 
     // the num of players in the game
@@ -22,12 +25,7 @@ public class Model {
         return 0;
     }
 
-
-
-
-
     public static void main(String[] args) {
-
 
 
         // while true:

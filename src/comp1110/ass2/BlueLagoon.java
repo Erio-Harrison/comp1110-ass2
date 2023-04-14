@@ -36,8 +36,9 @@ public class BlueLagoon {
                 count++;
             }
         }
-
         String[] statelist = stateString.split("; ", count);
+
+        // Checks if the minimum number of statements are met
         if (statelist.length <= 5) {
             return false;
         }
@@ -45,33 +46,33 @@ public class BlueLagoon {
 
         // Game Arrangement Statement
         String gArrangement = statelist[0];
-        if (!gArrangement.matches("^a \\d{1,} \\d{1,}")) {
+        if (!gArrangement.matches("^a \\d+ \\d+")) {
             return false;
         }
 
         // Current State Statement
         String csState = statelist[1];
-        if (!csState.matches("^c \\d{1,} [ES]")) {
+        if (!csState.matches("^c \\d+ [ES]")) {
             return false;
         }
 
         // Island State Statement
         ArrayList iState = (ArrayList) Arrays.stream(statelist).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
         for (k = 0; k < iState.size(); k++) {
-            if (!((String) iState.get(k)).matches("^i \\d{1,}( \\d{1,},\\d{1,})+")) {
+            if (!((String) iState.get(k)).matches("^i \\d+( \\d+,\\d+)+")) {
                 return false;
             }
         }
 
         // Stones Statement
         String stoneState = (statelist[iState.size() + 2]);
-        if (!stoneState.matches("^s( \\d{1,},\\d{1,})+")) {
+        if (!stoneState.matches("^s( \\d+,\\d+)+")) {
             return false;
         }
 
         // Unclaimed Resources Statement
         String ucrState = (statelist[iState.size() + 3]);
-        if (!ucrState.matches("^r C( \\d{1,},\\d{1,}){0,} B( \\d{1,},\\d{1,}){0,} W( \\d{1,},\\d{1,}){0,} P( \\d{1,},\\d{1,}){0,} S( \\d{1,},\\d{1,}){0,}")) {
+        if (!ucrState.matches("^r C( \\d+,\\d+)* B( \\d+,\\d+)* W( \\d+,\\d+)* P( \\d+,\\d+)* S( \\d+,\\d+)*")) {
             return false;
         }
 
@@ -81,7 +82,7 @@ public class BlueLagoon {
             return false;
         }
         for (k = 0; k < playState.size(); k++) {
-            if (!(((String) playState.get(k)).matches("^p [0-9](( [1-9][0-9]?[0-9]?)|( 0)){1,} S( \\d{1,},\\d{1,}){0,} T( \\d{1,},\\d{1,}){0,};?"))) {
+            if (!(((String) playState.get(k)).matches("^p [0-9](( [1-9][0-9]?[0-9]?)|( 0)){1,} S( \\d+,\\d+)* T( \\d+,\\d+)*;?"))) {
                 return false;
             }
         }
@@ -98,6 +99,9 @@ public class BlueLagoon {
      * @return true if moveString is well-formed and false otherwise
      */
     public static boolean isMoveStringWellFormed(String moveString){
+        if (moveString.matches("^(S|T) \\d+,\\d+")) {
+            return true;
+        }
          return false; // FIXME Task 4
     }
 
@@ -146,9 +150,11 @@ public class BlueLagoon {
         String playString = "p" + stateString.split("p", 2)[1];
 
         //assign rsrcs
+        // all possible stonecoords as an ArrayList
         ArrayList stoneCoords = new ArrayList(Arrays.asList(stoneState.split(" ")));
         ArrayList rsrcs = new ArrayList();
         stoneCoords.remove(0);
+
         while (stoneCoords.size() > 0) {
             var num = 6;
             if (stoneCoords.size() == 8) {
@@ -156,6 +162,7 @@ public class BlueLagoon {
             }
 
             String[] rscrsSub = new String[num];
+            //chooses a random index and assigns it to the current resource
             for (k = 0; k < num; k ++) {
                 int random = (int)(Math.random() * stoneCoords.size());
                 rscrsSub[k] = (String) stoneCoords.get(random);
@@ -164,7 +171,7 @@ public class BlueLagoon {
             rsrcs.add(rscrsSub);
         }
 
-        // accumulate coordinates into rsrcs string
+        // forms the ucrState string
         String rsrcAccum = "r ";
         int j = 0;
         char[] symbols = new char[] {'C', 'B', 'W', 'P', 'S'};
