@@ -98,7 +98,10 @@ public class BlueLagoon {
      * @return true if moveString is well-formed and false otherwise
      */
     public static boolean isMoveStringWellFormed(String moveString){
-         return false; // FIXME Task 4
+        if (moveString.matches("^(S|T) \\d{1,},\\d{1,}")) {
+            return true;
+        }
+        return false; // FIXME Task 4
     }
 
     /**
