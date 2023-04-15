@@ -207,7 +207,7 @@ public class BlueLagoon {
     //0:sea
     //1:island/land
     //2:occupied settler
-    //3:occupied villiage
+    //3:occupied village
     //4:current player occupied settler
     //5:current player occupied village
     public static boolean isMoveValid(String stateString, String moveString) {
@@ -343,10 +343,7 @@ public class BlueLagoon {
         String[] targetCoordinate = mve[1].split(",");
         int target_x = Integer.parseInt(targetCoordinate[0]);
         int target_y = Integer.parseInt(targetCoordinate[1]);
-//        System.out.print(target_x + ",");
-//        System.out.print(target_y + ",");
-//        System.out.print(phase + ",");
-//        System.out.println(pieceType);
+
         if (target_x < 0
                 || target_y < 0
                 || target_x > 12
@@ -538,7 +535,6 @@ public class BlueLagoon {
         //System.out.println(" final false");
         return false;
     }
-
     /**
      * Given a state string, generate a set containing all move strings playable
      * by the current player.
@@ -549,20 +545,422 @@ public class BlueLagoon {
      * @return a set of strings representing all moves the current player can play
      */
     public static Set<String> generateAllValidMoves(String stateString){
-
         HashSet<String> ms=new HashSet<String>();
-        for (int a=0;a<13;a++){
-            for(int b=0;b<13;b++){
-                //if(a%2==0&&b==12){continue;}
-                String MoveString1 ="S "+a+","+b;
-                String MoveString2 ="T "+a+","+b;
-                if(isMoveValid(stateString,MoveString1)){ms.add(MoveString1);}
-                if(isMoveValid(stateString,MoveString2)){ms.add(MoveString2);}
-            }
+        String[] stateArray = stateString.split("; |;"); //check
+        String[] gameArrangeStatement = stateArray[0].split(" ");
+        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);//check
+        String[] currentStateStatement = stateArray[1].split(" ");
+        int length = stateArray.length;
+        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);//check
+        String phase = (currentStateStatement[2]);//check
+        int[][] layout = {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9}
+
+        };
+        int[][] mapstatus = {
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9}
+
+        };
+        //islandStatement
+        Set<String> islandState = new HashSet<String>();//check
+        int i = 2;
+        while (stateArray[i].charAt(0) == 'i') {
+            islandState.add(stateArray[i]);
+            i++;
         }
 
-        return ms; // FIXME Task 8
+        for (String j : islandState) {
+            //System.out.println(j);
+            String[] temp = j.split(" ");
+            for (int k = 2; k < temp.length; k++) {
+                //System.out.println(temp[k]);
+
+                String[] coord = temp[k].split(",");
+
+                int x = Integer.parseInt(coord[0]);
+                int y = Integer.parseInt(coord[1]);
+                layout[x][y] = 1; // 1 represents island
+            }
+        }
+        String stonesStatement = stateArray[i];
+        i++;
+        String unclaimedResourcesAndStatuettesStatement = stateArray[i];
+        i++;
+
+
+        List<String> playerStatement = new ArrayList<String>();
+        while (i < length) {
+            playerStatement.add(stateArray[i]);
+            i++;
+        }
+        for (String p : playerStatement) {
+            String[] scores = p.split(" ");
+            int id =Integer.parseInt(scores[1]);
+            int l = 9; //'S'
+            while (!scores[l].equals("T")) {
+                //System.out.println("path");
+                String[] settlers = scores[l].split(",");
+                int x = Integer.parseInt(settlers[0]);
+                int y = Integer.parseInt(settlers[1]);
+                mapstatus[x][y] = id; // 2 represents occupied settlers
+                l++;
+
+            }
+
+            l++;//'T'
+            while (l < scores.length) {
+                String[] settlers = scores[l].split(",");
+                int x = Integer.parseInt(settlers[0]);
+                int y = Integer.parseInt(settlers[1]);
+                mapstatus[x][y] = id; // 3 represents occupied villages
+                l++;
+            }
+        }
+        String currentPlayStatement = playerStatement.get(currentPlayerId);
+        String[] current = currentPlayStatement.split(" ");
+        int z = 9;
+        while (!current[z].equals("T")) {
+            z++;
+        }
+        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
+
+        z++;
+        int acorh=z;
+        while (z < current.length) {
+            z++;
+        }
+        int restVillagePieces= 5-z+acorh;
+
+
+        for (int a=0;a<13;a++) {
+            for (int b = 0; b < 13; b++) {
+                if(a%2==0&&b==12){continue;}
+                if(mapstatus[a][b]!=8){continue;}
+                String MoveString1 = "S " + a + "," + b;
+                String MoveString2 = "T " + a + "," + b;
+                if (phase.equals("S"))
+                {
+                    if(restSettlerPiece!=0) {
+                        if (a % 2 == 0) {
+                            try {
+                                if (mapstatus[a - 1][b] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a + 1][b] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a + 1][b + 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a][b + 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a - 1][b + 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a][b - 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                        } else {
+
+                            try {
+                                if (mapstatus[a - 1][b - 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a - 1][b] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a + 1][b - 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a + 1][b] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a][b - 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (mapstatus[a][b + 1] == currentPlayerId) {
+                                    ms.add(MoveString1);
+                                }
+                            } catch (Exception e) {
+                            }
+
+                        }
+                    }
+
+
+                }
+                else if (phase.equals("E")) {
+                    if (layout[a][b] == 0) {
+                        ms.add(MoveString1);
+                    } else  {
+                        if(restSettlerPiece!=0) {
+                            if (a % 2 == 0) {
+                                try {
+                                    if (mapstatus[a - 1][b] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a - 1][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                            else {
+                                //System.out.println("enter");
+                                try {
+                                    if (mapstatus[a - 1][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a - 1][b] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString1);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                        }
+                        if(restVillagePieces!=0){
+                            if (a % 2 == 0) {
+                                try {
+                                    if (mapstatus[a - 1][b] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a - 1][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                            else {
+                                //System.out.println("enter");
+                                try {
+                                    if (mapstatus[a - 1][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a - 1][b] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a + 1][b] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b - 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                                try {
+                                    if (mapstatus[a][b + 1] == currentPlayerId) {
+                                        ms.add(MoveString2);
+
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+
+
+
+
+
+                        }
+                    }
+                }
+
+            }
+
+        }
+        return ms;
+
     }
+
+//        HashSet<String> ms=new HashSet<String>();
+//        for (int a=0;a<13;a++){
+//            for(int b=0;b<13;b++){
+//                //if(a%2==0&&b==12){continue;}
+//                String MoveString1 ="S "+a+","+b;
+//                String MoveString2 ="T "+a+","+b;
+//                if(isMoveValid(stateString,MoveString1)){ms.add(MoveString1);}
+//                if(isMoveValid(stateString,MoveString2)){ms.add(MoveString2);}
+//            }
+//        }
+//
+//        return ms; // FIXME Task 8
+//    }
+
     /**
      * Given a state string, determine whether it represents an end of phase state.
      * <p>
