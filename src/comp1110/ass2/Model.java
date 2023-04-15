@@ -1,6 +1,7 @@
 package comp1110.ass2;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Model {
@@ -24,6 +25,25 @@ public class Model {
     public static int declareWinner() {
         return 0;
     }
+    private static String getStatement(String stateString, char start, char end) {
+        int startIndex = 0;
+        int endIndex = 0;
+        for (int i = 0; i < stateString.length(); i++) {
+            if (stateString.charAt(i) == start) {
+                startIndex = i;
+
+                for (int j = i; j < stateString.length(); j++) {
+                    if (stateString.charAt(j) == end) {
+                        endIndex = j;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return stateString.substring(startIndex, endIndex);
+    }
+
 
     public static void main(String[] args) {
 
