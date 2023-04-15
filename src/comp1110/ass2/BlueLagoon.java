@@ -237,7 +237,7 @@ public class BlueLagoon {
         int[][] mapstatus = new int[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-        if (j == size - 1 && (i == 0 || i % 2 == 0)) {
+                if (j == size - 1 && (i == 0 || i % 2 == 0)) {
                     mapstatus[i][j] = 9;
                 } else {
                     mapstatus[i][j] = 8;
@@ -251,22 +251,17 @@ public class BlueLagoon {
 
 
         // parses islandStatement
-        Set<String> islandState = new HashSet<String>();//check
+        //Set<String> islandState = new HashSet<String>();//check
         int i = 2;
-        while (stateArray[i].charAt(0) == 'i') {
-            islandState.add(stateArray[i]);
-            i++;
-        }
+        ArrayList islandState = (ArrayList) Arrays.stream(stateArray).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
+        i += islandState.size();
 
-        // Displaying islands on layout
-        for (String j : islandState) {
-            String[] temp = j.split(" ");
+        // Setting islands on layout
+        for (Object j : islandState) {
+            String[] temp = ((String) j).split(" ");
             for (int k = 2; k < temp.length; k++) {
                 String[] coord = temp[k].split(",");
-
-                int x = Integer.parseInt(coord[0]);
-                int y = Integer.parseInt(coord[1]);
-                layout[x][y] = 1; // 1 represents island
+                layout[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])] = 1; // 1 represents island
             }
         }
         i += 2;
@@ -280,12 +275,16 @@ public class BlueLagoon {
         // for each player statement
         for (String p : playerStatement) {
             String[] scores = p.split(" ");
-            int id =Integer.parseInt(scores[1]);
+            if (scores[scores.length -2].equals("S")) {
+                continue;
+            }
+
+
+            int id  = Character.getNumericValue(p.charAt(2));
             int l = 9; //'Settlers part of the string'
 
             // retrieve all settler coordinates
             while (!scores[l].equals("T")) {
-                //System.out.println("path");
                 String[] settlers = scores[l].split(",");
                 int x = Integer.parseInt(settlers[0]);
                 int y = Integer.parseInt(settlers[1]);
@@ -293,6 +292,11 @@ public class BlueLagoon {
                 l++;
             }
             l++;
+
+            if (scores[scores.length -1].equals("T")) {
+                continue;
+            }
+
 
             // retrieve all villager coordinates
             while (l < scores.length) {
@@ -315,10 +319,7 @@ public class BlueLagoon {
         int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
         z++;
         int acorh=z;
-        while (z < current.length) {
-            z++;
-        }
-        int restVillagePieces= 5-z+acorh;
+        int restVillagePieces= 5-current.length+acorh;
 
         // moveString
         String[] mve = moveString.split(" ");
