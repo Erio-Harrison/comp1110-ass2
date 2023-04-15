@@ -217,8 +217,8 @@ public class BlueLagoon {
         int numPlayers = Integer.parseInt(gameArrangeStatement[2]);//check
         String[] currentStateStatement = stateArray[1].split(" ");
         int length = stateArray.length;
-        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);//check
-        String phase = (currentStateStatement[2]);//check
+        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
+        String phase = (currentStateStatement[2]);
         int[][] layout = {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -284,7 +284,7 @@ public class BlueLagoon {
         while (i < length) {
             playerStatement.add(stateArray[i]);
             i++;
-        }
+      }
         for (String p : playerStatement) {
             //System.out.println(p);
             String[] scores = p.split(" ");
