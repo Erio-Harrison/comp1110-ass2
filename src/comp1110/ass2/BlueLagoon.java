@@ -301,10 +301,6 @@ public class BlueLagoon {
         String[] current = currentPlayStatement.split(" ");
         int z = 9;
         while (!current[z].equals("T")) {
-//            String[] coord = current[z].split(",");
-//            int x = Integer.parseInt(coord[0]);
-//            int y = Integer.parseInt(coord[1]);
-//            //mapstatus[x][y] = 4; // 4 represents current settlers
             z++;
         }
         int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
@@ -312,21 +308,10 @@ public class BlueLagoon {
         z++;
         int acorh=z;
         while (z < current.length) {
-//            String[] settlers = current[z].split(",");
-//            int x = Integer.parseInt(settlers[0]);
-//            int y = Integer.parseInt(settlers[1]);
-//            //mapstatus[x][y] = 5; // 5 represents current villages
+
             z++;
         }
         int restVillagePieces= 5-z+acorh;
-        //System.out.println(restVillagePieces);
-
-//        for(int a=0;a<13;a++){
-//            for(int b=0;b<13;b++){
-//                System.out.print(mapstatus[a][b]);
-//            }
-//            System.out.println();
-//        }
         String[] mve = moveString.split(" ");
         String pieceType = mve[0];
         String[] targetCoordinate = mve[1].split(",");
@@ -337,7 +322,6 @@ public class BlueLagoon {
                 || target_y < 0
                 || target_x > 12
                 || target_y > 12) {
-            //System.out.println("Out of map boundary");
             return false;
         }
         else if(target_y==12&&target_x%2==0){return false;}
@@ -346,14 +330,12 @@ public class BlueLagoon {
             if (phase.equals("E")) {
                 if (pieceType.equals("T")) {
                     if (layout[target_x][target_y] == 0) {
-                        //System.out.println("village can't be on sea");
                         return false;//village can't be on sea
                     }
                     if (restVillagePieces == 0) {
                         return false;
                     }
                 }
-                // else if(pieceType.equals("S")) {
                 else{
                     if (layout[target_x][target_y] == 0) {
                         return true;
@@ -361,7 +343,6 @@ public class BlueLagoon {
                     if (restSettlerPiece == 0)
                         return false;
                 }
-                //if (layout[target_x][target_y] == 1) {
                 if (target_x % 2 == 0) {
                     try {
                         if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
