@@ -211,15 +211,14 @@ public class BlueLagoon {
     //4:current player occupied settler
     //5:current player occupied village
     public static boolean isMoveValid(String stateString, String moveString) {
-        //System.out.println(stateString);
-        String[] stateArray = stateString.split("; |;"); //check
-        String[] gameArrangeStatement = stateArray[0].split(" ");
-        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);//check
-        String[] currentStateStatement = stateArray[1].split(" ");
+        String[] stateArray = stateString.split("; |;");
         int length = stateArray.length;
-        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);//check
-        String phase = (currentStateStatement[2]);//check
+
+        String[] gameArrangeStatement = stateArray[0].split(" ");
+        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);
         int size = Integer.parseInt(gameArrangeStatement[1]);
+
+        // Generating layout of board
         int[][] layout = new int[size][size];
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
@@ -230,6 +229,8 @@ public class BlueLagoon {
                 }
             }
         }
+
+        // Generating status of each square
         int[][] mapstatus = new int[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -239,23 +240,25 @@ public class BlueLagoon {
                     mapstatus[i][j] = 8;
                 }
             }
-        }                                                      
-        //islandStatement
+        }
+
+        String[] currentStateStatement = stateArray[1].split(" ");
+        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
+        String phase = (currentStateStatement[2]);
+
+
+        // parses islandStatement
         Set<String> islandState = new HashSet<String>();//check
         int i = 2;
         while (stateArray[i].charAt(0) == 'i') {
             islandState.add(stateArray[i]);
             i++;
         }
-//       for(String e: islandState){
-//        System.out.println(e);
-//       }
+
+        // Displaying islands on layout
         for (String j : islandState) {
-            //System.out.println(j);
             String[] temp = j.split(" ");
             for (int k = 2; k < temp.length; k++) {
-                //System.out.println(temp[k]);
-
                 String[] coord = temp[k].split(",");
 
                 int x = Integer.parseInt(coord[0]);
@@ -263,23 +266,21 @@ public class BlueLagoon {
                 layout[x][y] = 1; // 1 represents island
             }
         }
-        String stonesStatement = stateArray[i];
-        i++;
-        String unclaimedResourcesAndStatuettesStatement = stateArray[i];
-        i++;
-        // System.out.println(stateArray[i]);
+        i += 2;
 
         List<String> playerStatement = new ArrayList<String>();
         while (i < length) {
             playerStatement.add(stateArray[i]);
             i++;
         }
+
+        // for each player statement
         for (String p : playerStatement) {
-            //System.out.println(p);
             String[] scores = p.split(" ");
             int id =Integer.parseInt(scores[1]);
-            int l = 9; //'S'
-            //System.out.println(scores[l]);unchecked
+            int l = 9; //'Settlers part of the string'
+
+            // retrieve all settler coordinates
             while (!scores[l].equals("T")) {
                 //System.out.println("path");
                 String[] settlers = scores[l].split(",");
@@ -288,7 +289,9 @@ public class BlueLagoon {
                 mapstatus[x][y] = id; // 2 represents occupied settlers
                 l++;
             }
-            l++;//'T'
+            l++;
+
+            // retrieve all villager coordinates
             while (l < scores.length) {
                 String[] settlers = scores[l].split(",");
                 int x = Integer.parseInt(settlers[0]);
@@ -297,212 +300,114 @@ public class BlueLagoon {
                 l++;
             }
         }
+
+        // get statement of current player
         String currentPlayStatement = playerStatement.get(currentPlayerId);
+
         String[] current = currentPlayStatement.split(" ");
         int z = 9;
         while (!current[z].equals("T")) {
             z++;
         }
         int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
-        //System.out.println(restSettlerPiece);
         z++;
         int acorh=z;
         while (z < current.length) {
-
             z++;
         }
         int restVillagePieces= 5-z+acorh;
+
+        // moveString
         String[] mve = moveString.split(" ");
         String pieceType = mve[0];
         String[] targetCoordinate = mve[1].split(",");
         int target_x = Integer.parseInt(targetCoordinate[0]);
         int target_y = Integer.parseInt(targetCoordinate[1]);
 
-        if (target_x < 0
-                || target_y < 0
-                || target_x > 12
-                || target_y > 12) {
+        // if out of bounds return false
+        if (target_x < 0 || target_y < 0 || target_x > size - 1 || target_y > size - 1) {
             return false;
         }
-        else if(target_y==12&&target_x%2==0){return false;}
-        else if(mapstatus[target_x][target_y]!=8){return false;}
+
+        // 8 = placable
+        else if (mapstatus[target_x][target_y] != 8){
+            return false;
+        }
+
         else {
-            if (phase.equals("E")) {
-                if (pieceType.equals("T")) {
-                    if (layout[target_x][target_y] == 0) {
-                        return false;//village can't be on sea
-                    }
-                    if (restVillagePieces == 0) {
-                        return false;
-                    }
-                }
-                else{
-                    if (layout[target_x][target_y] == 0) {
-                        return true;
-                    }
-                    if (restSettlerPiece == 0)
-                        return false;
-                }
-                if (target_x % 2 == 0) {
-                    try {
-                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x + 1][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x - 1][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    }catch (Exception e){}
-                }
-                else {
-                    //System.out.println("enter");
-                    try {
-                        if (mapstatus[target_x - 1][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x + 1][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                }
+            // Exploration
+            // sees if the position is touching the left right top or bottom side
+            int[] pos = {0, 0};
+            if (target_x - 1 == -1) {
+                pos[0] = -1; //left side
             }
-            //}
+            else if (target_x + 1 == size) {
+                pos[0] = 1; //right side
+            }
+            if (target_y - 1 == -1) {
+                pos[1] = -1; //top
+            }
+            else if (target_y + 1 == size) {
+                pos[1] = 1; //bottom
+            }
+
+            if (phase.equals("E")) {
+                // Village
+                if (pieceType.equals("T")) {
+                    if (layout[target_x][target_y] == 0) {return false;}
+                    if (restVillagePieces == 0) {return false;}
+                }
+                // Settler
+                else {
+                    if (layout[target_x][target_y] == 0) {return true;}
+                    if (restSettlerPiece == 0) return false;}
+            }
+
             else if(phase.equals("S")){
                 if(pieceType.equals("T")){return false;}
                 if(restSettlerPiece==0){return false;}
-                if (target_x % 2 == 0) {
-                    try {
-                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
+            }
+
+            //doesnt run if bottom side
+            if (pos[1] != 1) {
+                if (mapstatus[target_x][target_y + 1] == currentPlayerId) {return true;}
+            }
+
+            //doesnt run if top side
+            if (pos[1] != -1) {
+                if (mapstatus[target_x][target_y - 1] == currentPlayerId) {return true;}
+            }
+
+            if (target_x % 2 == 0) {
+                if (pos[0] != -1) {
+                    if (mapstatus[target_x - 1][target_y] == currentPlayerId) {return true;}
+                    if (pos[1] != 1) {
+                        if (mapstatus[target_x - 1][target_y + 1] == currentPlayerId) {return true;}
                     }
-                    try {
-                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x + 1][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x - 1][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    }catch (Exception e){}
                 }
-                else {
-                    //System.out.println("enter");
-                    try {
-                        if (mapstatus[target_x - 1][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
+                if (pos[0] != 1) {
+                    if (mapstatus[target_x + 1][target_y] == currentPlayerId) {return true;}
+                    if (pos[1] != 1) {
+                        if (mapstatus[target_x + 1][target_y + 1] == currentPlayerId) {return true;}
                     }
-                    try {
-                        if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
+                }
+            }
+            else {
+                if (pos[0] != -1) {
+                    if (mapstatus[target_x - 1][target_y] == currentPlayerId) {return true;}
+                    if (pos[1] != -1) {
+                        if (mapstatus[target_x - 1][target_y - 1] == currentPlayerId) {return true;}
                     }
-                    try {
-                        if (mapstatus[target_x + 1][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x + 1][target_y] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y - 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
-                    }
-                    try {
-                        if (mapstatus[target_x][target_y + 1] == currentPlayerId) {
-                            return true;
-                        }
-                    } catch (Exception e) {
+                }
+
+                if (pos[0] != 1) {
+                    if (mapstatus[target_x + 1][target_y] == currentPlayerId) {return true;}
+                    if (pos[1] != -1) {
+                        if (mapstatus[target_x + 1][target_y - 1] == currentPlayerId) {return true;}
                     }
                 }
             }
         }
-        //System.out.println(" final false");
         return false;
     }
     /**
