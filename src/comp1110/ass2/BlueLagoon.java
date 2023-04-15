@@ -217,40 +217,29 @@ public class BlueLagoon {
         int numPlayers = Integer.parseInt(gameArrangeStatement[2]);//check
         String[] currentStateStatement = stateArray[1].split(" ");
         int length = stateArray.length;
-        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
-        String phase = (currentStateStatement[2]);
-        int[][] layout = {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9}
-
-        };
-        int[][] mapstatus = {
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9}
-
-        };
+        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);//check
+        String phase = (currentStateStatement[2]);//check
+        int size = Integer.parseInt(gameArrangeStatement[1]);
+        int[][] layout = new int[size][size];
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
+                    layout[y][x] = 9;
+                } else {
+                    layout[y][x] = 0;
+                }
+            }
+        }
+        int[][] mapstatus = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+        if (j == size - 1 && (i == 0 || i % 2 == 0)) {
+                    mapstatus[i][j] = 9;
+                } else {
+                    mapstatus[i][j] = 8;
+                }
+            }
+        }                                                      
         //islandStatement
         Set<String> islandState = new HashSet<String>();//check
         int i = 2;
@@ -284,7 +273,7 @@ public class BlueLagoon {
         while (i < length) {
             playerStatement.add(stateArray[i]);
             i++;
-      }
+        }
         for (String p : playerStatement) {
             //System.out.println(p);
             String[] scores = p.split(" ");
@@ -312,10 +301,6 @@ public class BlueLagoon {
         String[] current = currentPlayStatement.split(" ");
         int z = 9;
         while (!current[z].equals("T")) {
-//            String[] coord = current[z].split(",");
-//            int x = Integer.parseInt(coord[0]);
-//            int y = Integer.parseInt(coord[1]);
-//            //mapstatus[x][y] = 4; // 4 represents current settlers
             z++;
         }
         int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
@@ -323,21 +308,10 @@ public class BlueLagoon {
         z++;
         int acorh=z;
         while (z < current.length) {
-//            String[] settlers = current[z].split(",");
-//            int x = Integer.parseInt(settlers[0]);
-//            int y = Integer.parseInt(settlers[1]);
-//            //mapstatus[x][y] = 5; // 5 represents current villages
+
             z++;
         }
         int restVillagePieces= 5-z+acorh;
-        //System.out.println(restVillagePieces);
-
-//        for(int a=0;a<13;a++){
-//            for(int b=0;b<13;b++){
-//                System.out.print(mapstatus[a][b]);
-//            }
-//            System.out.println();
-//        }
         String[] mve = moveString.split(" ");
         String pieceType = mve[0];
         String[] targetCoordinate = mve[1].split(",");
@@ -348,7 +322,6 @@ public class BlueLagoon {
                 || target_y < 0
                 || target_x > 12
                 || target_y > 12) {
-            //System.out.println("Out of map boundary");
             return false;
         }
         else if(target_y==12&&target_x%2==0){return false;}
@@ -357,14 +330,12 @@ public class BlueLagoon {
             if (phase.equals("E")) {
                 if (pieceType.equals("T")) {
                     if (layout[target_x][target_y] == 0) {
-                        //System.out.println("village can't be on sea");
                         return false;//village can't be on sea
                     }
                     if (restVillagePieces == 0) {
                         return false;
                     }
                 }
-                // else if(pieceType.equals("S")) {
                 else{
                     if (layout[target_x][target_y] == 0) {
                         return true;
@@ -372,7 +343,6 @@ public class BlueLagoon {
                     if (restSettlerPiece == 0)
                         return false;
                 }
-                //if (layout[target_x][target_y] == 1) {
                 if (target_x % 2 == 0) {
                     try {
                         if (mapstatus[target_x - 1][target_y] == currentPlayerId) {
@@ -546,47 +516,36 @@ public class BlueLagoon {
      */
     public static Set<String> generateAllValidMoves(String stateString){
         HashSet<String> ms=new HashSet<String>();
-        String[] stateArray = stateString.split("; |;"); //check
+        String[] stateArray = stateString.split("; |;");
         String[] gameArrangeStatement = stateArray[0].split(" ");
-        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);//check
+        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);
         String[] currentStateStatement = stateArray[1].split(" ");
         int length = stateArray.length;
-        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);//check
-        String phase = (currentStateStatement[2]);//check
-        int[][] layout = {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9}
+        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
+        String phase = (currentStateStatement[2]);
 
-        };
-        int[][] mapstatus = {
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8},
-                {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9}
-
-        };
-        //islandStatement
-        Set<String> islandState = new HashSet<String>();//check
+        int size = Integer.parseInt(gameArrangeStatement[1]);
+        int[][] layout = new int[size][size];
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
+                    layout[y][x] = 9;
+                } else {
+                    layout[y][x] = 0;
+                }
+            }
+        }
+        int[][] mapstatus = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (j == size - 1 && (i == 0 || i % 2 == 0)) {
+                    mapstatus[i][j] = 9;
+                } else {
+                    mapstatus[i][j] = 8;
+                }
+            }
+        }
+        Set<String> islandState = new HashSet<String>();
         int i = 2;
         while (stateArray[i].charAt(0) == 'i') {
             islandState.add(stateArray[i]);
@@ -610,8 +569,6 @@ public class BlueLagoon {
         i++;
         String unclaimedResourcesAndStatuettesStatement = stateArray[i];
         i++;
-
-
         List<String> playerStatement = new ArrayList<String>();
         while (i < length) {
             playerStatement.add(stateArray[i]);
@@ -622,21 +579,20 @@ public class BlueLagoon {
             int id =Integer.parseInt(scores[1]);
             int l = 9; //'S'
             while (!scores[l].equals("T")) {
-                //System.out.println("path");
                 String[] settlers = scores[l].split(",");
                 int x = Integer.parseInt(settlers[0]);
                 int y = Integer.parseInt(settlers[1]);
-                mapstatus[x][y] = id; // 2 represents occupied settlers
+                mapstatus[x][y] = id;
                 l++;
 
             }
 
-            l++;//'T'
+            l++;
             while (l < scores.length) {
                 String[] settlers = scores[l].split(",");
                 int x = Integer.parseInt(settlers[0]);
                 int y = Integer.parseInt(settlers[1]);
-                mapstatus[x][y] = id; // 3 represents occupied villages
+                mapstatus[x][y] = id;
                 l++;
             }
         }
@@ -796,7 +752,6 @@ public class BlueLagoon {
                                 }
                             }
                             else {
-                                //System.out.println("enter");
                                 try {
                                     if (mapstatus[a - 1][b - 1] == currentPlayerId) {
                                         ms.add(MoveString1);
