@@ -217,56 +217,44 @@ public class BlueLagoon {
         String[] stateArray = stateString.split("; |;");
         int length = stateArray.length;
 
+        //gameArrangement
         String[] gameArrangeStatement = stateArray[0].split(" ");
         int numPlayers = Integer.parseInt(gameArrangeStatement[2]);
         int size = Integer.parseInt(gameArrangeStatement[1]);
 
-        // Generating layout of board
-        int[][] layout = generatelayout(size, 0);
-        int[][] mapstatus = generatelayout(size, 8);
-
+        //currentState
         String[] currentStateStatement = stateArray[1].split(" ");
         int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
         String phase = (currentStateStatement[2]);
 
-
-        // parses islandStatement
-        //Set<String> islandState = new HashSet<String>();//check
+        //islands
         int i = 2;
         ArrayList islandState = (ArrayList) Arrays.stream(stateArray).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
-        i += islandState.size();
+        i += islandState.size() + 2;
 
-        // Setting islands on layout
-        for (Object j : islandState) {
-            String[] temp = ((String) j).split(" ");
-            for (int k = 2; k < temp.length; k++) {
-                String[] coord = temp[k].split(",");
-                layout[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])] = 1; // 1 represents island
-            }
-        }
-        i += 2;
-
+        //player
         List<String> playerStatement = new ArrayList<String>();
         while (i < length) {
             playerStatement.add(stateArray[i]);
             i++;
         }
+        String currentPlayStatement = playerStatement.get(currentPlayerId);
+        String[] current = currentPlayStatement.split(" ");
+
+        int z = 9;
+        while (!current[z].equals("T")) {z++;}
+        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
+        int restVillagePieces= 5-current.length + z + 1;
+
+        // Generating layout of board
+        int[][] layout = generatelayout(size, 0);
+        int[][] mapstatus = generatelayout(size, 8);
+
+        // Setting islands on layout
+        layout = generateIslands(layout, islandState);
 
         // generates map based on player
         mapstatus = generateMapStatus(mapstatus, playerStatement);
-
-        // get statement of current player
-        String currentPlayStatement = playerStatement.get(currentPlayerId);
-
-        String[] current = currentPlayStatement.split(" ");
-        int z = 9;
-        while (!current[z].equals("T")) {
-            z++;
-        }
-        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
-        z++;
-        int acorh=z;
-        int restVillagePieces= 5-current.length+acorh;
 
         // moveString
         String[] mve = moveString.split(" ");
@@ -413,6 +401,18 @@ public class BlueLagoon {
         return mapstatus;
     }
 
+    public static int[][] generateIslands(int[][] layout, ArrayList islandState){
+        for (Object j : islandState) {
+            String[] temp = ((String) j).split(" ");
+            for (int k = 2; k < temp.length; k++) {
+                String[] coord = temp[k].split(",");
+                layout[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])] = 1; // 1 represents island
+            }
+        }
+        return layout;
+    }
+
+
     /**
      * Given a state string, generate a set containing all move strings playable
      * by the current player.
@@ -423,63 +423,57 @@ public class BlueLagoon {
      * @return a set of strings representing all moves the current player can play
      */
     public static Set<String> generateAllValidMoves(String stateString) {
-        HashSet<String> ms=new HashSet<String>();
         String[] stateArray = stateString.split("; |;");
         int length = stateArray.length;
 
+        //gameArrangement
         String[] gameArrangeStatement = stateArray[0].split(" ");
         int numPlayers = Integer.parseInt(gameArrangeStatement[2]);
         int size = Integer.parseInt(gameArrangeStatement[1]);
 
-        // Generating layout of board
-        int[][] layout = generatelayout(size, 0);
-        int[][] mapstatus = generatelayout(size, 8);
-
-
+        //currentState
         String[] currentStateStatement = stateArray[1].split(" ");
         int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
         String phase = (currentStateStatement[2]);
 
-
-        // parses islandStatement
+        //islands
         int i = 2;
         ArrayList islandState = (ArrayList) Arrays.stream(stateArray).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
-        i += islandState.size();
+        i += islandState.size() + 2;
 
-        // Setting islands on layout
-        for (Object j : islandState) {
-            String[] temp = ((String) j).split(" ");
-            for (int k = 2; k < temp.length; k++) {
-                String[] coord = temp[k].split(",");
-                layout[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])] = 1; // 1 represents island
-            }
-        }
-        i += 2;
-
+        //player
         List<String> playerStatement = new ArrayList<String>();
         while (i < length) {
             playerStatement.add(stateArray[i]);
             i++;
         }
+        String currentPlayStatement = playerStatement.get(currentPlayerId);
+        String[] current = currentPlayStatement.split(" ");
+
+        int z = 9;
+        while (!current[z].equals("T")) {z++;}
+        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
+        int restVillagePieces= 5-current.length + z + 1;
+
+        // Generating layout of board
+        int[][] layout = generatelayout(size, 0);
+        int[][] mapstatus = generatelayout(size, 8);
+
+        // Setting islands on layout
+        layout = generateIslands(layout, islandState);
 
         // generates map based on player
         mapstatus = generateMapStatus(mapstatus, playerStatement);
 
-        // get statement of current player
-        String currentPlayStatement = playerStatement.get(currentPlayerId);
-
-        String[] current = currentPlayStatement.split(" ");
-        int z = 9;
-        while (!current[z].equals("T")) {
-            z++;
-        }
-        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
-        z++;
-        int restVillagePieces= 5-current.length+z;
+        // our return value
+        HashSet<String> ms=new HashSet<String>();
 
 
         for (int a=0;a < size ;a++) {
             for (int b = 0; b < size ; b++) {
+                String MoveString1 = "S " + a + "," + b;
+                String MoveString2 = "T " + a + "," + b;
+
                 if ( a < 0 || b < 0 || a > size - 1 || b > size - 1) {
                     continue ;
                 }
@@ -490,8 +484,6 @@ public class BlueLagoon {
                 if (mapstatus[a][b] != 8){
                     continue;
                 }
-                String MoveString1 = "S " + a + "," + b;
-                String MoveString2 = "T " + a + "," + b;
 
                 int[] pos = {0, 0};
                 if (a - 1 == -1) {
