@@ -352,6 +352,7 @@ public class BlueLagoon {
         return false;
     }
 
+    //generates a layout based on the size of the gameboard. the status parameter is to generate mapstatus
     public static int[][] generatelayout(int size, int status) {
         int[][] layout = new int[size][size];
         for (int y = 0; y < size; y++) {
@@ -366,6 +367,7 @@ public class BlueLagoon {
         return layout;
     }
 
+    // takes a mapstatus and list of player statements, and adds all player pieces into the mapstatus
     public static int[][] generateMapStatus(int[][] mapstatus, List<String> playerStatement) {
         for (String p : playerStatement) {
             String[] scores = p.split(" ");
@@ -401,6 +403,7 @@ public class BlueLagoon {
         return mapstatus;
     }
 
+    // takes a layout and arraylist of island states and adds the specified islands into the layout
     public static int[][] generateIslands(int[][] layout, ArrayList islandState){
         for (Object j : islandState) {
             String[] temp = ((String) j).split(" ");
