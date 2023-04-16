@@ -222,28 +222,8 @@ public class BlueLagoon {
         int size = Integer.parseInt(gameArrangeStatement[1]);
 
         // Generating layout of board
-        int[][] layout = new int[size][size];
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
-                    layout[y][x] = 9;
-                } else {
-                    layout[y][x] = 0;
-                }
-            }
-        }
-
-        // Generating status of each square
-        int[][] mapstatus = new int[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (j == size - 1 && (i == 0 || i % 2 == 0)) {
-                    mapstatus[i][j] = 9;
-                } else {
-                    mapstatus[i][j] = 8;
-                }
-            }
-        }
+        int[][] layout = generatelayout(size, 0);
+        int[][] mapstatus = generatelayout(size, 8);
 
         String[] currentStateStatement = stateArray[1].split(" ");
         int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
@@ -415,6 +395,19 @@ public class BlueLagoon {
         return false;
     }
 
+    public static int[][] generatelayout(int size, int status) {
+        int[][] layout = new int[size][size];
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
+                    layout[y][x] = 9;
+                } else {
+                    layout[y][x] = status;
+                }
+            }
+        }
+        return layout;
+    }
     /**
      * Given a state string, generate a set containing all move strings playable
      * by the current player.
@@ -434,28 +427,9 @@ public class BlueLagoon {
         int size = Integer.parseInt(gameArrangeStatement[1]);
 
         // Generating layout of board
-        int[][] layout = new int[size][size];
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
-                    layout[y][x] = 9;
-                } else {
-                    layout[y][x] = 0;
-                }
-            }
-        }
+        int[][] layout = generatelayout(size, 0);
+        int[][] mapstatus = generatelayout(size, 8);
 
-        // Generating status of each square
-        int[][] mapstatus = new int[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (j == size - 1 && (i == 0 || i % 2 == 0)) {
-                    mapstatus[i][j] = 9;
-                } else {
-                    mapstatus[i][j] = 8;
-                }
-            }
-        }
 
         String[] currentStateStatement = stateArray[1].split(" ");
         int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
@@ -529,6 +503,7 @@ public class BlueLagoon {
         int acorh=z;
         int restVillagePieces= 5-current.length+acorh;
 
+
         for (int a=0;a < size ;a++) {
             for (int b = 0; b < size ; b++) {
                 if ( a < 0 || b < 0 || a > size - 1 || b > size - 1) {
@@ -537,7 +512,7 @@ public class BlueLagoon {
                 if(a % 2==0 && b == 12){
                     continue;
                 }
-                // 8 = placable
+
                 if (mapstatus[a][b] != 8){
                     continue;
                 }
