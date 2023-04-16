@@ -8,8 +8,8 @@ declaration: >-
 # be 100 or 99 (33/33/33 is fine).  (Remove entries if you have fewer than three
 # members).  
 contributions:
-  - uid: 
-    contribution: 
+  - uid: u7553225
+    contribution: 33
   - uid:
     contribution:
   - uid:
@@ -20,7 +20,7 @@ contributions:
 signatures:
   - name: Kenney Siu
     uid: u7481157
-  - name:
-    uid:
+  - name: Tay Shao An
+    uid: u7553225
   - name:
     uid:
