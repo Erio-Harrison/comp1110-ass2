@@ -19,8 +19,9 @@ declaration: >-
 # Add as many "name+comment" entries as necessary
 # (or remove it altogether if you haven't collaborated with anyone)
 collaboration:
-  - name: 
-    comment: >-
+  - name: Tay Shao An
+    comment: >- Improved my code quality on task7 and task 8
+    
 
 # Use this to list any code that you used that you did not write,
 # aside from code provided by the lecturer.  Provide a comment
