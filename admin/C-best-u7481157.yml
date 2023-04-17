@@ -28,7 +28,7 @@ declaration: >-
 # Add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
 code:
-  - comment: Used code that extractssubstirng from a start and end index with substring() used in getStatement()
+  - comment: Used code that extracts substring from a start and end index with substring() used in getStatement()
     url: https://stackoverflow.com/a/12595052
     licence:
 
