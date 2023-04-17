@@ -44,8 +44,8 @@ class:
 # I wish to submit the following methods as entirely my own (remove this if
 # you want to just submit classes):
 method:
-   - 
-   - 
+   - isMoveValid
+   - generateAllValidMoves
 
 # sign *your* name and uid here
 name: Wenxuan Cao
