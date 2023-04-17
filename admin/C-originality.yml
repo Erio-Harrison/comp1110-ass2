@@ -30,8 +30,11 @@ declaration: >-
 code:
   - comment: Used code that extracts substring from a start and end index with substring() used in getStatement()
     url: https://stackoverflow.com/a/12595052
+    licence:
+      
   - comment: I used a line of code to partition the statestrings better. This is the code that I referenced -> intList.stream().collect(Collectors.groupingBy(s -> (s - 1) / 3))
     url: https://stackoverflow.com/questions/30995763/java-8-partition-list
+    licence:
 
 
 # Use this to list any assets (artwork, sound, etc) that you used.
