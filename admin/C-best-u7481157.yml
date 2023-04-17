@@ -30,7 +30,7 @@ declaration: >-
 code:
   - comment: Used code that extracts substring from a start and end index with substring() used in getStatement()
     url: https://stackoverflow.com/a/12595052
-    licence:
+    licence: https://creativecommons.org/licenses/by-sa/4.0/
 
 # I wish to submit the following classes as entirely my own (remove this if
 # you want to just submit methods):
