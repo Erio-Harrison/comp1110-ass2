@@ -19,7 +19,7 @@ declaration: >-
 # Add as many "name+comment" entries as necessary
 # (or remove it altogether if you haven't collaborated with anyone)
 collaboration:
-  - name:
+  - name: 
     comment: >-
 
 # Use this to list any code that you used that you did not write,
@@ -47,5 +47,5 @@ method:
    - 
 
 # sign *your* name and uid here
-name:
-uid:
+name: Wenxuan Cao
+uid: u7556980
