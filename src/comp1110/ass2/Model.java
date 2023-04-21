@@ -34,15 +34,13 @@ public class Model {
         return 0;
     }
 
+    //takles a stateString and adds its attributes to the model
     private void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");
-        int length = stateArray.length;
-
         //==gameArrangement==
         String[] gameArrangeStatement = stateArray[0].split(" ");
         this.numOfPlayers = Integer.parseInt(gameArrangeStatement[2]);
-        int size = Integer.parseInt(gameArrangeStatement[1]);
-        this.board = new Board(size);
+        this.board = new Board( Integer.parseInt(gameArrangeStatement[1]));
 
         //==currentState==
         String[] currentStateStatement = stateArray[1].split(" ");
@@ -62,32 +60,24 @@ public class Model {
         int islandNum = 0;
         for (Object j : islandState) {
             islandNum += 1;
-            String[] temp = ((String) j).split(" ");
             this.board.setBoardAttributes((String) j, 4, 0 );
             this.board.setBoardAttributes((String) j, 3, islandNum );
         }
 
         //==stones==
         i += islandState.size();
-        this.board.setBoardAttributes( stateArray[i], 0, 0 );
+        this.board.setBoardAttributes(stateArray[i], 0, 0 );
 
         //==unclaimed resources statement==
-        i  += 1;
-        this.board.setBoardAttributes( stateArray[i], 1, 0 );
+        this.board.setBoardAttributes( stateArray[i + 1], 1, 0 );
 
         //==player statement==
-        i  += 1;
-        List<String> playerStatement = new ArrayList<String>();
-        while (i < length) {
-            playerStatement.add(stateArray[i]);
-            i++;
+        for (int k = i + 2; k < stateArray.length; k ++) {
+            int id  = Character.getNumericValue(stateArray[k].charAt(2));
+            this.board.setBoardAttributes(stateArray[k], 2, id);
         }
-        for (String p : playerStatement) {
-            int id  = Character.getNumericValue(p.charAt(2));
-            this.board.setBoardAttributes(p, 2, id);
-        }
-
     }
+
     private static String getStatement(String stateString, char start, char end) {
         int startIndex = 0;
         int endIndex = 0;
