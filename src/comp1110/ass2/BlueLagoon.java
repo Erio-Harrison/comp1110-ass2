@@ -472,6 +472,7 @@ public class BlueLagoon {
         HashSet<String> ms=new HashSet<String>();
 
 
+
         for (int a=0;a < size ;a++) {
             for (int b = 0; b < size ; b++) {
                 String MoveString1 = "S " + a + "," + b;

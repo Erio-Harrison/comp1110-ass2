@@ -200,8 +200,6 @@ public class Viewer extends Application {
                         islandCord = new Hexagon((x * size) + (VIEWER_WIDTH / 5.), (y * size) + (VIEWER_HEIGHT / 10.) , size * 0.3, colours[i]);
                     }
                     root.getChildren().add(islandCord);
-
-
                 }
             }
         }

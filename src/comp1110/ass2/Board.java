@@ -2,11 +2,19 @@ package comp1110.ass2;
 
 public class Board {
 
-    int boardSize = 0;
-    Tile[] tiles = new Tile[boardSize];
+    int boardSize;
+    Tile[][] tiles;
 
     // Generates a board and initialises all the tiles
-    public Board() {
+    public Board(int boardsize) {
+        this.boardSize = boardsize;
+        this.tiles =  new Tile[boardSize][boardSize];
+        for (int k = 0; k < boardsize; k ++) {
+            for (int i = 0; i < boardsize; i ++) {
+                tiles[k][i] = new Tile();
+            }
+        }
+
     }
 
 
@@ -40,7 +48,48 @@ public class Board {
     // counts the total points obtained by a particular player
     // int player -> player the board is currently checking
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public static int countPoints(int player, int gamestate) {
+    //
+    public int countPoints(int player, int gamestate) {
+        //**Total Islands**
+        //
+        //Players with pieces on eight or more islands score 20 points.
+        //Players with pieces on exactly seven islands score 10 points.
+        //Otherwise, 0 points are scored.
+        //
+        //A (potentially) branching path of neighbouring settlers and villages
+        //belonging to a player forms a chain. Players earn points from the chain
+        //of their pieces which links the most islands. Players earn 5 points
+        //per linked island in this chain.
+        //
+        //The player with the most pieces on an island scores
+        //the points indicated on the board for that island.
+        //In the case of a tie, the points are divided evenly
+        //between the tied players, rounding down.
+        //
+        //Players score points for the resources they claimed during the phase.
+        //
+        //For each resource type (coconuts, bamboo, water and precious stones),
+        //each player receives the following points:
+        //- 4+ of a kind: 20 points
+        //- 3 of a kind: 10 points
+        //- 2 of a kind: 5 points
+        //
+        //Additionally, if a player has collected all 4 different resources, they get 10 bonus points.
+        //
+        //Players receive 4 points per claimed statuette.
+        if (gamestate == 0) {
+            for (Tile[] k: this.tiles) {
+                for (Tile tile: k) {
+                    System.out.println(k);
+                }
+            }
+
+        }
+        else if (gamestate == 1) {
+
+        }
+
+
         return 0;
     }
 
@@ -71,10 +120,14 @@ public class Board {
         // player who occupies the tile
         int occupier;
 
+        // village = 1, novillage = 0
+        int village;
+
         // island which the tile is a part of
         int island;
 
         // either water or land
+        // land = 1, water = 0
         int type;
         public enum Resource {
             COCO, BBOO, WATR, STON, STAT;
@@ -86,12 +139,13 @@ public class Board {
         public static void setPlayer(int player) {
         };
 
-        public Tile(Boolean isStoneCircle, Resource resource, int occupier, int island, int type) {
-            this.isStoneCircle = isStoneCircle;
-            this.resource = resource;
-            this.occupier = occupier;
-            this.island = island;
-            this.type = type;
+        public Tile() {
+            this.isStoneCircle = false;
+            this.resource = null;
+            this.occupier = 0;
+            this.island = -1;
+            this.type = 0;
+            this.village = 0;
         }
 
     }
