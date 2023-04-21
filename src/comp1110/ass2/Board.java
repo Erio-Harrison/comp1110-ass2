@@ -84,9 +84,24 @@ public class Board {
                 }
                 break;
             case 2:
-                for (int k = 1; k < split.length; k++) {
-                    String[] coord = split[k].split(",");
-                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].occupier= info;
+                if (split[split.length -2].equals("S")) {
+                    return;
+                }
+                int pos = 9;
+                for (int l = pos; !split[l].equals("T"); l++) {
+                    String[] settlers = split[l].split(",");
+                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info; // 2 represents occupied settlers
+                    pos += 1;
+                }
+                pos += 1;
+                if (split[split.length -1].equals("T")) {
+                    return;
+                }
+                // retrieve all villager coordinates
+                for (int l = pos; l < split.length; l ++) {
+                    String[] settlers = split[l].split(",");
+                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info; // 3 represents occupied villages
+                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].village = 1;
                 }
                 break;
             case 3:

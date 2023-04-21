@@ -235,7 +235,6 @@ public class BlueLagoon {
         //player
         List<String> playerStatement = new ArrayList<String>();
         while (i < length) {
-            System.out.println(stateArray[i]);
             playerStatement.add(stateArray[i]);
             i++;
         }
@@ -375,30 +374,21 @@ public class BlueLagoon {
             if (scores[scores.length -2].equals("S")) {
                 continue;
             }
-
             int id  = Character.getNumericValue(p.charAt(2));
-            int l = 9; //'Settlers part of the string'
-
-            // retrieve all settler coordinates
-            while (!scores[l].equals("T")) {
+            int pos = 9;
+            for (int l = pos; !scores[l].equals("T"); l++) {
                 String[] settlers = scores[l].split(",");
-                int x = Integer.parseInt(settlers[0]);
-                int y = Integer.parseInt(settlers[1]);
-                mapstatus[x][y] = id; // 2 represents occupied settlers
-                l++;
+                mapstatus[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])] = id; // 2 represents occupied settlers
+                pos += 1;
             }
-            l++;
-
+            pos += 1;
             if (scores[scores.length -1].equals("T")) {
                 continue;
             }
             // retrieve all villager coordinates
-            while (l < scores.length) {
+            for (int l = pos; l < scores.length; l ++) {
                 String[] settlers = scores[l].split(",");
-                int x = Integer.parseInt(settlers[0]);
-                int y = Integer.parseInt(settlers[1]);
-                mapstatus[x][y] = id; // 3 represents occupied villages
-                l++;
+                mapstatus[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])] = id; // 3 represents occupied villages
             }
         }
         return mapstatus;
