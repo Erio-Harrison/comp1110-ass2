@@ -235,6 +235,7 @@ public class BlueLagoon {
         //player
         List<String> playerStatement = new ArrayList<String>();
         while (i < length) {
+            System.out.println(stateArray[i]);
             playerStatement.add(stateArray[i]);
             i++;
         }

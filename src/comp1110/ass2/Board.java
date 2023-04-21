@@ -1,5 +1,7 @@
 package comp1110.ass2;
 
+import java.util.Arrays;
+
 public class Board {
 
     int boardSize;
@@ -43,12 +45,78 @@ public class Board {
         return true;
     };
 
+    public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
+        for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
+            String[] coord =  split[k].split(",");
+            this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].resource = resource;
+            ucrPosition += 1;
+        }
+        return ucrPosition + 1;
+    }
+
+    //this.isStoneCircle = 0;
+    //            this.resource = 1;
+    //            this.occupier = 2;
+    //            this.island = 3;
+    //            this.type = 4;
+    //            this.village = 5;
+    //        }
+
+    public void setBoardAttributes(String state, int attribute, int info)  {
+        String[] split = state.split(" ");
+        System.out.println(state);
+        switch (attribute) {
+            case 0:
+                for (int k = 1; k < split.length; k++) {
+                    String[] coord = split[k].split(",");
+                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].isStoneCircle = true;
+                }
+                break;
+            case 1:
+                int ucrPosition = 2;
+                ucrPosition = setResource(split,Tile.Resource.COCO, ucrPosition, "B");
+                ucrPosition = setResource(split,Tile.Resource.BBOO, ucrPosition, "W");
+                ucrPosition = setResource(split,Tile.Resource.WATR, ucrPosition, "P");
+                ucrPosition = setResource(split,Tile.Resource.STON, ucrPosition, "S");
+                for (int k = ucrPosition; k < split.length; k++) {
+                    String[] coord =  split[k].split(",");
+                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].resource = Board.Tile.Resource.STAT;
+                }
+                break;
+            case 2:
+                for (int k = 1; k < split.length; k++) {
+                    String[] coord = split[k].split(",");
+                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].occupier= info;
+                }
+                break;
+            case 3:
+                for (int k = 2; k < split.length; k++) {
+                    String[] coord = split[k].split(",");
+                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].island = info;
+                }
+                break;
+            case 4:
+                for (int k = 2; k < split.length; k++) {
+                    String[] coord = split[k].split(",");
+                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].type = 1;
+                }
+                break;
+            case 5:
+                for (int k = 1; k < split.length; k++) {
+                    String[] coord = split[k].split(",");
+                    this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].village= 1;
+                }
+                break;
+        }
+    }
+
     // =====================================================================
 
     // counts the total points obtained by a particular player
     // int player -> player the board is currently checking
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     //
+
     public int countPoints(int player, int gamestate) {
         //**Total Islands**
         //
