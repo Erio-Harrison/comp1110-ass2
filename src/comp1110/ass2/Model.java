@@ -34,7 +34,7 @@ public class Model {
         return 0;
     }
 
-    //takles a stateString and adds its attributes to the model
+    //takes a stateString and adds its attributes to the model
     private void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");
         //==gameArrangement==
@@ -121,7 +121,7 @@ public class Model {
 
         Model test = new Model();
         test.toModel(FACE_GAME);
-
+        test.board.countPoints(0 ,0);
 
     }
 }

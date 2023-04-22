@@ -54,25 +54,25 @@ public class Board {
         return ucrPosition + 1;
     }
 
-    //this.isStoneCircle = 0;
+    // used to set attributes for each tile on a board based on a string state
+    // attribute is assigned as follows:
+    //            this.isStoneCircle = 0;
     //            this.resource = 1;
     //            this.occupier = 2;
     //            this.island = 3;
     //            this.type = 4;
     //            this.village = 5;
-    //        }
-
     public void setBoardAttributes(String state, int attribute, int info)  {
         String[] split = state.split(" ");
-        System.out.println(state);
         switch (attribute) {
-            case 0:
+            case 0: //isStoneCircle
                 for (int k = 1; k < split.length; k++) {
                     String[] coord = split[k].split(",");
                     this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].isStoneCircle = true;
                 }
                 break;
-            case 1:
+
+            case 1: //resource
                 int ucrPosition = 2;
                 ucrPosition = setResource(split,Tile.Resource.COCO, ucrPosition, "B");
                 ucrPosition = setResource(split,Tile.Resource.BBOO, ucrPosition, "W");
@@ -83,14 +83,15 @@ public class Board {
                     this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].resource = Board.Tile.Resource.STAT;
                 }
                 break;
-            case 2:
+
+            case 2: //occupier
                 if (split[split.length -2].equals("S")) {
                     return;
                 }
                 int pos = 9;
                 for (int l = pos; !split[l].equals("T"); l++) {
                     String[] settlers = split[l].split(",");
-                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info; // 2 represents occupied settlers
+                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info;
                     pos += 1;
                 }
                 pos += 1;
@@ -100,23 +101,26 @@ public class Board {
                 // retrieve all villager coordinates
                 for (int l = pos; l < split.length; l ++) {
                     String[] settlers = split[l].split(",");
-                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info; // 3 represents occupied villages
+                    this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info;
                     this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].village = 1;
                 }
                 break;
-            case 3:
+
+            case 3: //island
                 for (int k = 2; k < split.length; k++) {
                     String[] coord = split[k].split(",");
                     this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].island = info;
                 }
                 break;
-            case 4:
+
+            case 4: //type
                 for (int k = 2; k < split.length; k++) {
                     String[] coord = split[k].split(",");
                     this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].type = 1;
                 }
                 break;
-            case 5:
+
+            case 5: //village
                 for (int k = 1; k < split.length; k++) {
                     String[] coord = split[k].split(",");
                     this.tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].village= 1;
@@ -163,8 +167,9 @@ public class Board {
         if (gamestate == 0) {
             for (Tile[] k: this.tiles) {
                 for (Tile tile: k) {
-                    System.out.println(k);
+                    System.out.print(tile.island + " ");
                 }
+                System.out.println("");
             }
 
         }
@@ -207,6 +212,7 @@ public class Board {
         int village;
 
         // island which the tile is a part of
+        // 0 indicates no island
         int island;
 
         // either water or land
@@ -226,7 +232,7 @@ public class Board {
             this.isStoneCircle = false;
             this.resource = null;
             this.occupier = 0;
-            this.island = -1;
+            this.island = 0;
             this.type = 0;
             this.village = 0;
         }
