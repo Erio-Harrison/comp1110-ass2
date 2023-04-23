@@ -1,6 +1,8 @@
 package comp1110.ass2;
 
-import java.util.Arrays;
+import javafx.scene.Node;
+
+import java.util.*;
 
 public class Board {
 
@@ -164,20 +166,65 @@ public class Board {
         //Additionally, if a player has collected all 4 different resources, they get 10 bonus points.
         //
         //Players receive 4 points per claimed statuette.
+        int points = 0;
+
+        Set<Integer> islands = new HashSet<>();
+        List<PieceNode> allPieces = new ArrayList<>();
         if (gamestate == 0) {
+            int x = 0;
+            int len = -1;
+            int shortlong = 0; //0 = short, 1 = long
             for (Tile[] k: this.tiles) {
-                for (Tile tile: k) {
-                    System.out.print(tile.island + " ");
+                len = 0;
+                shortlong = 1;
+
+                if (x % 2 == 0) {
+                    System.out.print(" ");
+                    len = -1;
+                    shortlong = 0;
+                }
+
+                // for each tile
+                for (int y = 0; y < k.length + len; y ++) {
+                    Tile tile = k[y];
+                    System.out.print(shortlong);
+                    System.out.print(" ");
+
+                    // if tile is occupied by player
+                    if (tile.occupier == player) {
+
+                        // set of all islands occupied by player
+                        islands.add(tile.island);
+
+                        // checking for links code
+                        PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
+                        allPieces.add(currentNode);
+                        for (PieceNode node: allPieces) {
+                            if (node.x == x && node.y - y == 1
+                                    || node.x == x && node.y - y == -1
+                                    || node.x - x == 1 && node.y == y
+                                    || node.x - x == -1 && node.y == y
+                                    || node.x == x + 1 - (shortlong * 2) && node.y - y == -1
+                                    || node.x == x + 1 - (shortlong * 2) && node.y - y == 1) {
+                                node.edges.add(currentNode);
+                                currentNode.edges.add(node);
+                            }
+                        }
+                    }
                 }
                 System.out.println("");
+                x += 1;
             }
 
+            Set<Integer> branchLen = new HashSet<>();
+            for (PieceNode node: allPieces) {
+                branchLen.add(node.nodeRunner(1, new ArrayList<>()));
+            }
+            System.out.println("Longest string:" + Arrays.toString(branchLen.toArray()));
         }
         else if (gamestate == 1) {
-
         }
-
-
+        System.out.println(Arrays.toString(islands.toArray()));
         return 0;
     }
 
@@ -197,6 +244,58 @@ public class Board {
         return true;
     }
 
+    public static class PieceNode {
+        int island;
+        int x;
+        int y;
+        int shortlong;
+        List<PieceNode> edges;
+
+        public PieceNode(int island, int x, int y, int shortlong) {
+            this.island = island;
+            this.x = x;
+            this.y = y;
+            this.shortlong = shortlong;
+            this.edges = new ArrayList<>();
+        }
+
+        //returns longest chain in this node
+        public int nodeRunner(int length, List<PieceNode>  previousNodes ) {
+            List<Integer> allengths = new ArrayList<>();
+            previousNodes.add(this);
+
+            // for each node in this nodes' edges
+            for (int k = 0; k < this.edges.size(); k ++) {
+                var getnode = 1;
+                // if this node has already appeared before, ignore
+                for (PieceNode node: previousNodes) {
+                    if (node.equals(this.edges.get(k))) {
+                        getnode = 0;
+                    }
+                }
+                // runs noderunner on each of the nodes
+                if (getnode == 1) {
+                    allengths.add(this.edges.get(k).nodeRunner(length + 1, previousNodes));
+                }
+            }
+
+            // if this is an end node
+            if (allengths.size() == 0) {
+                return length;
+            }
+
+            Collections.sort(allengths);
+            return allengths.get(0);
+        }
+
+        @Override
+        public String toString() {
+            return island + ":" + x + "," + y + ":" + this.edges.size();
+        }
+
+
+    }
+
 
     public static class Tile {
         // if it is a stone circle, a resource may be generated on the tile
@@ -206,6 +305,7 @@ public class Board {
         Resource resource;
 
         // player who occupies the tile
+        // -1 indicates no occupier
         int occupier;
 
         // village = 1, novillage = 0
@@ -231,7 +331,7 @@ public class Board {
         public Tile() {
             this.isStoneCircle = false;
             this.resource = null;
-            this.occupier = 0;
+            this.occupier = -1;
             this.island = 0;
             this.type = 0;
             this.village = 0;
