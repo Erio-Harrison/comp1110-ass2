@@ -130,6 +130,22 @@ public class Board {
                 break;
         }
     }
+    public static List<PieceNode>  addPieces(Tile tile, int x, int y, int shortlong, List<PieceNode> allPieces) {
+        PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
+        allPieces.add(currentNode);
+        for (PieceNode node: allPieces) {
+            if (node.x == x && node.y - y == 1
+                    || node.x == x && node.y - y == -1
+                    || node.x - x == 1 && node.y == y
+                    || node.x - x == -1 && node.y == y
+                    || node.x == x + 1 - (shortlong * 2) && node.y - y == -1
+                    || node.x == x + 1 - (shortlong * 2) && node.y - y == 1) {
+                node.edges.add(currentNode);
+                currentNode.edges.add(node);
+            }
+        }
+        return allPieces;
+    }
 
     // =====================================================================
 
@@ -140,15 +156,6 @@ public class Board {
 
     public int countPoints(int player, int gamestate) {
         //**Total Islands**
-        //
-        //Players with pieces on eight or more islands score 20 points.
-        //Players with pieces on exactly seven islands score 10 points.
-        //Otherwise, 0 points are scored.
-        //
-        //A (potentially) branching path of neighbouring settlers and villages
-        //belonging to a player forms a chain. Players earn points from the chain
-        //of their pieces which links the most islands. Players earn 5 points
-        //per linked island in this chain.
         //
         //The player with the most pieces on an island scores
         //the points indicated on the board for that island.
@@ -176,18 +183,18 @@ public class Board {
             int shortlong = 0; //0 = short, 1 = long
             for (Tile[] k: this.tiles) {
                 len = 0;
-                shortlong = 1;
+                shortlong = 0;
 
                 if (x % 2 == 0) {
                     System.out.print(" ");
                     len = -1;
-                    shortlong = 0;
+                    shortlong = 1;
                 }
 
                 // for each tile
                 for (int y = 0; y < k.length + len; y ++) {
                     Tile tile = k[y];
-                    System.out.print(shortlong);
+                    System.out.print(tile.occupier + 1);
                     System.out.print(" ");
 
                     // if tile is occupied by player
@@ -195,27 +202,13 @@ public class Board {
 
                         // set of all islands occupied by player
                         islands.add(tile.island);
-
-                        // checking for links code
-                        PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
-                        allPieces.add(currentNode);
-                        for (PieceNode node: allPieces) {
-                            if (node.x == x && node.y - y == 1
-                                    || node.x == x && node.y - y == -1
-                                    || node.x - x == 1 && node.y == y
-                                    || node.x - x == -1 && node.y == y
-                                    || node.x == x + 1 - (shortlong * 2) && node.y - y == -1
-                                    || node.x == x + 1 - (shortlong * 2) && node.y - y == 1) {
-                                node.edges.add(currentNode);
-                                currentNode.edges.add(node);
-                            }
-                        }
+                        // adds all pieces on the board to a list
+                        allPieces = addPieces(tile, x, y, shortlong, allPieces);
                     }
                 }
                 System.out.println("");
                 x += 1;
             }
-
             Set<Integer> branchLen = new HashSet<>();
             for (PieceNode node: allPieces) {
                 branchLen.add(node.nodeRunner(1, new ArrayList<>()));
@@ -285,15 +278,14 @@ public class Board {
             }
 
             Collections.sort(allengths);
-            return allengths.get(0);
+            //System.out.println(allengths);
+            return allengths.get(allengths.size() -1);
         }
 
         @Override
         public String toString() {
             return island + ":" + x + "," + y + ":" + this.edges.size();
         }
-
-
     }
 
 

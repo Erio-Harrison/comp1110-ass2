@@ -35,7 +35,7 @@ public class Model {
     }
 
     //takes a stateString and adds its attributes to the model
-    private void toModel(String stateString) {
+    void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");
         //==gameArrangement==
         String[] gameArrangeStatement = stateArray[0].split(" ");
