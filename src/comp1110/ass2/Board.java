@@ -7,11 +7,14 @@ import java.util.*;
 public class Board {
 
     int boardSize;
+
+    int numOfIslands;
     Tile[][] tiles;
 
     // Generates a board and initialises all the tiles
     public Board(int boardsize) {
         this.boardSize = boardsize;
+        this.numOfIslands = 0;
         this.tiles =  new Tile[boardSize][boardSize];
         for (int k = 0; k < boardsize; k ++) {
             for (int i = 0; i < boardsize; i ++) {
@@ -130,6 +133,9 @@ public class Board {
                 break;
         }
     }
+
+    // creates a PieceNode object for a specific tile and adds this PieceNode object to all PieceNodes
+    // it is beside to based on a list of PieceNodes.
     public static List<PieceNode>  addPieces(Tile tile, int x, int y, int shortlong, List<PieceNode> allPieces) {
         PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
         allPieces.add(currentNode);
@@ -177,47 +183,68 @@ public class Board {
 
         Set<Integer> islands = new HashSet<>();
         List<PieceNode> allPieces = new ArrayList<>();
-        if (gamestate == 0) {
-            int x = 0;
-            int len = -1;
-            int shortlong = 0; //0 = short, 1 = long
-            for (Tile[] k: this.tiles) {
-                len = 0;
-                shortlong = 0;
-
-                if (x % 2 == 0) {
-                    System.out.print(" ");
-                    len = -1;
-                    shortlong = 1;
-                }
-
-                // for each tile
-                for (int y = 0; y < k.length + len; y ++) {
-                    Tile tile = k[y];
-                    System.out.print(tile.occupier + 1);
-                    System.out.print(" ");
-
-                    // if tile is occupied by player
-                    if (tile.occupier == player) {
-
-                        // set of all islands occupied by player
-                        islands.add(tile.island);
-                        // adds all pieces on the board to a list
-                        allPieces = addPieces(tile, x, y, shortlong, allPieces);
-                    }
-                }
-                System.out.println("");
-                x += 1;
-            }
-            Set<Integer> branchLen = new HashSet<>();
-            for (PieceNode node: allPieces) {
-                branchLen.add(node.nodeRunner(1, new ArrayList<>()));
-            }
-            System.out.println("Longest string:" + Arrays.toString(branchLen.toArray()));
+        ArrayList<Integer>[] playersOnIslands = new ArrayList[numOfIslands + 1];
+        for (int i = 0; i < numOfIslands + 1; i++) {
+            playersOnIslands[i] = new ArrayList<Integer>();
         }
-        else if (gamestate == 1) {
+
+        int x = 0;
+        int len = -1;
+        int shortlong = 0; //0 = short, 1 = long
+        for (Tile[] k: this.tiles) {
+            len = 0;
+            shortlong = 0;
+
+            if (x % 2 == 0) {
+                System.out.print(" ");
+                len = -1;
+                shortlong = 1;
+            }
+
+            // for each tile
+            for (int y = 0; y < k.length + len; y ++) {
+                Tile tile = k[y];
+                System.out.print(tile.occupier + 1);
+                System.out.print(" ");
+
+                // if tile is occupied by player
+                if (tile.occupier == player) {
+
+                    // set of all islands occupied by player
+                    islands.add(tile.island);
+                    // adds all pieces on the board to a list
+                    allPieces = addPieces(tile, x, y, shortlong, allPieces);
+                    // adds to a counter to the number of pieces which appear per island per player
+                    playersOnIslands[tile.island].add(tile.occupier);
+
+                }
+            }
+            System.out.println("");
+            x += 1;
         }
-        System.out.println(Arrays.toString(islands.toArray()));
+        // processing nodes
+        List<Integer> branchLen = new ArrayList<>();
+        for (Board.PieceNode node: allPieces) {
+            branchLen.add(node.nodeRunner(new HashSet<>(), new ArrayList<>()).size());
+        }
+        // counting majority for islands
+        List<Integer> islandsWon = new ArrayList<>();
+        for (int k = 1; k < playersOnIslands.length; k ++ ) {
+            var island = playersOnIslands[k];
+            var playerCount = 0;
+
+            for (Object i: island) {
+                playerCount += 1;
+            }
+            if (playerCount > island.size()/2) {
+                islandsWon.add(k);
+            }
+        }
+        System.out.println("total islands occupied:" + islands);
+        System.out.println("Most number of islands in a row:" + Arrays.toString(branchLen.toArray()));
+        //System.out.println("Pieces which occupy each island" + Arrays.toString(playersOnIslands));
+        System.out.println("islands won" + islandsWon);
+        Collections.sort(branchLen);
         return 0;
     }
 
@@ -252,10 +279,10 @@ public class Board {
             this.edges = new ArrayList<>();
         }
 
-        //returns longest chain in this node
-        public int nodeRunner(int length, List<PieceNode>  previousNodes ) {
-            List<Integer> allengths = new ArrayList<>();
+        //returns all islands that the edges of this node spans
+        public Set<Integer> nodeRunner(Set<Integer> islands, List<PieceNode>  previousNodes ) {
             previousNodes.add(this);
+            islands.add(this.island);
 
             // for each node in this nodes' edges
             for (int k = 0; k < this.edges.size(); k ++) {
@@ -268,18 +295,11 @@ public class Board {
                 }
                 // runs noderunner on each of the nodes
                 if (getnode == 1) {
-                    allengths.add(this.edges.get(k).nodeRunner(length + 1, previousNodes));
+                    islands.addAll(this.edges.get(k).nodeRunner(islands, previousNodes));
                 }
             }
 
-            // if this is an end node
-            if (allengths.size() == 0) {
-                return length;
-            }
-
-            Collections.sort(allengths);
-            //System.out.println(allengths);
-            return allengths.get(allengths.size() -1);
+            return islands;
         }
 
         @Override
