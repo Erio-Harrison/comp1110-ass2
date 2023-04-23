@@ -163,11 +163,6 @@ public class Board {
     public int countPoints(int player, int gamestate) {
         //**Total Islands**
         //
-        //The player with the most pieces on an island scores
-        //the points indicated on the board for that island.
-        //In the case of a tie, the points are divided evenly
-        //between the tied players, rounding down.
-        //
         //Players score points for the resources they claimed during the phase.
         //
         //For each resource type (coconuts, bamboo, water and precious stones),
@@ -204,6 +199,7 @@ public class Board {
             // for each tile
             for (int y = 0; y < k.length + len; y ++) {
                 Tile tile = k[y];
+                System.out.print(tile.island);
                 System.out.print(tile.occupier + 1);
                 System.out.print(" ");
 
@@ -214,9 +210,10 @@ public class Board {
                     islands.add(tile.island);
                     // adds all pieces on the board to a list
                     allPieces = addPieces(tile, x, y, shortlong, allPieces);
-                    // adds to a counter to the number of pieces which appear per island per player
+                }
+                // adds to a counter to the number of pieces which appear per island per player
+                if (tile.occupier != -1) {
                     playersOnIslands[tile.island].add(tile.occupier);
-
                 }
             }
             System.out.println("");
@@ -233,9 +230,12 @@ public class Board {
             var island = playersOnIslands[k];
             var playerCount = 0;
 
-            for (Object i: island) {
-                playerCount += 1;
+            for (Integer i: island) {
+                if (i == player) {
+                    playerCount += 1;
+                }
             }
+            //System.out.println("island:" + k + " num of appearances:" + playerCount + " islandsize" + island.size());
             if (playerCount > island.size()/2) {
                 islandsWon.add(k);
             }
