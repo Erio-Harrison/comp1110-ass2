@@ -3,6 +3,8 @@ package comp1110.ass2;
 import javafx.scene.Node;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Board {
 
@@ -27,7 +29,56 @@ public class Board {
 
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public static void reset(int gamestate) {
+    public void reset(int gamestate) {
+        ArrayList<Tile> stoneCoords = new ArrayList();
+        if (gamestate == 1){
+            // resources are removed
+            for (int k = 0; k < boardSize; k ++) {
+                for (int i = 0; i < boardSize; i ++) {
+                    tiles[k][i].resource = null;
+                    if (tiles[k][i].isStoneCircle){
+                        // remove the village in stone circle
+                        tiles[k][i].village = 0;
+                        //re-distribute resource
+                        stoneCoords.add(tiles[k][i]);
+                    }
+                }
+            }
+            Tile[] rscrsSub = new Tile[6];
+            int i = 0;
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                    rscrsSub[i] = stoneCoords.get(random);
+                    rscrsSub[i].resource = Tile.Resource.BBOO;
+                    stoneCoords.remove(random);
+            }
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.STON;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.WATR;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.COCO;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < stoneCoords.size(); i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.STAT;
+                stoneCoords.remove(random);
+            }
+
+        }
+
     }
 
     // =====================================================================
@@ -38,7 +89,10 @@ public class Board {
     // int y -> y coordinate of tile
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     // int player -> int representing which player is currently in play
-    public static boolean setSettler(int x, int y, int gamestate, int player) {
+    public boolean setSettler(int x, int y, int gamestate, int player) {
+        if (isValid(x,y,gamestate)){
+            tiles[x][y].setPlayer(player);
+        }
         return true;
     };
 
@@ -282,7 +336,6 @@ public class Board {
         //returns all islands that the edges of this node spans
         public Set<Integer> nodeRunner(Set<Integer> islands, List<PieceNode>  previousNodes ) {
             previousNodes.add(this);
-            islands.add(this.island);
 
             // for each node in this nodes' edges
             for (int k = 0; k < this.edges.size(); k ++) {
@@ -309,7 +362,7 @@ public class Board {
     }
 
 
-    public static class Tile {
+    public class Tile {
         // if it is a stone circle, a resource may be generated on the tile
         Boolean isStoneCircle;
 
@@ -337,7 +390,8 @@ public class Board {
 
         // sets the occupier of the tile
         // int player -> player
-        public static void setPlayer(int player) {
+        public void setPlayer(int player) {
+            this.occupier = player;
         };
 
         public Tile() {
