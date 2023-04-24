@@ -2,6 +2,8 @@ package comp1110.ass2;
 
 import javafx.scene.Node;
 import comp1110.ass2.Model;
+
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board {
@@ -51,21 +53,56 @@ public class Board {
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
     // int y -> y coordinate of tile
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public static boolean isValid(int x, int y, int gamestate) {
+    // int player -> player
+    // int piece -> int representing the piece 0 = settler 1 = village
+    //
+    public static boolean isValidExploration (int x, int y, int player, int piece) {
+        // Out of bounds
         if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
             return false;
         }
+
+        // Occupied
         if (tiles[x][y].occupier != -1) {
             return false;
         }
+        // if piece is settler
+        if (piece == 0) {
+            if (tiles[x][y].type == 1) {
+                return true;
+            } else {
+                ArrayList<Tile> adjacent = adjacentTiles(x,y);
+                if (!containsPlayerTiles(player,adjacent)) {
+                    return false;
+                }
+            }
 
+            // village piece
+        } else {
+            // Village can't be place on water
+            if (tiles[x][y].type == 1) {
+                return false;
+            }
 
-
+            ArrayList<Tile> adjacent = adjacentTiles(x,y);
+            if (!containsPlayerTiles(player,adjacent)) {
+                return false;
+            }
+        }
 
         return true;
     }
 
+
+    // check if a players neighbours tiles contains one that is occupied.
+    public static Boolean containsPlayerTiles(int player, ArrayList<Tile> adjacent) {
+        for (Tile a : adjacent) {
+            if (a.occupier == player) {
+                return true;
+            }
+        }
+        return false;
+    }
     // helper method to get neighbouring pieces
 
     public static ArrayList<Tile> adjacentTiles(int col, int row) {
@@ -73,8 +110,6 @@ public class Board {
         if (col < 0 || col > boardSize || row < 0 || row > boardSize) {
             return adjacent;
         }
-
-
         // check Left
         if (col > 0) {
             adjacent.add(tiles[col-1][row]);
@@ -94,6 +129,7 @@ public class Board {
 
         return adjacent;
     }
+
 
 
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
