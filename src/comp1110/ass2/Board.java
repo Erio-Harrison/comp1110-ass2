@@ -1,17 +1,19 @@
 package comp1110.ass2;
 
 import javafx.scene.Node;
+import comp1110.ass2.Model;
 
+import java.lang.reflect.Array;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Board {
 
-    int boardSize;
 
-    int numOfIslands;
-    Tile[][] tiles;
+    public static int boardSize;
+
+    public static int numOfIslands;
+    public static Tile[][] tiles;
+
 
     // Generates a board and initialises all the tiles
     public Board(int boardsize) {
@@ -27,58 +29,13 @@ public class Board {
     }
 
 
+    public static Tile getTiles(int x,int y) {
+        return tiles[x][y];
+    }
+
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public void reset(int gamestate) {
-        ArrayList<Tile> stoneCoords = new ArrayList();
-        if (gamestate == 1){
-            // resources are removed
-            for (int k = 0; k < boardSize; k ++) {
-                for (int i = 0; i < boardSize; i ++) {
-                    tiles[k][i].resource = null;
-                    if (tiles[k][i].isStoneCircle){
-                        // remove the village in stone circle
-                        tiles[k][i].village = 0;
-                        //re-distribute resource
-                        stoneCoords.add(tiles[k][i]);
-                    }
-                }
-            }
-            Tile[] rscrsSub = new Tile[6];
-            int i = 0;
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                    rscrsSub[i] = stoneCoords.get(random);
-                    rscrsSub[i].resource = Tile.Resource.BBOO;
-                    stoneCoords.remove(random);
-            }
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.STON;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.WATR;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.COCO;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < stoneCoords.size(); i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.STAT;
-                stoneCoords.remove(random);
-            }
-
-        }
-
+    public static void reset(int gamestate) {
     }
 
     // =====================================================================
@@ -89,20 +46,91 @@ public class Board {
     // int y -> y coordinate of tile
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     // int player -> int representing which player is currently in play
-    public boolean setSettler(int x, int y, int gamestate, int player) {
-        if (isValid(x,y,gamestate)){
-            tiles[x][y].setPlayer(player);
-        }
+    public static boolean setSettler(int x, int y, int gamestate, int player) {
         return true;
     };
 
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
     // int y -> y coordinate of tile
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public static boolean isValid(int x, int y, int gamestate) {
+    // int player -> player
+    // int piece -> int representing the piece 0 = settler 1 = village
+    //
+    public static boolean isValidExploration (int x, int y, int player, int piece) {
+        // Out of bounds
+        if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
+            return false;
+        }
+
+        // Occupied
+        if (tiles[x][y].occupier != -1) {
+            return false;
+        }
+        // if piece is settler
+        if (piece == 0) {
+            if (tiles[x][y].type == 1) {
+                return true;
+            } else {
+                ArrayList<Tile> adjacent = adjacentTiles(x,y);
+                if (!containsPlayerTiles(player,adjacent)) {
+                    return false;
+                }
+            }
+
+            // village piece
+        } else {
+            // Village can't be place on water
+            if (tiles[x][y].type == 1) {
+                return false;
+            }
+
+            ArrayList<Tile> adjacent = adjacentTiles(x,y);
+            if (!containsPlayerTiles(player,adjacent)) {
+                return false;
+            }
+        }
+
         return true;
-    };
+    }
+
+
+    // check if a players neighbours tiles contains one that is occupied.
+    public static Boolean containsPlayerTiles(int player, ArrayList<Tile> adjacent) {
+        for (Tile a : adjacent) {
+            if (a.occupier == player) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // helper method to get neighbouring pieces
+
+    public static ArrayList<Tile> adjacentTiles(int col, int row) {
+        ArrayList<Tile> adjacent = new ArrayList<>();
+        if (col < 0 || col > boardSize || row < 0 || row > boardSize) {
+            return adjacent;
+        }
+        // check Left
+        if (col > 0) {
+            adjacent.add(tiles[col-1][row]);
+        }
+        // check Right
+        if (col < boardSize-1) {
+            adjacent.add(tiles[col+1][row]);
+        }
+        // Check Up
+        if (row > 0) {
+            adjacent.add(tiles[col][row-1]);
+        }
+        // CHeck Down
+        if (row < boardSize-1) {
+            adjacent.add(tiles[col][row+1]);
+        }
+
+        return adjacent;
+    }
+
+
 
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
@@ -336,6 +364,7 @@ public class Board {
         //returns all islands that the edges of this node spans
         public Set<Integer> nodeRunner(Set<Integer> islands, List<PieceNode>  previousNodes ) {
             previousNodes.add(this);
+            islands.add(this.island);
 
             // for each node in this nodes' edges
             for (int k = 0; k < this.edges.size(); k ++) {
@@ -362,7 +391,8 @@ public class Board {
     }
 
 
-    public class Tile {
+    public static class Tile {
+        static int occupier;
         // if it is a stone circle, a resource may be generated on the tile
         Boolean isStoneCircle;
 
@@ -371,7 +401,7 @@ public class Board {
 
         // player who occupies the tile
         // -1 indicates no occupier
-        int occupier;
+
 
         // village = 1, novillage = 0
         int village;
@@ -390,8 +420,8 @@ public class Board {
 
         // sets the occupier of the tile
         // int player -> player
-        public void setPlayer(int player) {
-            this.occupier = player;
+        public static void setPlayer(int player) {
+            occupier = player;
         };
 
         public Tile() {
