@@ -1,15 +1,16 @@
 package comp1110.ass2;
 
 import javafx.scene.Node;
-
+import comp1110.ass2.Model;
 import java.util.*;
 
 public class Board {
 
-    int boardSize;
+    public static int boardSize;
 
-    int numOfIslands;
-    Tile[][] tiles;
+
+    public static int numOfIslands;
+    public static Tile[][] tiles;
 
     // Generates a board and initialises all the tiles
     public Board(int boardsize) {
@@ -24,6 +25,10 @@ public class Board {
 
     }
 
+
+    public static Tile getTiles(int x,int y) {
+        return tiles[x][y];
+    }
 
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
@@ -47,8 +52,48 @@ public class Board {
     // int y -> y coordinate of tile
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     public static boolean isValid(int x, int y, int gamestate) {
+        if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
+            return false;
+        }
+        if (tiles[x][y].occupier != -1) {
+            return false;
+        }
+
+
+
+
         return true;
-    };
+    }
+
+    // helper method to get neighbouring pieces
+
+    public static ArrayList<Tile> adjacentTiles(int col, int row) {
+        ArrayList<Tile> adjacent = new ArrayList<>();
+        if (col < 0 || col > boardSize || row < 0 || row > boardSize) {
+            return adjacent;
+        }
+
+
+        // check Left
+        if (col > 0) {
+            adjacent.add(tiles[col-1][row]);
+        }
+        // check Right
+        if (col < boardSize) {
+            adjacent.add(tiles[col+1][row]);
+        }
+        // Check Up
+        if (row > 0) {
+            adjacent.add(tiles[col][row-1]);
+        }
+        // CHeck Down
+        if (row > boardSize) {
+            adjacent.add(tiles[col][row+1]);
+        }
+
+        return adjacent;
+    }
+
 
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
@@ -310,6 +355,7 @@ public class Board {
 
 
     public static class Tile {
+        static int occupier;
         // if it is a stone circle, a resource may be generated on the tile
         Boolean isStoneCircle;
 
@@ -318,7 +364,7 @@ public class Board {
 
         // player who occupies the tile
         // -1 indicates no occupier
-        int occupier;
+
 
         // village = 1, novillage = 0
         int village;
@@ -338,6 +384,7 @@ public class Board {
         // sets the occupier of the tile
         // int player -> player
         public static void setPlayer(int player) {
+            occupier = player;
         };
 
         public Tile() {
