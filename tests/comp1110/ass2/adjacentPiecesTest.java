@@ -16,11 +16,17 @@ class adjacentPiecesTest {
        ArrayList<Board.Tile> tiles = Board.adjacentTiles(-1,-1);
        Assertions.assertTrue(tiles.isEmpty());
 
-       ArrayList<Board.Tile> tiles2 = Board.adjacentTiles(-3,-1);
-       Assertions.assertTrue(tiles.isEmpty());
+       ArrayList<Board.Tile> tiles2 = Board.adjacentTiles(0,-1);
+       Assertions.assertTrue(tiles2.isEmpty());
 
-       ArrayList<Board.Tile> tiles3 = Board.adjacentTiles(15,10);
-       Assertions.assertTrue(tiles.isEmpty());
+       ArrayList<Board.Tile> tiles3 = Board.adjacentTiles(15,8);
+       Assertions.assertTrue(tiles3.isEmpty());
+
+        ArrayList<Board.Tile> tiles4 = Board.adjacentTiles(13,2);
+        Assertions.assertTrue(tiles4.isEmpty());
+
+        ArrayList<Board.Tile> tiles5 = Board.adjacentTiles(14,5);
+        Assertions.assertTrue(tiles5.isEmpty());
     }
 
     @Test

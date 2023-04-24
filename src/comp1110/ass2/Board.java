@@ -112,7 +112,7 @@ public class Board {
 
     public static ArrayList<Tile> adjacentTiles(int col, int row) {
         ArrayList<Tile> adjacent = new ArrayList<>();
-        if (col < 0 || (row % 2 == 0 && col > boardSize - 1) || (row % 2 != 0 && col > boardSize)  || row < 0 || row > boardSize) {
+        if (col < 0 || (row % 2 == 0 && col > boardSize - 2) || (row % 2 != 0 && col > boardSize - 1)  || row < 0 || row > boardSize) {
             return adjacent;
         }
         // check Left
