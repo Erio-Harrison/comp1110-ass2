@@ -6,11 +6,12 @@ import java.util.*;
 
 public class Board {
 
-    public static int boardSize;
 
+    public static int boardSize;
 
     public static int numOfIslands;
     public static Tile[][] tiles;
+
 
     // Generates a board and initialises all the tiles
     public Board(int boardsize) {
@@ -79,7 +80,7 @@ public class Board {
             adjacent.add(tiles[col-1][row]);
         }
         // check Right
-        if (col < boardSize) {
+        if (col < boardSize-1) {
             adjacent.add(tiles[col+1][row]);
         }
         // Check Up
@@ -87,7 +88,7 @@ public class Board {
             adjacent.add(tiles[col][row-1]);
         }
         // CHeck Down
-        if (row > boardSize) {
+        if (row < boardSize-1) {
             adjacent.add(tiles[col][row+1]);
         }
 
