@@ -19,10 +19,16 @@ public class Board {
     public Board(int boardsize) {
         this.boardSize = boardsize;
         this.numOfIslands = 0;
-        this.tiles =  new Tile[boardSize][boardSize];
-        for (int k = 0; k < boardsize; k ++) {
-            for (int i = 0; i < boardsize; i ++) {
-                tiles[k][i] = new Tile();
+
+        for (int row = 0; row < boardSize; row++) {
+            if (row % 2 == 0) {
+                for (int col = 0; col < boardSize - 1; col++) {
+                    tiles[col][row] = new Tile();
+                }
+            } else {
+                for (int col = 0; col < boardsize; col++) {
+                    tiles[col][row] = new Tile();
+                }
             }
         }
 
