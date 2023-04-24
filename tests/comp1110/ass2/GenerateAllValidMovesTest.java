@@ -28,10 +28,10 @@ public class GenerateAllValidMovesTest implements TestMapNamePlayerCount {
     }
     private static void test(Set<String> expected, String input){
         Set<String> actual  = BlueLagoon.generateAllValidMoves(input);
-        Set<String> symmetricDiff = symmetricDifference(expected, actual);
         Assertions.assertEquals(expected, actual, "Sets are not equal for state: " + input + "\n"
-        + "expected: " + expected + "\nactual: " +actual+ "\nsymmetric difference: " + symmetricDiff);
+                + "expected: " + expected + "\nactual: " + actual);
     }
+
 
 
     private static void testGame(List<String> game, List<Set<String>> solutions){
