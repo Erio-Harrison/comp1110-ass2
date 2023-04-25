@@ -319,7 +319,6 @@ public class Board {
                 int pos = 9;
                 for (int l = pos; !split[l].equals("T"); l++) {
                     String[] settlers = split[l].split(",");
-                    //System.out.println("coord:" + settlers[0] + ", " + settlers[1] + ": " + this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier);
                     this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info;
                     pos += 1;
                 }
@@ -384,7 +383,7 @@ public class Board {
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     //
 
-    public int countPoints(int player, int gamestate) {
+    public int countPoints(int player) {
         //**Total Islands**
         //
         //Players score points for the resources they claimed during the phase.
@@ -429,9 +428,9 @@ public class Board {
 
                 // if tile is occupied by player
                 if (tile.occupier == player) {
-
                     // set of all islands occupied by player
                     islands.add(tile.island);
+
                     // adds all pieces on the board to a list
                     allPieces = addPieces(tile, x, y, shortlong, allPieces);
                 }
