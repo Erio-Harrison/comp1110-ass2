@@ -40,7 +40,53 @@ public class Board {
 
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public static void reset(int gamestate) {
+    public void reset(int gamestate) {
+        ArrayList<Tile> stoneCoords = new ArrayList();
+        if(gamestate == 1){
+            // resources are removed
+            for (int k = 0; k < boardSize; k ++) {
+                for (int i = 0; i < boardSize; i ++) {
+                    tiles[k][i].resource=null;
+                    if (tiles[k][i].isStoneCircle){
+                        tiles[k][i].village = 0;
+                        stoneCoords.add(tiles[k][i]);
+                    }
+                }
+            }
+            Tile[] rscrsSub = new Tile[6];
+            int i = 0;
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.BBOO;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.STON;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.WATR;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < 6; i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.COCO;
+                stoneCoords.remove(random);
+            }
+            for (i = 0;i < stoneCoords.size(); i++){
+                int random = (int)(Math.random() * stoneCoords.size());
+                rscrsSub[i] = stoneCoords.get(random);
+                rscrsSub[i].resource = Tile.Resource.STAT;
+                stoneCoords.remove(random);
+            }
+        }
+
     }
 
     // =====================================================================
@@ -49,11 +95,54 @@ public class Board {
     // relevant values
     // int x -> x coordinate of tile
     // int y -> y coordinate of tile
+    // int piece -> int representing the piece 0 = settler 1 = village
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     // int player -> int representing which player is currently in play
-    public static boolean setSettler(int x, int y, int gamestate, int player) {
+    public static boolean setSettler(int x, int y, int player, int piece,int gamestate) {
+        if (gamestate == 0){
+            if (isValidExploration(x,y,player,piece)){
+                tiles[x][y].occupier = player;
+                return true;
+            }
+        }
+        else if(gamestate == 1){
+            if (isValidSettle(x,y,player,piece)){
+                tiles[x][y].occupier = player;
+                return true;
+            }
+        }
+        return false;
+    }
+    // checks if a tile is a valid tile for settler to be placed.
+    // int x -> x coordinate of tile
+    // int y -> y coordinate of tile
+    // int player -> player
+    // int piece -> int representing the piece 0 = settler 1 = village
+    //
+    public static boolean isValidSettle (int x, int y, int player, int piece){
+        // Out of bounds
+        if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
+            return false;
+        }
+        // Occupied
+        if (tiles[x][y].occupier != -1) {
+            return false;
+        }
+        // if piece is settler
+        if (piece == 0) {
+            if (tiles[x][y].type == 1) {
+                ArrayList<Tile> adjacent = adjacentTiles(x,y);
+                if (!containsPlayerTiles(player,adjacent)){
+                    return false;
+                }
+            }
+        }
+        else {
+            // can't place village
+            return false;
+        }
         return true;
-    };
+    }
 
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
@@ -427,7 +516,7 @@ public class Board {
     }
 
 
-    public static class Tile {
+    public class Tile {
         static int occupier;
         // if it is a stone circle, a resource may be generated on the tile
         Boolean isStoneCircle;

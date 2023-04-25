@@ -17,22 +17,11 @@ public class GenerateAllValidMovesTest implements TestMapNamePlayerCount {
     private final GameDataLoader gameDataLoader = new GameDataLoader();
     private final AllValidMovesDataLoader loader = new AllValidMovesDataLoader();
 
-    private static <T> Set<T> symmetricDifference(Set<T> a, Set<T> b) {
-        Set<T> result = new HashSet<>(a);
-        for (T element : b) {
-            if (!result.add(element)) {
-                result.remove(element);
-            }
-        }
-        return result;
-    }
     private static void test(Set<String> expected, String input){
         Set<String> actual  = BlueLagoon.generateAllValidMoves(input);
-        Set<String> symmetricDiff = symmetricDifference(expected, actual);
         Assertions.assertEquals(expected, actual, "Sets are not equal for state: " + input + "\n"
-        + "expected: " + expected + "\nactual: " +actual+ "\nsymmetric difference: " + symmetricDiff);
+                + "expected: " + expected + "\nactual: " + actual);
     }
-
 
     private static void testGame(List<String> game, List<Set<String>> solutions){
         for (int i = 0; i < solutions.size(); i++) {
