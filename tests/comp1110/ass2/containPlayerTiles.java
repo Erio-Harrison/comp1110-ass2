@@ -93,7 +93,7 @@ class containPlayerTiles {
         Assertions.assertEquals(expect1,actual1);
     }
     @Test
-    public void normalFalseCase(){
+    public void falseCase(){
         //top left corner
         Board newBoard = new Board(13);
         Board.getTiles(6,5).setPlayer(1);
@@ -122,7 +122,7 @@ class containPlayerTiles {
         //down left corner
         Board.getTiles(5,4).setPlayer(3);
         Board.getTiles(2,11).setPlayer(7);
-        Board.getTiles(10,12).setPlayer(2);
+        Board.getTiles(10,11).setPlayer(2);
         Board.getTiles(2,11).setPlayer(2);
         ArrayList<Board.Tile> test4 = Board.adjacentTiles(0,12);
         Boolean actual4 = Board.containsPlayerTiles(3,test4);
@@ -135,11 +135,13 @@ class containPlayerTiles {
         Board.getTiles(1,2).setPlayer(5);
         Board.getTiles(11,1).setPlayer(5);
         ArrayList<Board.Tile> test5 = Board.adjacentTiles(12,12);
-        Boolean actual5 = Board.containsPlayerTiles(2,test4);
+        Boolean actual5 = Board.containsPlayerTiles(2,test5);
         Boolean expect5 = Boolean.FALSE;
         Assertions.assertEquals(expect5,actual5);
 
     }
+
+
 
     }
 
