@@ -25,8 +25,8 @@ public class pieceNodeTest {
             // for each tile
             for (int y = 0; y < k.length + len; y ++) {
                 Board.Tile tile = k[y];
-                System.out.print(tile.occupier + 1);
-                System.out.print(" ");
+                //System.out.print(tile.occupier);
+                //System.out.print(" ");
                 // if tile is occupied by player
                 if (tile.occupier == player) {
                     // adds all pieces on the board to a list
