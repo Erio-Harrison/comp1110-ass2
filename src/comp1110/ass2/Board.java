@@ -21,15 +21,13 @@ public class Board {
         this.numOfIslands = 0;
         this.tiles = new Tile[boardSize][boardSize];
         for (int row = 0; row < boardSize; row++) {
+            var len = 0;
             if (row % 2 == 0) {
-                for (int col = 0; col < boardSize - 1; col++) {
-                    this.tiles[col][row] = new Tile();
-                }
-            } else {
-                for (int col = 0; col < boardSize; col++) {
-                    this.tiles[col][row] = new Tile();
-                }
+                len = -1;
             }
+                for (int col = 0; col < boardSize + len; col++) {
+                    this.tiles[row][col] = new Tile();
+                }
         }
     }
 
@@ -218,7 +216,7 @@ public class Board {
             if (col < boardSize-2) {
                 adjacent.add(tiles[col+1][row]);
             }
-        } else {
+        } else if (row % 2 != 0) {
             if (col < boardSize-1) {
                 adjacent.add(tiles[col+1][row]);
             }
@@ -227,26 +225,41 @@ public class Board {
         // Check Up
         if (row > 0) {
             if (row % 2 == 0) {
-                adjacent.add(tiles[col+1][row]);
-                adjacent.add(tiles[col][row]);
+                adjacent.add(tiles[col+1][row-1]);
+                adjacent.add(tiles[col][row-1]);
             } else if (row % 2 != 0) {
                 if (col == 0) {
-                    adjacent.add(tiles[col][row]);
+                    adjacent.add(tiles[col][row-1]);
                 } else if (col == boardSize - 1) {
-                    adjacent.add(tiles[col-1][row]);
+                    adjacent.add(tiles[col-1][row-1]);
                 } else {
-                    adjacent.add(tiles[col-1][row]);
-                    adjacent.add(tiles[col][row]);
+                    adjacent.add(tiles[col-1][row-1]);
+                    adjacent.add(tiles[col][row-1]);
 
                 }
 
             }
-            if (row < boardSize-1) {
+
+        }
+        // Check Down
+        if (row < boardSize - 1) {
+            if (row % 2 == 0) {
+                adjacent.add(tiles[col][row+1]);
+                adjacent.add(tiles[col+1][row+1]);
+            } else if (row % 2 != 0) {
+                if (col == 0) {
+                    adjacent.add(tiles[col][row+1]);
+                } else if (col == boardSize - 1) {
+                    adjacent.add(tiles[col-1][row+1]);
+                } else {
+                    adjacent.add(tiles[col-1][row+1]);
+                    adjacent.add(tiles[col][row+1]);
+
+                }
 
             }
 
         }
-
 
 
 
@@ -303,6 +316,7 @@ public class Board {
                 int pos = 9;
                 for (int l = pos; !split[l].equals("T"); l++) {
                     String[] settlers = split[l].split(",");
+                    //System.out.println("coord:" + settlers[0] + ", " + settlers[1] + ": " + this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier);
                     this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info;
                     pos += 1;
                 }
@@ -517,7 +531,7 @@ public class Board {
 
 
     public class Tile {
-        static int occupier;
+        int occupier;
         // if it is a stone circle, a resource may be generated on the tile
         Boolean isStoneCircle;
 
@@ -545,8 +559,8 @@ public class Board {
 
         // sets the occupier of the tile
         // int player -> player
-        public static void setPlayer(int player) {
-            occupier = player;
+        public void setPlayer(int player) {
+            this.occupier = player;
         };
 
         public Tile() {
