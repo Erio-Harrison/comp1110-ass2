@@ -218,7 +218,7 @@ public class Board {
             if (col < boardSize-2) {
                 adjacent.add(tiles[col+1][row]);
             }
-        } else {
+        } else if (row % 2 != 0) {
             if (col < boardSize-1) {
                 adjacent.add(tiles[col+1][row]);
             }
@@ -227,26 +227,41 @@ public class Board {
         // Check Up
         if (row > 0) {
             if (row % 2 == 0) {
-                adjacent.add(tiles[col+1][row]);
-                adjacent.add(tiles[col][row]);
+                adjacent.add(tiles[col+1][row-1]);
+                adjacent.add(tiles[col][row-1]);
             } else if (row % 2 != 0) {
                 if (col == 0) {
-                    adjacent.add(tiles[col][row]);
+                    adjacent.add(tiles[col][row-1]);
                 } else if (col == boardSize - 1) {
-                    adjacent.add(tiles[col-1][row]);
+                    adjacent.add(tiles[col-1][row-1]);
                 } else {
-                    adjacent.add(tiles[col-1][row]);
-                    adjacent.add(tiles[col][row]);
+                    adjacent.add(tiles[col-1][row-1]);
+                    adjacent.add(tiles[col][row-1]);
 
                 }
 
             }
-            if (row < boardSize-1) {
+
+        }
+        // Check Down
+        if (row < boardSize - 1) {
+            if (row % 2 == 0) {
+                adjacent.add(tiles[col][row+1]);
+                adjacent.add(tiles[col+1][row+1]);
+            } else if (row % 2 != 0) {
+                if (col == 0) {
+                    adjacent.add(tiles[col][row+1]);
+                } else if (col == boardSize - 1) {
+                    adjacent.add(tiles[col-1][row+1]);
+                } else {
+                    adjacent.add(tiles[col-1][row+1]);
+                    adjacent.add(tiles[col][row+1]);
+
+                }
 
             }
 
         }
-
 
 
 
