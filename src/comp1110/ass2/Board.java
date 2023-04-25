@@ -192,7 +192,14 @@ public class Board {
 
 
     // check if a players neighbours tiles contains one that is occupied.
-
+    public static Boolean containsPlayerTiles(int player, ArrayList<Tile> adjacent) {
+        for (Tile n : adjacent) {
+            if (n.occupier == player) {
+                return true;
+            }
+        }
+        return false;
+    }
     // helper method to get neighbouring pieces
 
     public static ArrayList<Tile> adjacentTiles(int col, int row) {
