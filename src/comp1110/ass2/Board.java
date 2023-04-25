@@ -61,6 +61,10 @@ public class Board {
     // int player -> player
     // int piece -> int representing the piece 0 = settler 1 = village
     //
+
+    public static boolean isValidSettlement() {
+        return false;
+    }
     public static boolean isValidExploration (int x, int y, int player, int piece) {
         // Out of bounds
         if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
@@ -73,7 +77,8 @@ public class Board {
         }
         // if piece is settler
         if (piece == 0) {
-            if (tiles[x][y].type == 1) {
+            // tile is a water tile
+            if (tiles[x][y].type == 0) {
                 return true;
             } else {
                 ArrayList<Tile> adjacent = adjacentTiles(x,y);
@@ -85,7 +90,7 @@ public class Board {
             // village piece
         } else {
             // Village can't be place on water
-            if (tiles[x][y].type == 1) {
+            if (tiles[x][y].type == 0) {
                 return false;
             }
 
@@ -132,41 +137,31 @@ public class Board {
 
         // Check Up
         if (row > 0) {
-            // left up
-            if (col == 0) {
-                adjacent.add(tiles[col][row-1]);
-            } else if (row % 2 == 0 && col == boardSize - 2) {
-                adjacent.add(tiles[col][row-1]);
-                adjacent.add(tiles[col+1][row-1]);
-            } else if (row % 2 != 0 && col == boardSize) {
-                adjacent.add(tiles[col-1][row-1]);
-            } else if (row % 2 == 0 && col < boardSize - 2) {
-                adjacent.add(tiles[col-1][row-1]);
-                adjacent.add(tiles[col][row-1]);
-            } else if (row % 2 != 0 && col < boardSize - 2) {
-                adjacent.add(tiles[col+1][row-1]);
-                adjacent.add(tiles[col][row-1]);
+            if (row % 2 == 0) {
+                adjacent.add(tiles[col+1][row]);
+                adjacent.add(tiles[col][row]);
+            } else if (row % 2 != 0) {
+                if (col == 0) {
+                    adjacent.add(tiles[col][row]);
+                } else if (col == boardSize - 1) {
+                    adjacent.add(tiles[col-1][row]);
+                } else {
+                    adjacent.add(tiles[col-1][row]);
+                    adjacent.add(tiles[col][row]);
+
+                }
+
             }
+            if (row < boardSize-1) {
+
+            }
+
         }
 
 
-        // Check Down
-        if (row < boardSize-1) {
-            if (col == 0) {
-                adjacent.add(tiles[col][row+1]);
-            } else if (row % 2 == 0 && col == boardSize - 2) {
-                adjacent.add(tiles[col][row+1]);
-                adjacent.add(tiles[col+1][row+1]);
-            } else if (row % 2 != 0 && col == boardSize) {
-                adjacent.add(tiles[col-1][row+1]);
-            } else if (row % 2 == 0 && col < boardSize - 2) {
-                adjacent.add(tiles[col-1][row+1]);
-                adjacent.add(tiles[col][row+1]);
-            } else if (row % 2 != 0 && col < boardSize - 2) {
-                adjacent.add(tiles[col+1][row+1]);
-                adjacent.add(tiles[col][row+1]);
-            }
-        }
+
+
+
 
         return adjacent;
     }
