@@ -566,7 +566,14 @@ public class BlueLagoon {
      * the score for each player
      */
     public static int[] calculateTotalIslandsScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            returnValue[k] = pointCounter.islandsCounter();
+        }
+        return returnValue; // FIXME Task 11
     }
 
     /**
@@ -672,7 +679,20 @@ public class BlueLagoon {
      * @return an integer array containing the calculated scores for each player
      */
     public static int[] calculateScores(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            var points = 0;
+            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            points += pointCounter.islandsCounter();
+            points += pointCounter.majorityIslandsCounter(test.board.islandToPoints);
+            points += pointCounter.linkCounter();
+            points += test.board.resourcesPoints(k);
+
+            returnValue[k] = points;
+        }
+        return returnValue;  // FIXME Task 11
     }
 
     /**

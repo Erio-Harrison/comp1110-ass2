@@ -441,7 +441,6 @@ public class Board {
         points += pointCounter.linkCounter();
         points += resourcesPoints(player);
 
-
         return points;
     }
 
