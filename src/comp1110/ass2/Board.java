@@ -390,7 +390,12 @@ public class Board {
 
     // creates a PieceNode object for a specific tile and adds this PieceNode object to all PieceNodes
     // it is beside to based on a list of PieceNodes.
-    public static List<PieceNode>  addNodePieces(Tile tile, int x, int y, int shortlong, List<PieceNode> allPieces) {
+    // even = -1, odd = 1
+    //  0 0 0 0
+    // 0 0 0 0 0
+    //  0 0 0 0
+    // 0 0 0 0 0
+    public static List<PieceNode> addNodePieces(Tile tile, int x, int y, int shortlong, List<PieceNode> allPieces) {
         PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
         allPieces.add(currentNode);
         for (PieceNode node: allPieces) {
@@ -398,10 +403,23 @@ public class Board {
                     || node.x == x && node.y - y == -1
                     || node.x - x == 1 && node.y == y
                     || node.x - x == -1 && node.y == y
-                    || node.x == x + 1 - (shortlong * 2) && node.y - y == -1
-                    || node.x == x + 1 - (shortlong * 2) && node.y - y == 1) {
+                    ) {
                 node.edges.add(currentNode);
                 currentNode.edges.add(node);
+            }
+            if (shortlong == -1) {
+                if (node.x == x + shortlong && node.y - y == 1 || node.x + shortlong == x && node.y - y == -1) {
+                    node.edges.add(currentNode);
+                    currentNode.edges.add(node);
+                }
+            }
+            else if (shortlong == 1) {
+                if (node.x == x + shortlong && node.y - y == 1 || node.x + shortlong == x && node.y - y == -1) {
+                    node.edges.add(currentNode);
+                    currentNode.edges.add(node);
+                }
+
+
             }
         }
         return allPieces;
@@ -423,7 +441,6 @@ public class Board {
         points += pointCounter.linkCounter();
         points += resourcesPoints(player);
 
-        System.out.println("total points" + points );
 
         return points;
     }
@@ -477,7 +494,10 @@ public class Board {
                 branchLen.add(node.nodeRunner(new HashSet<>(), new ArrayList<>()).size());
             }
             Collections.sort(branchLen);
-            return branchLen.get(branchLen.size() - 1);
+            if (branchLen.size() >= 1) {
+                return branchLen.get(branchLen.size() - 1)*5;
+            }
+            return 0;
         }
 
         public int majorityIslandsCounter(List<Integer> islandToPoints) {
@@ -531,13 +551,13 @@ public class Board {
 
             for (Tile[] k: tiles) {
                 len = 0;
-                shortlong = 0;
+                shortlong = 1;
 
                 if (x % 2 == 0) {
                     len = -1;
-                    shortlong = 1;
+                    shortlong = -1;
+                    //System.out.print(" ");
                 }
-
                 // for each tile
                 for (int y = 0; y < k.length + len; y ++) {
                     Tile tile = k[y];
@@ -596,7 +616,6 @@ public class Board {
                     islands.addAll(this.edges.get(k).nodeRunner(islands, previousNodes));
                 }
             }
-
             return islands;
         }
 
