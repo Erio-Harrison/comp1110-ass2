@@ -313,21 +313,16 @@ public class BlueLagoon {
     }
 
     public static Boolean helper(int[] pos, int[][] mapstatus, int a, int b, int currentPlayerId) {
-        if (pos[1] != 1) {
-            if (mapstatus[a][b + 1] == currentPlayerId) {return true;}
-        }
-
-        if (pos[1] != -1) {
-            if (mapstatus[a][b - 1] == currentPlayerId) {return true;}
-        }
         var add = -1;
         if (a % 2 == 0) {
             add = 1;
         }
-        if (pos[0] != -1 && mapstatus[a - 1][b] == currentPlayerId) {return true;}
-        if (pos[0] != -1 && pos[1] != add && mapstatus[a - 1][b + add] == currentPlayerId) {return true;}
-        if (pos[0] != 1 && mapstatus[a + 1][b] == currentPlayerId) {return true;}
-        if (pos[0] != 1 && pos[1] != add && mapstatus[a + 1][b + add] == currentPlayerId) {return true;}
+        if (pos[1] != 1 && mapstatus[a][b + 1] == currentPlayerId ||
+                pos[1] != -1 && mapstatus[a][b - 1] == currentPlayerId ||
+                pos[0] != -1 && mapstatus[a - 1][b] == currentPlayerId ||
+                pos[0] != -1 && pos[1] != add && mapstatus[a - 1][b + add] == currentPlayerId ||
+                pos[0] != 1 && mapstatus[a + 1][b] == currentPlayerId ||
+                pos[0] != 1 && pos[1] != add && mapstatus[a + 1][b + add] == currentPlayerId) {return true;}
 
         return false;
     }
