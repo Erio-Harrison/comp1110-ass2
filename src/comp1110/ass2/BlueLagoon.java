@@ -610,7 +610,14 @@ public class BlueLagoon {
      * of the score for each player
      */
     public static int[] calculateIslandMajoritiesScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            returnValue[k] = pointCounter.majorityIslandsCounter(test.board.islandToPoints);
+        }
+         return returnValue; // FIXME Task 11
     }
 
     /**
