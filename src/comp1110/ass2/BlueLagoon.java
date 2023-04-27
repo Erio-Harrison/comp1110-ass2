@@ -320,35 +320,15 @@ public class BlueLagoon {
         if (pos[1] != -1) {
             if (mapstatus[a][b - 1] == currentPlayerId) {return true;}
         }
+        var add = -1;
         if (a % 2 == 0) {
-            if (pos[0] != -1) {
-                if (mapstatus[a - 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != 1) {
-                    if (mapstatus[a - 1][b + 1] == currentPlayerId) {return true;}
-                }
-            }
-            if (pos[0] != 1) {
-                if (mapstatus[a + 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != 1) {
-                    if (mapstatus[a + 1][b + 1] == currentPlayerId) {return true;}
-                }
-            }
+            add = 1;
         }
-        else {
-            if (pos[0] != -1) {
-                if (mapstatus[a - 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != -1) {
-                    if (mapstatus[a - 1][b - 1] == currentPlayerId) {return true;}
-                }
-            }
+        if (pos[0] != -1 && mapstatus[a - 1][b] == currentPlayerId) {return true;}
+        if (pos[0] != -1 && pos[1] != add && mapstatus[a - 1][b + add] == currentPlayerId) {return true;}
+        if (pos[0] != 1 && mapstatus[a + 1][b] == currentPlayerId) {return true;}
+        if (pos[0] != 1 && pos[1] != add && mapstatus[a + 1][b + add] == currentPlayerId) {return true;}
 
-            if (pos[0] != 1) {
-                if (mapstatus[a + 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != -1) {
-                    if (mapstatus[a + 1][b - 1] == currentPlayerId) {return true;}
-                }
-            }
-        }
         return false;
     }
 
@@ -683,13 +663,7 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         for (int k = 0; k < test.numOfPlayers; k ++) {
-            var points = 0;
-            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
-            points += pointCounter.islandsCounter();
-            points += pointCounter.majorityIslandsCounter(test.board.islandToPoints);
-            points += pointCounter.linkCounter();
-            points += test.board.resourcesPoints(k);
-
+            var points = test.board.countPoints(k);
             returnValue[k] = points;
         }
         return returnValue;  // FIXME Task 11

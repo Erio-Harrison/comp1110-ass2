@@ -388,45 +388,6 @@ public class Board {
         }
     }
 
-    // creates a PieceNode object for a specific tile and adds this PieceNode object to all PieceNodes
-    // it is beside to based on a list of PieceNodes.
-    // even = -1, odd = 1
-    //  0 0 0 0
-    // 0 0 0 0 0
-    //  0 0 0 0
-    // 0 0 0 0 0
-    public static List<PieceNode> addNodePieces(Tile tile, int x, int y, int shortlong, List<PieceNode> allPieces) {
-        PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
-        allPieces.add(currentNode);
-        for (PieceNode node: allPieces) {
-            if (node.x == x && node.y - y == 1
-                    || node.x == x && node.y - y == -1
-                    || node.x - x == 1 && node.y == y
-                    || node.x - x == -1 && node.y == y
-                    ) {
-                node.edges.add(currentNode);
-                currentNode.edges.add(node);
-            }
-            if (shortlong == -1) {
-                if (node.x == x + shortlong && node.y - y == 1 || node.x + shortlong == x && node.y - y == -1) {
-                    node.edges.add(currentNode);
-                    currentNode.edges.add(node);
-                }
-            }
-            else if (shortlong == 1) {
-                if (node.x == x + shortlong && node.y - y == 1 || node.x + shortlong == x && node.y - y == -1) {
-                    node.edges.add(currentNode);
-                    currentNode.edges.add(node);
-                }
-
-
-            }
-        }
-        return allPieces;
-    }
-
-    // =====================================================================
-
     // counts the total points obtained by a particular player
     // int player -> player the board is currently checking
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
@@ -443,10 +404,6 @@ public class Board {
 
         return points;
     }
-
-    public static int count4(int player, int gamestate) {return 0;}
-    public static int count3(int player, int gamestate) {return 0;}
-    public static int count2(int player, int gamestate) {return 0;}
 
     // returns an integer array of all points of each player
     public static int[] countAll() {
@@ -480,6 +437,61 @@ public class Board {
         List<PieceNode> allPieces;
         ArrayList<Integer>[] playersOnIslands;
 
+        public PlayerPointCounter(int player, Tile[][] tiles, int numOfIslands) {
+            this.player = player;
+            this.numOfIslands = numOfIslands;
+            this.islands = new HashSet<>();
+            this.allPieces = new ArrayList<>();
+            this.playersOnIslands = new ArrayList[numOfIslands + 1];
+
+            for (int i = 0; i < numOfIslands + 1; i++) {
+                playersOnIslands[i] = new ArrayList<>();
+            }
+
+            int len;
+            int x = 0;
+
+            for (Tile[] k: tiles) {
+                len = 0;
+                if (x % 2 == 0) {len = -1;}
+
+                for (int y = 0; y < k.length + len; y ++) {
+                    Tile tile = k[y];
+
+                    // if tile is occupied by player
+                    if (tile.occupier == player) {
+                        // set of all islands occupied by (number of islands occupied)
+                        if (tile.island != 0) {islands.add(tile.island);};
+
+                        // adds all pieces on the board to a list (linked islands)
+                        addNodePieces(tile, x, y, len);
+                    }
+                    // adds to a counter to the number of pieces which appear per island per player (majority islands)
+                    if (tile.occupier != -1) {
+                        playersOnIslands[tile.island].add(tile.occupier);
+                    }
+                }
+                x += 1;
+            }
+        }
+
+        public List<PieceNode> addNodePieces(Tile tile, int x, int y, int shortlong) {
+            PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
+            this.allPieces.add(currentNode);
+            for (PieceNode node: this.allPieces) {
+                if (node.x == x && node.y - y == 1
+                        || node.x == x && node.y - y == -1
+                        || node.x - x == 1 && node.y == y
+                        || node.x - x == -1 && node.y == y
+                        || node.x == x + 1 + 2*(shortlong) && node.y - y == 1
+                        || node.x + 1 + 2*(shortlong) == x && node.y - y == -1) {
+                    node.edges.add(currentNode);
+                    currentNode.edges.add(node);
+                }
+            }
+            return allPieces;
+        }
+
         public int islandsCounter() {
             if (islands.size() >= 8) {return 20;}
             else if (islands.size() == 7) {return 10;}
@@ -502,7 +514,6 @@ public class Board {
         public int majorityIslandsCounter(List<Integer> islandToPoints) {
             Integer points = 0;
             List<Integer> islandsWon = new ArrayList<>();
-            List<Integer> halfIslandsWon = new ArrayList<>();
             for (int k = 1; k < playersOnIslands.length; k ++ ) {
                 var island = playersOnIslands[k];
                 var playerCount = 0;
@@ -514,68 +525,18 @@ public class Board {
                 }
                 if (island.size() > 0) {
                     if (playerCount > island.size()/2) {
-                        islandsWon.add(k);
+                        islandsWon.add(islandToPoints.get(k - 1));
                     }
                     else if (playerCount == (float) (island.size())/2) {
-                        halfIslandsWon.add(k);
+                        islandsWon.add(islandToPoints.get(k - 1)/2);
                     }
                 }
             }
 
             for (int k = 0; k < islandsWon.size(); k ++) {
-                points += islandToPoints.get(islandsWon.get(k) - 1);
-            }
-
-            for (int k = 0; k < halfIslandsWon.size(); k ++) {
-                points += islandToPoints.get(halfIslandsWon.get(k) - 1)/2;
+                points += islandsWon.get(k);
             }
             return points;
-        }
-
-
-        public PlayerPointCounter(int player, Tile[][] tiles, int numOfIslands) {
-            this.player = player;
-            this.numOfIslands = numOfIslands;
-            this.islands = new HashSet<>();
-            this.allPieces = new ArrayList<>();
-            this.playersOnIslands = new ArrayList[numOfIslands + 1];
-
-            for (int i = 0; i < numOfIslands + 1; i++) {
-                playersOnIslands[i] = new ArrayList<Integer>();
-            }
-
-            int len;
-            int shortlong;
-            int x = 0;
-
-            for (Tile[] k: tiles) {
-                len = 0;
-                shortlong = 1;
-
-                if (x % 2 == 0) {
-                    len = -1;
-                    shortlong = -1;
-                    //System.out.print(" ");
-                }
-                // for each tile
-                for (int y = 0; y < k.length + len; y ++) {
-                    Tile tile = k[y];
-
-                    // if tile is occupied by player
-                    if (tile.occupier == player) {
-                        // set of all islands occupied by (number of islands occupied)
-                        if (tile.island != 0) {islands.add(tile.island);};
-
-                        // adds all pieces on the board to a list (linked islands)
-                        allPieces = addNodePieces(tile, x, y, shortlong, allPieces);
-                    }
-                    // adds to a counter to the number of pieces which appear per island per player (majority islands)
-                    if (tile.occupier != -1) {
-                        playersOnIslands[tile.island].add(tile.occupier);
-                    }
-                }
-                x += 1;
-            }
         }
     }
 
