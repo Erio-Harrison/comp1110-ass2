@@ -651,7 +651,13 @@ public class BlueLagoon {
      * portions of the score for each player
      */
     public static int[] calculateResourcesAndStatuettesScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = test.board.resourcesPoints(k);
+        }
+         return returnValue; // FIXME Task 11
     }
 
     /**
