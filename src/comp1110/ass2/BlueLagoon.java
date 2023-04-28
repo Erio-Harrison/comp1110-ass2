@@ -437,19 +437,10 @@ public class BlueLagoon {
         // our return value
         HashSet<String> ms=new HashSet<String>();
 
-
-
         for (int a=0;a < size ;a++) {
             for (int b = 0; b < size ; b++) {
                 String MoveString1 = "S " + a + "," + b;
                 String MoveString2 = "T " + a + "," + b;
-
-                if ( a < 0 || b < 0 || a > size - 1 || b > size - 1) {
-                    continue ;
-                }
-                if(a % 2 == 0 && b == 12){
-                    continue;
-                }
 
                 if (mapstatus[a][b] != 8){
                     continue;
