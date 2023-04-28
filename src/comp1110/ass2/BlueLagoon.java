@@ -332,13 +332,16 @@ public class BlueLagoon {
         int[][] layout = new int[size][size];
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
+                if (x == size - 1 && (y % 2 == 0)) {
                     layout[y][x] = 9;
                 } else {
                     layout[y][x] = status;
                 }
             }
         }
+        //for (var k: layout) {
+        //    System.out.println(Arrays.toString(k));
+        //}
         return layout;
     }
 
