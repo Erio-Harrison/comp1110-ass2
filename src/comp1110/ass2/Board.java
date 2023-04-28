@@ -8,12 +8,12 @@ import java.util.*;
 
 public class Board {
 
-    public static List<Player> playerList;
+    public List<Player> playerList;
     public static int boardSize;
 
-    public static int numOfIslands;
+    public int numOfIslands;
 
-    public static List<Integer> islandToPoints;
+    public List<Integer> islandToPoints;
     public static Tile[][] tiles;
 
 
@@ -342,7 +342,8 @@ public class Board {
                 for (int k = 3; k < 8; k ++) {
                     rsrcs[k - 3] = Integer.parseInt(split[k]);
                 }
-                this.playerList.add(new Player(Integer.parseInt(split[1]), Integer.parseInt(split[2]), rsrcs));
+                Player currentPlayer = new Player(Integer.parseInt(split[1]), Integer.parseInt(split[2]), rsrcs);
+                this.playerList.add(currentPlayer);
                 if (split[split.length -2].equals("S")) {
                     return;
                 }
@@ -351,6 +352,7 @@ public class Board {
                     String[] settlers = split[l].split(",");
                     this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info;
                     pos += 1;
+                    currentPlayer.settlers += 1;
                 }
                 pos += 1;
                 if (split[split.length -1].equals("T")) {
@@ -361,6 +363,7 @@ public class Board {
                     String[] settlers = split[l].split(",");
                     this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].occupier = info;
                     this.tiles[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])].village = 1;
+                    currentPlayer.villages += 1;
                 }
                 break;
 
@@ -423,10 +426,16 @@ public class Board {
         int points;
         Integer[] resources;
 
+        int settlers;
+
+        int villages;
+
         public Player(int id, int points, Integer[] resources) {
             this.id = id;
             this.points = points;
             this.resources = resources;
+            this.settlers = 0;
+            this.villages = 0;
         }
     }
 
