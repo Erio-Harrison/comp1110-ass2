@@ -166,6 +166,13 @@ public class BlueLagoon {
             }
             rsrcs.add(rscrsSub);
         }
+        for (var t: rsrcs) {
+            System.out.println(" ");
+            for (String s: (String[]) t) {
+                System.out.print( " " + s);
+            }
+        }
+        System.out.println("stop");
 
         // accumulate coordinates into rsrcs string
         String rsrcAccum = "r ";
@@ -429,7 +436,7 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         for (int k = 0; k < test.numOfPlayers; k ++) {
-            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
             returnValue[k] = pointCounter.islandsCounter();
         }
         return returnValue; // FIXME Task 11
@@ -457,7 +464,7 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         for (int k = 0; k < test.numOfPlayers; k ++) {
-            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
             returnValue[k] = pointCounter.linkCounter();
         }
         return returnValue;  // FIXME Task 11
@@ -487,7 +494,7 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         for (int k = 0; k < test.numOfPlayers; k ++) {
-            Board.PlayerPointCounter pointCounter = new Board.PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
             returnValue[k] = pointCounter.majorityIslandsCounter(test.board.islandToPoints);
         }
          return returnValue; // FIXME Task 11
