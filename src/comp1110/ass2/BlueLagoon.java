@@ -166,6 +166,13 @@ public class BlueLagoon {
             }
             rsrcs.add(rscrsSub);
         }
+        for (var t: rsrcs) {
+            System.out.println(" ");
+            for (String s: (String[]) t) {
+                System.out.print( " " + s);
+            }
+        }
+        System.out.println("stop");
 
         // accumulate coordinates into rsrcs string
         String rsrcAccum = "r ";
@@ -207,203 +214,115 @@ public class BlueLagoon {
      * @param moveString a string representing the current player's move
      * @return true if the current player can make the move and false otherwise
      */
-    //0:sea
-    //1:island/land
-    //2:occupied settler
-    //3:occupied village
-    //4:current player occupied settler
-    //5:current player occupied village
     public static boolean isMoveValid(String stateString, String moveString) {
-        String[] stateArray = stateString.split("; |;");
-        int length = stateArray.length;
+        Model test = new Model();
+        test.toModel(stateString);
 
-        //gameArrangement
-        String[] gameArrangeStatement = stateArray[0].split(" ");
-        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);
-        int size = Integer.parseInt(gameArrangeStatement[1]);
-
-        //currentState
-        String[] currentStateStatement = stateArray[1].split(" ");
-        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
-        String phase = (currentStateStatement[2]);
-
-        //islands
-        int i = 2;
-        ArrayList islandState = (ArrayList) Arrays.stream(stateArray).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
-        i += islandState.size() + 2;
-
-        //player
-        List<String> playerStatement = new ArrayList<String>();
-        while (i < length) {
-            playerStatement.add(stateArray[i]);
-            i++;
+        int restSettlerPieces = 0;
+        int restVillagePieces = 0;
+        for (Board.Player k: test.board.playerList) {
+            if (k.id == test.currentPlayer) {
+                restSettlerPieces = 30 - ((test.numOfPlayers - 2) * 5) - k.settlers;
+                restVillagePieces = 5 - (k.villages);
+            }
         }
-        String currentPlayStatement = playerStatement.get(currentPlayerId);
-        String[] current = currentPlayStatement.split(" ");
-
-        int z = 9;
-        while (!current[z].equals("T")) {z++;}
-        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
-        int restVillagePieces= 5-current.length + z + 1;
-
-        // Generating layout of board
-        int[][] layout = generatelayout(size, 0);
-        int[][] mapstatus = generatelayout(size, 8);
-
-        // Setting islands on layout
-        layout = generateIslands(layout, islandState);
-
-        // generates map based on player
-        mapstatus = generateMapStatus(mapstatus, playerStatement);
 
         // moveString
         String[] mve = moveString.split(" ");
         String pieceType = mve[0];
-        String[] targetCoordinate = mve[1].split(",");
-        int target_x = Integer.parseInt(targetCoordinate[0]);
-        int target_y = Integer.parseInt(targetCoordinate[1]);
+        int a = Integer.parseInt(mve[1].split(",")[0]);
+        int b = Integer.parseInt(mve[1].split(",")[1]);
+
+        int len = 0;
+        if (a % 2 == 0) {len = -1;}
 
         // if out of bounds return false
-        if (target_x < 0 || target_y < 0 || target_x > size - 1 || target_y > size - 1) {
+        if (a < 0 || b < 0 || a > test.board.boardSize - 1|| b > test.board.boardSize - 1 + len) {
             return false;
         }
-        // 8 = placable
-        else if (mapstatus[target_x][target_y] != 8){
+        else if (test.board.tiles[a][b].occupier != -1){
             return false;
         }
         else {
             // Exploration
             // sees if the position is touching the left right top or bottom side
             int[] pos = {0, 0};
-            if (target_x - 1 == -1) {
-                pos[0] = -1; //left side
-            }
-            else if (target_x + 1 == size) {
-                pos[0] = 1; //right side
-            }
-            if (target_y - 1 == -1) {
-                pos[1] = -1; //top
-            }
-            else if (target_y + 1 == size) {
-                pos[1] = 1; //bottom
-            }
+            if (a - 1 == -1) {pos[0] = -1;}
+            else if (a + 1 == test.board.boardSize) {pos[0] = 1;}
+            if (b - 1 == -1) {pos[1] = -1;}
+            else if (b + 1 == test.board.boardSize + len) {pos[1] = 1;}
 
-            if (phase.equals("E")) {
+            if (test.gamestate == 0) {
                 // Village
                 if (pieceType.equals("T")) {
-                    if (layout[target_x][target_y] == 0) {return false;}
+                    if (test.board.tiles[a][b].island == 0) {return false;}
                     if (restVillagePieces == 0) {return false;}
 
                 }
                 // Settler
                 else {
-                    if (layout[target_x][target_y] == 0) {return true;}
-                    if (restSettlerPiece == 0) return false;}
+                    if (test.board.tiles[a][b].island == 0) {return true;}
+                    if (restSettlerPieces == 0) return false;}
             }
 
-            else if(phase.equals("S")){
+            else if(test.gamestate == 1){
                 if(pieceType.equals("T")){return false;}
-                if(restSettlerPiece==0){return false;}
+                if(restSettlerPieces==0){return false;}
             }
-            if (helper( pos, mapstatus, target_x, target_y, currentPlayerId)) {
+            if (helper2( pos, test.board, a, b, test.currentPlayer)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static Boolean helper(int[] pos, int[][] mapstatus, int a, int b, int currentPlayerId) {
-        if (pos[1] != 1) {
-            if (mapstatus[a][b + 1] == currentPlayerId) {return true;}
+    public static Boolean helper2(int[] pos, Board mapstatus, int a, int b, int currentPlayerId) {
+        var evenRow = 0;
+        if (a % 2 == 0) {
+            evenRow = 1;
         }
 
-        if (pos[1] != -1) {
-            if (mapstatus[a][b - 1] == currentPlayerId) {return true;}
-        }
-        if (a % 2 == 0) {
-            if (pos[0] != -1) {
-                if (mapstatus[a - 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != 1) {
-                    if (mapstatus[a - 1][b + 1] == currentPlayerId) {return true;}
-                }
+        if ((pos[0] == -1 || pos[0] == 1)) {
+            if (pos[1] == 0) {
+                if (mapstatus.tiles[a][b - 1].occupier == currentPlayerId ||
+                        mapstatus.tiles[a][b + 1].occupier == currentPlayerId) {return true;}
             }
-            if (pos[0] != 1) {
-                if (mapstatus[a + 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != 1) {
-                    if (mapstatus[a + 1][b + 1] == currentPlayerId) {return true;}
-                }
+            else {
+                if (mapstatus.tiles[a][b - pos[1]].occupier == currentPlayerId) {return true;}
+            }
+
+            if (evenRow == 1 || (evenRow == 0 && pos[1] == 0)) {
+                if (mapstatus.tiles[a - pos[0]][b].occupier == currentPlayerId ||
+                        mapstatus.tiles[a - pos[0]][b +  1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+            }
+            else if (evenRow == 0) {
+                if (mapstatus.tiles[a - pos[0]][b -(pos[1] + 1)*(1/2)].occupier == currentPlayerId) {return true;}
+            }
+        }
+
+        else if (pos[0] == 0 && (pos[1] == -1||pos[1] == 1)) {
+            if (mapstatus.tiles[a][b-pos[1]].occupier == currentPlayerId) {return true;}
+
+            if (pos[1] == -1 || (pos[1] == 1 && evenRow == 1)) {
+                if (mapstatus.tiles[a-1][b].occupier == currentPlayerId ||
+                        mapstatus.tiles[a+1][b].occupier == currentPlayerId) {return true;}
+
+            }
+            if (evenRow == 1 || (pos[1] == 1 && evenRow == 0)) {
+                if (mapstatus.tiles[a-1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId ||
+                        mapstatus.tiles[a+1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
             }
         }
         else {
-            if (pos[0] != -1) {
-                if (mapstatus[a - 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != -1) {
-                    if (mapstatus[a - 1][b - 1] == currentPlayerId) {return true;}
-                }
-            }
-
-            if (pos[0] != 1) {
-                if (mapstatus[a + 1][b] == currentPlayerId) {return true;}
-                if (pos[1] != -1) {
-                    if (mapstatus[a + 1][b - 1] == currentPlayerId) {return true;}
-                }
-            }
+            if (mapstatus.tiles[a-1][b].occupier == currentPlayerId
+            || mapstatus.tiles[a+1][b].occupier == currentPlayerId
+            || mapstatus.tiles[a-1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
+            || mapstatus.tiles[a+1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
+            || mapstatus.tiles[a][b+1].occupier == currentPlayerId
+            || mapstatus.tiles[a][b-1].occupier == currentPlayerId) {return true;}
         }
+
         return false;
-    }
-
-    //generates a layout based on the size of the gameboard. the status parameter is to generate mapstatus
-    public static int[][] generatelayout(int size, int status) {
-        int[][] layout = new int[size][size];
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                if (x == size - 1 && (y == 0 || y % 2 == 0)) {
-                    layout[y][x] = 9;
-                } else {
-                    layout[y][x] = status;
-                }
-            }
-        }
-        return layout;
-    }
-
-    // takes a mapstatus and list of player statements, and adds all player pieces into the mapstatus
-    public static int[][] generateMapStatus(int[][] mapstatus, List<String> playerStatement) {
-        for (String p : playerStatement) {
-            String[] scores = p.split(" ");
-            if (scores[scores.length -2].equals("S")) {
-                continue;
-            }
-            int id  = Character.getNumericValue(p.charAt(2));
-            int pos = 9;
-            for (int l = pos; !scores[l].equals("T"); l++) {
-                String[] settlers = scores[l].split(",");
-                mapstatus[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])] = id; // 2 represents occupied settlers
-                pos += 1;
-            }
-            pos += 1;
-            if (scores[scores.length -1].equals("T")) {
-                continue;
-            }
-            // retrieve all villager coordinates
-            for (int l = pos; l < scores.length; l ++) {
-                String[] settlers = scores[l].split(",");
-                mapstatus[Integer.parseInt(settlers[0])][Integer.parseInt(settlers[1])] = id; // 3 represents occupied villages
-            }
-        }
-        return mapstatus;
-    }
-
-    // takes a layout and arraylist of island states and adds the specified islands into the layout
-    public static int[][] generateIslands(int[][] layout, ArrayList islandState){
-        for (Object j : islandState) {
-            String[] temp = ((String) j).split(" ");
-            for (int k = 2; k < temp.length; k++) {
-                String[] coord = temp[k].split(",");
-                layout[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])] = 1; // 1 represents island
-            }
-        }
-        return layout;
     }
 
 
@@ -417,101 +336,48 @@ public class BlueLagoon {
      * @return a set of strings representing all moves the current player can play
      */
     public static Set<String> generateAllValidMoves(String stateString) {
-        String[] stateArray = stateString.split("; |;");
-        int length = stateArray.length;
+        Model test = new Model();
+        test.toModel(stateString);
 
-        //gameArrangement
-        String[] gameArrangeStatement = stateArray[0].split(" ");
-        int numPlayers = Integer.parseInt(gameArrangeStatement[2]);
-        int size = Integer.parseInt(gameArrangeStatement[1]);
-
-        //currentState
-        String[] currentStateStatement = stateArray[1].split(" ");
-        int currentPlayerId = Integer.parseInt(currentStateStatement[1]);
-        String phase = (currentStateStatement[2]);
-
-        //islands
-        int i = 2;
-        ArrayList islandState = (ArrayList) Arrays.stream(stateArray).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
-        i += islandState.size() + 2;
-
-        //player
-        List<String> playerStatement = new ArrayList<String>();
-        while (i < length) {
-            playerStatement.add(stateArray[i]);
-            i++;
-        }
-        String currentPlayStatement = playerStatement.get(currentPlayerId);
-        String[] current = currentPlayStatement.split(" ");
-
-        int z = 9;
-        while (!current[z].equals("T")) {z++;}
-        int restSettlerPiece=(30-(numPlayers-2)*5)-(z-9);
-        int restVillagePieces= 5-current.length + z + 1;
-
-        // Generating layout of board
-        int[][] layout = generatelayout(size, 0);
-        int[][] mapstatus = generatelayout(size, 8);
-
-        // Setting islands on layout
-        layout = generateIslands(layout, islandState);
-
-        // generates map based on player
-        mapstatus = generateMapStatus(mapstatus, playerStatement);
-
-        // our return value
         HashSet<String> ms=new HashSet<String>();
-
-
-
-        for (int a=0;a < size ;a++) {
-            for (int b = 0; b < size ; b++) {
-                String MoveString1 = "S " + a + "," + b;
-                String MoveString2 = "T " + a + "," + b;
-
-                if ( a < 0 || b < 0 || a > size - 1 || b > size - 1) {
-                    continue ;
-                }
-                if(a % 2 == 0 && b == 12){
-                    continue;
-                }
-
-                if (mapstatus[a][b] != 8){
+        int len;
+        for (int a=0;a < test.board.boardSize ;a++) {
+            len = 0;
+            if (a % 2 == 0) {len = -1;}
+            for (int b = 0; b < test.board.boardSize + len ; b++) {
+                if (test.board.tiles[a][b].occupier != -1){
                     continue;
                 }
 
                 int[] pos = {0, 0};
-                if (a - 1 == -1) {
-                    pos[0] = -1; //left side
-                }
-                else if (a + 1 == size) {
-                    pos[0] = 1; //right side
-                }
-                if (b - 1 == -1) {
-                    pos[1] = -1; //top
-                }
-                else if (b + 1 == size) {
-                    pos[1] = 1; //bottom
-                }
-                if (phase.equals("S")) {
-                    if (restSettlerPiece != 0) {
-                        if (helper(pos, mapstatus, a, b, currentPlayerId)) {
-                            ms.add(MoveString1);
-                        }
+                if (a - 1 == -1) {pos[0] = -1;}
+                else if (a + 1 == test.board.boardSize) {pos[0] = 1;}
+                if (b - 1 == -1) {pos[1] = -1;}
+                else if (b + 1 == test.board.boardSize + len ) {pos[1] = 1;}
+
+                int restSettlerPieces = 0;
+                int restVillagePieces = 0;
+                for (Board.Player k: test.board.playerList) {
+                    if (k.id == test.currentPlayer) {
+                        restSettlerPieces = 30 - ((test.numOfPlayers - 2) * 5) - k.settlers;
+                        restVillagePieces = 5 - (k.villages);
                     }
                 }
-                else if (phase.equals("E")) {
-                    if (layout[a][b] == 0) {ms.add(MoveString1);}
+
+                if (test.gamestate == 1) {
+                    if (restSettlerPieces != 0 && helper2(pos, test.board, a, b, test.currentPlayer)) {
+                            ms.add("S " + a + "," + b);
+                    }
+                }
+                else if (test.gamestate == 0) {
+                    if (test.board.tiles[a][b].island == 0) {
+                        ms.add("S " + a + "," + b);}
                     else {
-                        if (restSettlerPiece != 0) {
-                            if (helper(pos, mapstatus, a, b, currentPlayerId)) {
-                                ms.add(MoveString1);
-                            }
+                        if (restSettlerPieces != 0 && helper2(pos, test.board, a, b,  test.currentPlayer)) {
+                                ms.add("S " + a + "," + b);
                         }
-                        if (restVillagePieces != 0) {
-                            if (helper(pos, mapstatus, a, b, currentPlayerId)) {
-                                ms.add(MoveString2);
-                            }
+                        if (restVillagePieces != 0 && helper2(pos, test.board, a, b,  test.currentPlayer)) {
+                                ms.add("T " + a + "," + b);
                         }
                     }
                 }
@@ -566,7 +432,14 @@ public class BlueLagoon {
      * the score for each player
      */
     public static int[] calculateTotalIslandsScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            returnValue[k] = pointCounter.islandsCounter();
+        }
+        return returnValue; // FIXME Task 11
     }
 
     /**
@@ -587,7 +460,14 @@ public class BlueLagoon {
      * the score for each player
      */
     public static int[] calculateIslandLinksScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            returnValue[k] = pointCounter.linkCounter();
+        }
+        return returnValue;  // FIXME Task 11
     }
 
     /**
@@ -610,7 +490,14 @@ public class BlueLagoon {
      * of the score for each player
      */
     public static int[] calculateIslandMajoritiesScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
+            returnValue[k] = pointCounter.majorityIslandsCounter(test.board.islandToPoints);
+        }
+         return returnValue; // FIXME Task 11
     }
 
     /**
@@ -637,7 +524,13 @@ public class BlueLagoon {
      * portions of the score for each player
      */
     public static int[] calculateResourcesAndStatuettesScore(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = test.board.resourcesPoints(k);
+        }
+         return returnValue; // FIXME Task 11
     }
 
     /**
@@ -652,7 +545,14 @@ public class BlueLagoon {
      * @return an integer array containing the calculated scores for each player
      */
     public static int[] calculateScores(String stateString){
-         return new int[]{0, 0}; // FIXME Task 11
+        int[] returnValue = new int[]{0, 0};
+        Model test = new Model();
+        test.toModel(stateString);
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            var points = test.board.countPoints(k);
+            returnValue[k] = points;
+        }
+        return returnValue;  // FIXME Task 11
     }
 
     /**
