@@ -13,10 +13,21 @@ public class Game extends Application {
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 700;
 
+
+
+    public void modelToGui() {
+
+    }
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.root, WINDOW_WIDTH, WINDOW_HEIGHT);
         stage.setScene(scene);
         stage.show();
+
+
+
+
+
+
     }
 }
