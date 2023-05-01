@@ -1,8 +1,8 @@
 ## Code Review
 
-Reviewed by: Tay Shao An, u7553225
+Reviewed by: <Tay Shao An>, <u7553225>
 
-Reviewing code written by: Wenxuan Cao, u7556980
+Reviewing code written by: <Wenxuan Cao> <u7556980>
 
 Component: Board.reset(), Board.isValidSettle()
 
