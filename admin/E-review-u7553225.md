@@ -10,6 +10,7 @@ Component: Board.reset(), Board.isValidSettle()
 
 Board.reset()
 What are the best features of this code?
+- Code is to the point and straightforward. No uneeded loops or if else statements.
 Is the code well-documented?
 - The function's purpose and its parameters are well documented
 - Lack of documentation within the code to explain what it is doing
@@ -19,7 +20,6 @@ Is the program decomposition (class and method structure) appropriate?
 
 
 Board.isValidSettle()
-What are the best features of this code?
 Is the code well-documented?
 - The function's purpose and its parameters are well documented
 - Comments placed within the function helps to understand what it is doing
