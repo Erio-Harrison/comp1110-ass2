@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ * Authored by Kenney Siu
  * A visual representation of a given stateString
  */
 

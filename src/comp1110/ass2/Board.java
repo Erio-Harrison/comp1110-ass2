@@ -35,7 +35,7 @@ public class Board {
         this.islandToPoints = new ArrayList<>();
     }
 
-
+// method to get tile of the board given a x and y coordinate
     public static Tile getTiles(int x,int y) {
         return tiles[x][y];
     }
