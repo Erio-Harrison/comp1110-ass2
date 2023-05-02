@@ -17,6 +17,9 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * A visual representation of a given stateString
+ */
 
 public class Viewer extends Application {
 
@@ -27,13 +30,14 @@ public class Viewer extends Application {
     private final Group controls = new Group();
     private TextField stateTextField;
 
+    // Constructor that is used to represent our game pieces
     static class Tile extends Rectangle {
         public Tile(double x, double y, double size, Color color) {
             super(x, y, size, size);
             this.setFill(color);
         }
     }
-
+    // Constructor Hexagon that is used to represent our board tiles, islands and stones
     static class Hexagon extends Polygon {
 
         Hexagon(double x, double y, double size, Color color) {
@@ -102,6 +106,10 @@ public class Viewer extends Application {
 
     }
 
+    /**
+     * Display a legend in the top right corner showing what each square or hexagon represents
+     */
+
     private void legend() {
         String[] legend = new String[]{"Board Tile", "Island", "Stones", "Coconuts", "Bamboo", "Water", "Precious Stone", "Statuettes", "Settlers", "Villages"};
         Color[] colours = new Color[]{Color.BLUE,Color.GREEN,Color.GREY, Color.WHEAT, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN, Color.BLACK, Color.FIREBRICK};
@@ -128,6 +136,13 @@ public class Viewer extends Application {
         root.getChildren().add(note);
     }
 
+    /**
+     * Given the Game Arrangement Statement of a state String, display game information and
+     * display the board as water tiles
+     * @param gameArrangementStatement a string representing a game state
+     * @param y the y coordinate to set for the text
+     * @param size the size our tiles should be
+     */
     private void displayArrangement(String gameArrangementStatement, int y, double size) {
         String[] arrangements = gameArrangementStatement.split(" ");
         Text layout = new Text("Layout: " + arrangements[1] + " high");
@@ -161,6 +176,11 @@ public class Viewer extends Application {
         root.getChildren().addAll(tiles);
 
     }
+    /**
+     * Given the stones Statement of a state String, display the stones as grey hexagons
+     * @param stonesStatement a string representing the stones Statement
+     * @param size the size our tiles should be
+     */
     private void displayStones(String stonesStatement, double size) {
         String coordinate = stoneCoordinates(stonesStatement);
         String[] statement = coordinate.split(" ");
@@ -180,7 +200,11 @@ public class Viewer extends Application {
 
         }
     }
-
+    /**
+     * Given the Unclaimed Resources Statement of a state String, display the unclaimed resources as squares
+     * @param resourcesStatement a string representing the resources Statement
+     * @param size the size our tiles should be
+     */
     private void displayUnclaimedResources(String resourcesStatement, double size) {
         String resources = "CBWPS";
         Color[] colours = new Color[]{Color.WHEAT, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN};
@@ -206,6 +230,11 @@ public class Viewer extends Application {
 
     }
 
+    /**
+     * Given the Island Statement of a state String, display the islands as green hexagons
+     * @param islandStatement a string representing a game state
+     * @param size the size our tiles should be
+     */
     private ArrayList<Text> displayIsland(String islandStatement, double size) {
         String[] statement = islandStatement.split(" ");
         String bonus = statement[1];
@@ -241,6 +270,11 @@ public class Viewer extends Application {
         return bonusTexts;
     }
 
+    /**
+     * Given a state String, return a substring that has the stones statement
+     * @param stateString stateString
+     * @return stoneStatement
+     */
     private static String stoneCoordinates(String stateString) {
         int startIndex = 0;
         int endIndex = 0;
@@ -260,7 +294,11 @@ public class Viewer extends Application {
         return stateString.substring(startIndex, endIndex);
     }
 
-
+    /**
+     * Given an islandStatement, return a substring that has the stones statement
+     * @param stateString islandStatement
+     * @return coordinates of the island statement
+     */
     private static String getCoordinates(String stateString) {
         int startIndex = 0;
         int endIndex = 0;
@@ -280,6 +318,13 @@ public class Viewer extends Application {
         return stateString.substring(startIndex, endIndex);
     }
 
+    /**
+     * Given an unclaimed Resource statement and a character representing the resource,
+     * return the coordinates of that resoruce
+     * @param statement unclaimed resource statement
+     * @param resource character representing resource
+     * @return coordinates of the unclaimed resources
+     */
     private static String getUnclaimedResources(String statement, char resource) {
         String string = "";
         if (resource == 'C') {
@@ -293,7 +338,13 @@ public class Viewer extends Application {
         } else string += getStatement(statement,'S',';');
         return string;
     }
-
+    /**
+     * Given a player statement and a double and an int, display the player information
+     * as well as the settlers and villages on the board
+     * @param playersStatement unclaimed resource statement
+     * @param y y coordinate to set text
+     * @param size size of the player tiles on the board
+     */
     private void displayPlayers(String playersStatement, int y, double size) {
     String[] statement = playersStatement.split(" ");
     Text player = new Text("Player " + statement[1] + " Statistics:");
@@ -371,7 +422,12 @@ public class Viewer extends Application {
     }
 
 
-
+    /**
+     * Given a current state statement, display information of the current phase, and current player move
+     * @param currentStateStatement stateString
+     * @param x x coordinate to set text
+     * @param y y coordinate to set text
+     */
     private void currentState(String currentStateStatement, int x, int y) {
         String[] statement = currentStateStatement.split(" ");
         String phase;
@@ -386,7 +442,14 @@ public class Viewer extends Application {
 
 
 
-
+    /**
+     * get the substring of a statestring between the start and end characters
+     *
+     * @param stateString stateString
+     * @param start starting character of string
+     * @param end ending character of string
+     * @return substring between start and end characters
+     */
     private static String getStatement(String stateString, char start, char end) {
         int startIndex = 0;
         int endIndex = 0;
