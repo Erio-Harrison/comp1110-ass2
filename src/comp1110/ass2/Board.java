@@ -7,13 +7,15 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board {
-
+    // List of players in a game
     public List<Player> playerList;
+    // the size of the board
     public static int boardSize;
-
+    // number of islands
     public int numOfIslands;
-
+    // islands to points
     public List<Integer> islandToPoints;
+    // array representing the tiles of the board
     public static Tile[][] tiles;
 
 
@@ -398,8 +400,11 @@ public class Board {
 
     //used to store the points and resources of each player
     public class Player {
+
         int id;
+
         int points;
+
         Integer[] resources;
 
         int settlers;
@@ -446,7 +451,7 @@ public class Board {
         public void setPlayer(int player) {
             this.occupier = player;
         };
-
+        // initialises the tile.
         public Tile() {
             this.isStoneCircle = false;
             this.resource = null;
