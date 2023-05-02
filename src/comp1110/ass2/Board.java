@@ -40,6 +40,16 @@ public class Board {
         return tiles[x][y];
     }
 
+    //helper function to assign resource
+    public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords,Tile[] rscrsSub){
+        for (int i = 0; i < count;i++){
+            int random = (int)(Math.random() * stoneCoords.size());
+            rscrsSub[i] = stoneCoords.get(random);
+            rscrsSub[i].resource = resource;
+            stoneCoords.remove(random);
+        }
+    }
+
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     public void reset(int gamestate) {
@@ -56,37 +66,13 @@ public class Board {
                 }
             }
             Tile[] rscrsSub = new Tile[6];
-            int i = 0;
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.BBOO;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.STON;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.WATR;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < 6; i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.COCO;
-                stoneCoords.remove(random);
-            }
-            for (i = 0;i < stoneCoords.size(); i++){
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[i] = stoneCoords.get(random);
-                rscrsSub[i].resource = Tile.Resource.STAT;
-                stoneCoords.remove(random);
-            }
+            helper(6, Tile.Resource.WATR,stoneCoords,rscrsSub);
+            helper(6, Tile.Resource.BBOO,stoneCoords,rscrsSub);
+            helper(6, Tile.Resource.STON,stoneCoords,rscrsSub);
+            helper(6, Tile.Resource.COCO,stoneCoords,rscrsSub);
+            helper(8, Tile.Resource.STAT,stoneCoords,rscrsSub);
+
+
         }
 
     }
