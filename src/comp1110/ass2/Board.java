@@ -146,16 +146,15 @@ public class Board {
         return true;
     }
 
-    // checks if a tile is a valid tile for settler to be placed.
-    // int x -> x coordinate of tile
-    // int y -> y coordinate of tile
-    // int player -> player
-    // int piece -> int representing the piece 0 = settler 1 = village
-    //
-
-    public static boolean isValidSettlement() {
-        return false;
-    }
+    /**
+     * Check is a tile is valid for a move to be played in the exploration phase
+     *
+     * @param x x coodinate of a tile
+     * @param y y coordinate of a tile
+     * @param player current player
+     * @param piece village or settler piece
+     * @return true if the move can be played,
+     */
     public static boolean isValidExploration (int x, int y, int player, int piece) {
         // Out of bounds
         if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
@@ -207,8 +206,13 @@ public class Board {
         }
         return false;
     }
-    // helper method to get neighbouring pieces
-
+    /**
+     * Given a x and y coordinate of a given tile, return a list of the adjacent tiles
+     *
+     * @param col x coordinate of a tile
+     * @param row y coordinate of a tile
+     * @return list of adjacent tiles
+     */
     public static ArrayList<Tile> adjacentTiles(int col, int row) {
         ArrayList<Tile> adjacent = new ArrayList<>();
         if (col < 0 || (row % 2 == 0 && col > boardSize - 2) || (row % 2 != 0 && col > boardSize - 1)  || row < 0 || row > boardSize) {

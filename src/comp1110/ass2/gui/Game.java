@@ -3,6 +3,8 @@ package comp1110.ass2.gui;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 // FIXME Task 14
@@ -16,6 +18,14 @@ public class Game extends Application {
 
 
     public void modelToGui() {
+
+    }
+
+    public class Tile extends Rectangle {
+
+    }
+
+    public class BoardTile extends Polygon {
 
     }
     @Override
