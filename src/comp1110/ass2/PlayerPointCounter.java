@@ -2,6 +2,10 @@ package comp1110.ass2;
 
 import java.util.*;
 
+/**
+ * Authored by Tay Shao An
+ * Used to count the number of points obtained by a particular player
+ */
 public class PlayerPointCounter {
     Integer player;
     Integer numOfIslands;
