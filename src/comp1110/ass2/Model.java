@@ -34,6 +34,7 @@ public class Model {
         return 0;
     }
 
+    //authored by Tay Shao An
     //takes a stateString and adds its attributes to the model
     void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");

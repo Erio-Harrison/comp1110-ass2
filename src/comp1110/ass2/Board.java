@@ -260,7 +260,7 @@ public class Board {
     }
 
 
-
+    // Authored by Tay Shao An
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
             String[] coord =  split[k].split(",");
@@ -270,6 +270,7 @@ public class Board {
         return ucrPosition + 1;
     }
 
+    // Authored by Tay Shao An
     public int resourcesPoints(int player) {
         var points = 0;
         for (Player k: this.playerList) {
@@ -290,6 +291,7 @@ public class Board {
         return points;
     }
 
+    // Authored by Tay Shao An
     // used to set attributes for each tile on a board based on a string state
     // attribute is assigned as follows:
     //            this.isStoneCircle = 0;
@@ -375,11 +377,10 @@ public class Board {
         }
     }
 
+    // Authored by Tay Shao An
     // counts the total points obtained by a particular player
     // int player -> player the board is currently checking
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    //
-
     public int countPoints(int player) {
         int points = 0;
 
@@ -397,6 +398,11 @@ public class Board {
     public static boolean checkEnd() {
         return true;
     }
+
+    /**
+     * Authored by Tay Shao An
+     * Stores current state of a player
+     */
 
     //used to store the points and resources of each player
     public class Player {
@@ -420,6 +426,10 @@ public class Board {
         }
     }
 
+    /**
+     * Authored by Tay Shao An
+     * Stores attributes about a certain tile
+     */
     public class Tile {
         // if it is a stone circle, a resource may be generated on the tile
         Boolean isStoneCircle;
