@@ -217,66 +217,25 @@ public class BlueLagoon {
     public static boolean isMoveValid(String stateString, String moveString) {
         Model test = new Model();
         test.toModel(stateString);
-
-        int restSettlerPieces = 0;
-        int restVillagePieces = 0;
-        for (Board.Player k: test.board.playerList) {
-            if (k.id == test.currentPlayer) {
-                restSettlerPieces = 30 - ((test.numOfPlayers - 2) * 5) - k.settlers;
-                restVillagePieces = 5 - (k.villages);
-            }
+        var split = moveString.split(" ");
+        Integer x = Integer.valueOf(split[1].split(",")[0]);
+        Integer y = Integer.valueOf(split[1].split(",")[1]);
+        int piece = 0;
+        if (moveString.charAt(0) == 'T') {
+            piece = 1;
         }
 
-        // moveString
-        String[] mve = moveString.split(" ");
-        String pieceType = mve[0];
-        int a = Integer.parseInt(mve[1].split(",")[0]);
-        int b = Integer.parseInt(mve[1].split(",")[1]);
-
-        int len = 0;
-        if (a % 2 == 0) {len = -1;}
-
-        // if out of bounds return false
-        if (a < 0 || b < 0 || a > test.board.boardSize - 1|| b > test.board.boardSize - 1 + len) {
-            return false;
-        }
-        else if (test.board.tiles[a][b].occupier != -1){
-            return false;
-        }
-        else {
-            // Exploration
-            // sees if the position is touching the left right top or bottom side
-            int[] pos = {0, 0};
-            if (a - 1 == -1) {pos[0] = -1;}
-            else if (a + 1 == test.board.boardSize) {pos[0] = 1;}
-            if (b - 1 == -1) {pos[1] = -1;}
-            else if (b + 1 == test.board.boardSize + len) {pos[1] = 1;}
-
-            if (test.gamestate == 0) {
-                // Village
-                if (pieceType.equals("T")) {
-                    if (test.board.tiles[a][b].island == 0) {return false;}
-                    if (restVillagePieces == 0) {return false;}
-
-                }
-                // Settler
-                else {
-                    if (test.board.tiles[a][b].island == 0) {return true;}
-                    if (restSettlerPieces == 0) return false;}
-            }
-
-            else if(test.gamestate == 1){
-                if(pieceType.equals("T")){return false;}
-                if(restSettlerPieces==0){return false;}
-            }
-            if (helper2( pos, test.board, a, b, test.currentPlayer)) {
-                return true;
-            }
+        if (test.gamestate == 0) { //exploration
+            return test.board.isValidExploration(x, y, test.currentPlayer, piece);
+        } else if (test.gamestate == 1) { // settlement
+            return (test.board.isValidSettle(x, y, test.currentPlayer, piece));
         }
         return false;
     }
 
-    public static Boolean helper2(int[] pos, Board mapstatus, int a, int b, int currentPlayerId) {
+
+    // returns true if there's a piece adjacent to it that has similar occupier
+    public static Boolean checkOccupier(int[] pos, Board mapstatus, int a, int b, int currentPlayerId) {
         var evenRow = 0;
         if (a % 2 == 0) {
             evenRow = 1;
@@ -365,7 +324,7 @@ public class BlueLagoon {
                 }
 
                 if (test.gamestate == 1) {
-                    if (restSettlerPieces != 0 && helper2(pos, test.board, a, b, test.currentPlayer)) {
+                    if (restSettlerPieces != 0 && checkOccupier(pos, test.board, a, b, test.currentPlayer)) {
                             ms.add("S " + a + "," + b);
                     }
                 }
@@ -373,10 +332,10 @@ public class BlueLagoon {
                     if (test.board.tiles[a][b].island == 0) {
                         ms.add("S " + a + "," + b);}
                     else {
-                        if (restSettlerPieces != 0 && helper2(pos, test.board, a, b,  test.currentPlayer)) {
+                        if (restSettlerPieces != 0 && checkOccupier(pos, test.board, a, b,  test.currentPlayer)) {
                                 ms.add("S " + a + "," + b);
                         }
-                        if (restVillagePieces != 0 && helper2(pos, test.board, a, b,  test.currentPlayer)) {
+                        if (restVillagePieces != 0 && checkOccupier(pos, test.board, a, b,  test.currentPlayer)) {
                                 ms.add("T " + a + "," + b);
                         }
                     }
@@ -415,8 +374,6 @@ public class BlueLagoon {
     public static String placePiece(String stateString, String moveString){
         Model test = new Model();
         test.toModel(stateString);
-        System.out.println("===========");
-        System.out.println(moveString);
         var split = moveString.split(" ");
         Integer x = Integer.valueOf(split[1].split(",")[0]);
         Integer y = Integer.valueOf(split[1].split(",")[1]);
@@ -445,6 +402,7 @@ public class BlueLagoon {
         int[] returnValue = new int[]{0, 0};
         Model test = new Model();
         test.toModel(stateString);
+
         for (int k = 0; k < test.numOfPlayers; k ++) {
             PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
             returnValue[k] = pointCounter.islandsCounter();

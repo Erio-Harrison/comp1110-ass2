@@ -90,29 +90,29 @@ public class Board {
     // int player -> player
     // int piece -> int representing the piece 0 = settler 1 = village
     //
-    public static boolean isValidSettle (int x, int y, int player, int piece){
-        // Out of bounds
-        if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
-            return false;
-        }
-        // Occupied
-        if (tiles[x][y].occupier != -1) {
-            return false;
-        }
+    public boolean isValidSettle(int x, int y, int player, int piece){
+        int len = 0;
+        if (x % 2 == 0) {len = -1;}
+
+        int[] pos = {0, 0};
+        if (x - 1 == -1) {pos[0] = -1;}
+        else if (x + 1 == boardSize) {pos[0] = 1;}
+        if (y - 1 == -1) {pos[1] = -1;}
+        else if (y + 1 == boardSize + len ) {pos[1] = 1;}
+
+        if (x < 0 || x > boardSize - 1 || y < 0 || y > boardSize - 1 + len) {return false;}
+        if (this.tiles[x][y] == null) {return false;};
+        if (tiles[x][y].occupier != -1) {return false;}
+
         // if piece is settler
         if (piece == 0) {
-            if (tiles[x][y].type == 1) {
-                ArrayList<Tile> adjacent = adjacentTiles(x,y);
-                if (!containsPlayerTiles(player,adjacent)){
-                    return false;
-                }
-            }
+            if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
+            return BlueLagoon.checkOccupier(pos, this, x, y, player);
         }
         else {
-            // can't place village
             return false;
         }
-        return true;
+
     }
 
     /**
@@ -130,121 +130,34 @@ public class Board {
      * @param piece village or settler piece
      * @return true if the move can be played,
      */
-    public static boolean isValidExploration (int x, int y, int player, int piece) {
-        System.out.println("Exploration");
+    public boolean isValidExploration(int x, int y, int player, int piece) {
         // Out of bounds
-        if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
-            return false;
-        }
+        int len = 0;
+        if (x % 2 == 0) {len = -1;}
 
-        // Occupied
-        if (tiles[x][y].occupier != -1) {
-            return false;
-        }
+        int[] pos = {0, 0};
+        if (x - 1 == -1) {pos[0] = -1;}
+        else if (x + 1 == boardSize) {pos[0] = 1;}
+        if (y - 1 == -1) {pos[1] = -1;}
+        else if (y + 1 == boardSize + len ) {pos[1] = 1;}
+
+        if (x < 0 || x > boardSize - 1 || y < 0 || y > boardSize - 1 + len) {return false;}
+        if (this.tiles[x][y] == null) {return false;};
+        if (tiles[x][y].occupier != -1) {return false;}
+
         // if piece is settler
         if (piece == 0) {
-            System.out.println("settler");
-            // tile is a water tile
-            if (tiles[x][y].type == 0) {
-                return true;
-            } else {
-                ArrayList<Tile> adjacent = adjacentTiles(x,y);
-                if (!containsPlayerTiles(player,adjacent)) {
-                    return false;
-                }
-            }
-
-            // village piece
-        } else {
-            // Village can't be place on water
-            if (tiles[x][y].type == 0) {
-                return false;
-            }
-
-            ArrayList<Tile> adjacent = adjacentTiles(x,y);
-            if (!containsPlayerTiles(player,adjacent)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    // check if a players neighbours tiles contains one that is occupied.
-    public static Boolean containsPlayerTiles(int player, ArrayList<Tile> adjacent) {
-        if (adjacent.isEmpty()) {
-            return false;
-        }
-        for (Tile n : adjacent) {
-            if (n.occupier == player) {
-                return true;
-            }
-        }
-        return false;
-    }
-    /**
-     * Given a x and y coordinate of a given tile, return a list of the adjacent tiles
-     *
-     * @param col x coordinate of a tile
-     * @param row y coordinate of a tile
-     * @return list of adjacent tiles
-     */
-    public static ArrayList<Tile> adjacentTiles(int col, int row) {
-        ArrayList<Tile> adjacent = new ArrayList<>();
-        if (col < 0 || (row % 2 == 0 && col > boardSize - 2) || (row % 2 != 0 && col > boardSize - 1)  || row < 0 || row > boardSize) {
-            return adjacent;
-        }
-        // check Left
-        if (col > 0) {
-            adjacent.add(tiles[col-1][row]);
-        }
-        // check Right
-        if (row % 2 == 0) {
-            if (col < boardSize-2) {
-                adjacent.add(tiles[col+1][row]);
-            }
-        } else if (row % 2 != 0) {
-            if (col < boardSize-1) {
-                adjacent.add(tiles[col+1][row]);
-            }
+            if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
+            if (tiles[x][y].type == 0) {return true;}
+            return BlueLagoon.checkOccupier(pos, this, x, y, player);
         }
 
-        // Check Up
-        if (row > 0) {
-            if (row % 2 == 0) {
-                adjacent.add(tiles[col+1][row-1]);
-                adjacent.add(tiles[col][row-1]);
-            } else if (row % 2 != 0) {
-                if (col == 0) {
-                    adjacent.add(tiles[col][row-1]);
-                } else if (col == boardSize - 1) {
-                    adjacent.add(tiles[col-1][row-1]);
-                } else {
-                    adjacent.add(tiles[col-1][row-1]);
-                    adjacent.add(tiles[col][row-1]);
-
-                }
-
-            }
-
+        // village piece
+        else {
+            if (this.getPlayer(player).villages >= 5) {return false;}
+            if (tiles[x][y].type == 0) {return false;}
+            return BlueLagoon.checkOccupier(pos, this, x, y, player);
         }
-        // Check Down
-        if (row < boardSize - 1) {
-            if (row % 2 == 0) {
-                adjacent.add(tiles[col][row+1]);
-                adjacent.add(tiles[col+1][row+1]);
-            } else if (row % 2 != 0) {
-                if (col == 0) {
-                    adjacent.add(tiles[col][row+1]);
-                } else if (col == boardSize - 1) {
-                    adjacent.add(tiles[col-1][row+1]);
-                } else {
-                    adjacent.add(tiles[col-1][row+1]);
-                    adjacent.add(tiles[col][row+1]);
-                }
-            }
-        }
-        return adjacent;
     }
 
 

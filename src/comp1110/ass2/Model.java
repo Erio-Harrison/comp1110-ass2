@@ -269,11 +269,8 @@ public class Model {
         if (this.gamestate == 0){ //exploration
             if (this.board.isValidExploration(x,y,this.currentPlayer,piece)){
                 this.board.tiles[x][y].occupier = this.currentPlayer;
-                if (piece == 1) {
-                    this.board.tiles[x][y].village = 1;
-                }
+                this.board.tiles[x][y].village = piece;
                 if (this.board.tiles[x][y].isStoneCircle) {
-                    System.out.println("gathering resource:" + x + "," + y);
                     this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[x][y].resource)] += 1;
                     this.board.tiles[x][y].resource = null;
                 }
@@ -283,8 +280,10 @@ public class Model {
         else if(this.gamestate == 1){ // settlement
             if (this.board.isValidSettle(x,y,this.currentPlayer,piece)){
                 this.board.tiles[x][y].occupier = this.currentPlayer;
-                if (piece == 1) {
-                    this.board.tiles[x][y].village = 1;
+                this.board.tiles[x][y].village = piece;
+                if (this.board.tiles[x][y].isStoneCircle) {
+                    this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[x][y].resource)] += 1;
+                    this.board.tiles[x][y].resource = null;
                 }
             }
         }
