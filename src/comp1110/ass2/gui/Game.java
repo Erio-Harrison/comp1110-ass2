@@ -45,13 +45,17 @@ public class Game extends Application {
 
 
     }
-    public class Tile extends Rectangle {
+    public class Tile {
 
     }
 
-    public class BoardTile extends Polygon {
+    public class BoardTile {
 
     }
+
+
+
+
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.root, WINDOW_WIDTH, WINDOW_HEIGHT);
