@@ -413,7 +413,17 @@ public class BlueLagoon {
      * @return a new state string achieved by placing the move on the board
      */
     public static String placePiece(String stateString, String moveString){
-         return ""; // FIXME Task 10
+        Model test = new Model();
+        test.toModel(stateString);
+        System.out.println("===========");
+        System.out.println(moveString);
+        var split = moveString.split(" ");
+        Integer x = Integer.valueOf(split[1].split(",")[0]);
+        Integer y = Integer.valueOf(split[1].split(",")[1]);
+        int piece = 0;
+        if (moveString.charAt(0) == 'T') {piece =1;}
+        test.setSettler(x, y, piece);
+        return test.toStateString(); // FIXME Task 10
     }
 
     /**

@@ -80,6 +80,218 @@ public class Model {
         }
     }
 
+    // converts model to a statestring
+    public String toStateString() {
+        // gamearrangment statement
+        String gameAStatement = "a " + this.board.boardSize + " " + this.numOfPlayers + ";";
+
+        // currentstate statement
+        String state;
+        if (this.gamestate == 0) {state = "E";}
+        else {state = "S";}
+        String csStatement = "c " + this.currentPlayer + " " + state + ";";
+
+        // islands statement
+        List<List<String>> islands = new ArrayList<>();
+        for (var i = 0; i < this.board.numOfIslands; i ++) {
+            islands.add(new ArrayList<>());
+        }
+
+        // stone statement
+        List<String> stones = new ArrayList<>();
+
+        // resource statement
+        List<List<String>> resources = new ArrayList<>();
+        String[] resourceChar = {"C", "B", "W", "P", "S"};
+        for (var i = 0; i < 5; i ++) {
+            List<String> currentAL = new ArrayList<>();
+            currentAL.add(resourceChar[i]);
+            resources.add(currentAL);
+        }
+
+        //player statement
+        List<List<String>> players = new ArrayList<>();
+        List<List<String>> playerSettler = new ArrayList<>();
+        List<List<String>> playerVillages = new ArrayList<>();
+        for (int p = 0; p < this.numOfPlayers; p ++) {
+            players.add(new ArrayList<>());
+            playerSettler.add(new ArrayList<>());
+            playerVillages.add(new ArrayList<>());
+        }
+
+
+        for (var player: this.board.playerList) {
+            players.get(player.id).add("p");
+            players.get(player.id).add(String.valueOf(player.id));
+            players.get(player.id).add(String.valueOf(player.points));
+            for (var r: player.resources) {
+                players.get(player.id).add(String.valueOf(r));
+            }
+        }
+
+        // runs through every tile on the board
+        for (int row = 0; row < this.board.boardSize; row++) {
+            var len = 0;
+            if (row % 2 == 0) {
+                len = -1;
+            }
+            for (int col = 0; col < this.board.boardSize + len; col++) {
+                if (this.board.tiles[row][col].island != 0) {
+                    islands.get(this.board.tiles[row][col].island - 1).add(row + "," + col);
+                }
+
+                if (this.board.tiles[row][col].isStoneCircle) {
+                    stones.add(row + "," + col);
+                }
+                if (this.board.tiles[row][col].resource != null) {
+                    switch (this.board.tiles[row][col].resource) {
+
+                        case COCO -> resources.get(0).add(row + "," + col);
+                        case BBOO -> resources.get(1).add(row + "," + col);
+                        case WATR -> resources.get(2).add(row + "," + col);
+                        case STON -> resources.get(3).add(row + "," + col);
+                        case STAT -> resources.get(4).add(row + "," + col);
+                    }
+                }
+                if (this.board.tiles[row][col].occupier != -1) {
+                    if (this.board.tiles[row][col].village == 1) {
+                        List<String> currentList = playerVillages.get(this.board.tiles[row][col].occupier);
+                        currentList.add(row + "," + col);
+
+                    }
+
+                    if (this.board.tiles[row][col].village == 0) {
+                        List<String> currentList = playerSettler.get(this.board.tiles[row][col].occupier);
+                        currentList.add(row + "," + col);
+
+                    }
+                }
+            }
+        }
+
+        String stoneStatement = "s";
+        for (var k: stones) {
+            stoneStatement += " ";
+            stoneStatement += k;
+        }
+        stoneStatement += ";";
+
+        String islandStatement = "";
+        int i = 0;
+        for (var k: islands) {
+            i += 1;
+            String currentIS = "";
+            currentIS += "i ";
+            currentIS += Integer.toString(this.board.islandToPoints.get(i - 1));
+            for (var t: k) {
+                currentIS += " ";
+                currentIS += t;
+            }
+            islandStatement += currentIS;
+            islandStatement += "; ";
+        }
+
+        String resStatement = "r";
+        for (var k: resources) {
+            for (String s: k) {
+                resStatement += " ";
+                resStatement += s;
+            }
+        }
+        resStatement += ";";
+
+        String playerStatement = "";
+        for (int k = 0; k < players.size(); k++) {
+            List<String> player = players.get(k);
+            if (k > 0) {
+                playerStatement += " ";
+            }
+            for (var t: player) {
+                playerStatement += t;
+                playerStatement += " ";
+            }
+
+            playerStatement += "S ";
+
+            for (var t: playerSettler.get(k)) {
+                playerStatement += t;
+                playerStatement += " ";
+            }
+
+            playerStatement += "T";
+
+            for (var t: playerVillages.get(k)) {
+                playerStatement += " ";
+                playerStatement += t;
+            }
+            playerStatement += ";";
+
+        }
+
+        //System.out.println(gameAStatement);
+        //System.out.println(csStatement);
+        //System.out.println(islandStatement);
+        //System.out.println(stoneStatement);
+        //System.out.println(resStatement);
+        //System.out.println(playerStatement);
+        String returnString = "";
+        returnString += gameAStatement + " " + csStatement + " " + islandStatement + stoneStatement + " " + resStatement + " " + playerStatement;
+
+        return  returnString;
+    }
+
+    // =====================================================================
+
+    // calls isValid to check if a tile is a valid position. If true, replaces tile's fields with
+    // relevant values
+    // int x -> x coordinate of tile
+    // int y -> y coordinate of tile
+    // int piece -> int representing the piece 0 = settler 1 = village
+    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
+    // int player -> int representing which player is currently in play
+
+    // Exploration
+    // The rules for playing a piece are as follows:
+    //- A settler can be placed on any unoccupied water space
+    //- A settler or a village can be placed on any unoccupied land space adjacent to one of their pieces.
+    //
+    //If a piece is placed on a stone circle, the player instantly claims the resource in that space
+    //into their hand.
+    //
+    // Settlement
+    //may only place settlers
+    //next to pieces they already own. That is, one cannot play on an
+    //unoccupied water space anymore unless it is adjacent to one of
+    //their pieces.
+    //piece = 1 (village)
+    //piece = 0 (settler)
+    public boolean setSettler(int x, int y, int piece) {
+        if (this.gamestate == 0){ //exploration
+            if (this.board.isValidExploration(x,y,this.currentPlayer,piece)){
+                this.board.tiles[x][y].occupier = this.currentPlayer;
+                if (piece == 1) {
+                    this.board.tiles[x][y].village = 1;
+                }
+                if (this.board.tiles[x][y].isStoneCircle) {
+                    System.out.println("gathering resource:" + x + "," + y);
+                    this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[x][y].resource)] += 1;
+                    this.board.tiles[x][y].resource = null;
+                }
+                return true;
+            }
+        }
+        else if(this.gamestate == 1){ // settlement
+            if (this.board.isValidSettle(x,y,this.currentPlayer,piece)){
+                this.board.tiles[x][y].occupier = this.currentPlayer;
+                if (piece == 1) {
+                    this.board.tiles[x][y].village = 1;
+                }
+            }
+        }
+        return false;
+    }
+
+
     private static String getStatement(String stateString, char start, char end) {
         int startIndex = 0;
         int endIndex = 0;
@@ -118,7 +330,9 @@ public class Model {
         String SNAKE= "a 13 2; c 0 E; i 6 0,0 0,1 0,2 0,3 0,4 0,5 0,6 0,7 0,8 0,9 0,10 0,11 1,0 1,12 2,0 2,11 3,0 3,12 4,0 4,11 5,0 5,12 6,0 6,11 7,0 7,12 8,0 8,11 9,0 9,12 10,0 10,11 11,0 11,12 12,0 12,1 12,2 12,3 12,4 12,5 12,6 12,7 12,8 12,9 12,10 12,11; i 6 2,4 2,5 2,6 2,7; i 9 4,4 4,5 4,6 4,7; i 9 6,5 6,6 7,5 7,7 8,5 8,6; i 12 2,2 3,2 3,3 4,2 5,2 5,3 6,2 7,2 7,3; i 12 2,9 3,9 3,10 4,9 5,9 5,10 6,9 7,9 7,10; i 12 9,2 9,10 10,2 10,3 10,4 10,5 10,6 10,7 10,8 10,9; s 0,3 0,8 1,0 1,12 2,2 2,4 2,7 2,9 4,2 4,5 4,6 4,9 5,0 5,12 6,2 6,5 6,6 6,9 8,0 8,5 8,6 8,11 9,2 9,10 10,3 10,5 10,6 10,8 11,0 11,12 12,4 12,7; r C B W P S; p 0 0 1 2 3 4 5 S 1,2 2,2 2,3 2,4 3,4 4,4 4,5 3,6 3,7 4,7 5,7 6,6 7,6 7,2 8,2 9,2 T 9,8; p 1 0 0 0 0 0 0 S 3,2 3,3 4,2 T;";
         Model test = new Model();
         test.toModel(SNAKE);
-        test.board.countPoints(0);
+        //System.out.println("test:" + test.toStateString());
+        System.out.println();
+        System.out.println(SNAKE == test.toStateString());
 
     }
 }

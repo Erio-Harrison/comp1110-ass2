@@ -78,31 +78,12 @@ public class Board {
         }
 
     }
+    //  // Settlement
+    //    //may only place settlers
+    //    //next to pieces they already own. That is, one cannot play on an
+    //    //unoccupied water space anymore unless it is adjacent to one of
+    //    //their pieces.
 
-    // =====================================================================
-
-    // calls isValid to check if a tile is a valid position. If true, replaces tile's fields with
-    // relevant values
-    // int x -> x coordinate of tile
-    // int y -> y coordinate of tile
-    // int piece -> int representing the piece 0 = settler 1 = village
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    // int player -> int representing which player is currently in play
-    public static boolean setSettler(int x, int y, int player, int piece,int gamestate) {
-        if (gamestate == 0){
-            if (isValidExploration(x,y,player,piece)){
-                tiles[x][y].occupier = player;
-                return true;
-            }
-        }
-        else if(gamestate == 1){
-            if (isValidSettle(x,y,player,piece)){
-                tiles[x][y].occupier = player;
-                return true;
-            }
-        }
-        return false;
-    }
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
     // int y -> y coordinate of tile
@@ -135,7 +116,13 @@ public class Board {
     }
 
     /**
-     * Check is a tile is valid for a move to be played in the exploration phase
+     *  // Exploration
+     *     // The rules for playing a piece are as follows:
+     *     //- A settler can be placed on any unoccupied water space
+     *     //- A settler or a village can be placed on any unoccupied land space adjacent to one of their pieces.
+     *     //
+     *     //If a piece is placed on a stone circle, the player instantly claims the resource in that space
+     *     //into their hand.
      *
      * @param x x coodinate of a tile
      * @param y y coordinate of a tile
@@ -144,6 +131,7 @@ public class Board {
      * @return true if the move can be played,
      */
     public static boolean isValidExploration (int x, int y, int player, int piece) {
+        System.out.println("Exploration");
         // Out of bounds
         if (x < 0 || x > boardSize || y < 0 || y > boardSize) {
             return false;
@@ -155,6 +143,7 @@ public class Board {
         }
         // if piece is settler
         if (piece == 0) {
+            System.out.println("settler");
             // tile is a water tile
             if (tiles[x][y].type == 0) {
                 return true;
@@ -177,7 +166,6 @@ public class Board {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -393,6 +381,26 @@ public class Board {
         return points;
     }
 
+    public Player getPlayer(int id) {
+        for (Player p: this.playerList) {
+            if (p.id == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public static int resourceToInt(Tile.Resource rsrc) {
+        switch (rsrc) {
+            case COCO -> {return 0;}
+            case BBOO -> {return 1;}
+            case WATR -> {return 2;}
+            case STON -> {return 3;}
+            case STAT -> {return 4;}
+        }
+        return -1;
+    }
+
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
     public static boolean checkEnd() {
@@ -454,8 +462,6 @@ public class Board {
         public enum Resource {
             COCO, BBOO, WATR, STON, STAT;
         }
-
-
         // sets the occupier of the tile
         // int player -> player
         public void setPlayer(int player) {
