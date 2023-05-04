@@ -37,11 +37,6 @@ public class Board {
         this.islandToPoints = new ArrayList<>();
     }
 
-// method to get tile of the board given a x and y coordinate
-    public static Tile getTiles(int x,int y) {
-        return tiles[x][y];
-    }
-
     //helper function to assign resource
     public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords,Tile[] rscrsSub){
         for (int i = 0; i < count;i++){
@@ -307,7 +302,6 @@ public class Board {
 
     //used to store the points and resources of each player
     public static class Player {
-
         int id;
 
         int points;
