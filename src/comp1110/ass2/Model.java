@@ -214,6 +214,17 @@ public class Model {
         return stateString.substring(startIndex, endIndex);
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public int getGamestate() {
+        return gamestate;
+    }
 
     public static void main(String[] args) {
 

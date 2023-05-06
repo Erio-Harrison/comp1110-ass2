@@ -37,6 +37,10 @@ public class Board {
         this.islandToPoints = new ArrayList<>();
     }
 
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
+
     //helper function to assign resource
     public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords,Tile[] rscrsSub){
         for (int i = 0; i < count;i++){
@@ -291,7 +295,8 @@ public class Board {
 
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
-    public static boolean checkEnd() {
+
+    public static boolean checkEnd(int phase) {
         return true;
     }
 
@@ -319,7 +324,29 @@ public class Board {
             this.settlers = 0;
             this.villages = 0;
         }
+
+        public int getSettlers() {
+            return settlers;
+        }
+
+        public int getVillages() {
+            return villages;
+        }
+
+        public Integer[] getResources() {
+            return resources;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public int getPoints() {
+            return points;
+        }
     }
+
+
 
     /**
      * Authored by Tay Shao An
