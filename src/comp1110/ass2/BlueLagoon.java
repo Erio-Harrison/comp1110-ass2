@@ -357,7 +357,20 @@ public class BlueLagoon {
      * @return true if the state is at the end of either phase and false otherwise
      */
     public static boolean isPhaseOver(String stateString){
-         return false; // FIXME Task 9
+        Model test = new Model();
+        test.toModel(stateString);
+        int gameState = test.gamestate;
+        return test.board.checkEnd(gameState);
+
+
+
+        // all resources have been collected
+
+        //no player has valid moves
+
+        
+
+        // FIXME Task 9
     }
 
     /**

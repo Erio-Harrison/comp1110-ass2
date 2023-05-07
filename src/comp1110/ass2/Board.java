@@ -296,9 +296,47 @@ public class Board {
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
 
-    public static boolean checkEnd(int phase) {
+    public  boolean checkEnd(int gameState) {
+        return noValidMoves(gameState) || allResourcesCollected();
+    }
+
+
+    public boolean noValidMoves(int gameState) {
+        if (gameState == 0) {
+            for (Player player : playerList) {
+                if (player.settlers != 30 || player.villages != 5) {return false;}
+            }
+        }
+
+        if (gameState == 1) {
+            for (Player player : playerList) {
+                if (player.settlers != 30) {return false;}
+            }
+        }
         return true;
     }
+
+    public boolean allResourcesCollected() {
+        for (int col = 0; col < boardSize; col++) {
+            for (int row = 0; row < boardSize; row++) {
+                Tile curr = tiles[col][row];
+                if (curr != null) {
+                    if (curr.isStoneCircle) {
+                        if (curr.resource != null) {
+                            if (!curr.resource.equals(Tile.Resource.STAT)) {
+                                return false;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+
 
     /**
      * Authored by Tay Shao An
