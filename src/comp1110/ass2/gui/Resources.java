@@ -35,7 +35,7 @@ public class Resources {
 
     private class coconut extends Circle {
         public coconut(int x, int y, int size) {
-            super(x,y,size,Color.BROWN);
+            super(x,y,size,Color.WHITE);
         }
     }
 
