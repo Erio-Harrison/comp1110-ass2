@@ -304,40 +304,18 @@ public class BlueLagoon {
             len = 0;
             if (a % 2 == 0) {len = -1;}
             for (int b = 0; b < test.board.boardSize + len ; b++) {
-                if (test.board.tiles[a][b].occupier != -1){
-                    continue;
-                }
+                if (test.gamestate == 0) {
+                    if (test.board.isValidExploration(a,b,test.currentPlayer, 0)) {
+                        ms.add("S " + a + "," + b);
+                    }
 
-                int[] pos = {0, 0};
-                if (a - 1 == -1) {pos[0] = -1;}
-                else if (a + 1 == test.board.boardSize) {pos[0] = 1;}
-                if (b - 1 == -1) {pos[1] = -1;}
-                else if (b + 1 == test.board.boardSize + len ) {pos[1] = 1;}
-
-                int restSettlerPieces = 0;
-                int restVillagePieces = 0;
-                for (Board.Player k: test.board.playerList) {
-                    if (k.id == test.currentPlayer) {
-                        restSettlerPieces = 30 - ((test.numOfPlayers - 2) * 5) - k.settlers;
-                        restVillagePieces = 5 - (k.villages);
+                    if (test.board.isValidExploration(a,b,test.currentPlayer, 1)) {
+                        ms.add("T " + a + "," + b);
                     }
                 }
-
                 if (test.gamestate == 1) {
-                    if (restSettlerPieces != 0 && checkOccupier(pos, test.board, a, b, test.currentPlayer)) {
-                            ms.add("S " + a + "," + b);
-                    }
-                }
-                else if (test.gamestate == 0) {
-                    if (test.board.tiles[a][b].island == 0) {
-                        ms.add("S " + a + "," + b);}
-                    else {
-                        if (restSettlerPieces != 0 && checkOccupier(pos, test.board, a, b,  test.currentPlayer)) {
-                                ms.add("S " + a + "," + b);
-                        }
-                        if (restVillagePieces != 0 && checkOccupier(pos, test.board, a, b,  test.currentPlayer)) {
-                                ms.add("T " + a + "," + b);
-                        }
+                    if (test.board.isValidSettle(a,b,test.currentPlayer, 0)) {
+                        ms.add("S " + a + "," + b);
                     }
                 }
             }
@@ -357,8 +335,6 @@ public class BlueLagoon {
      * @return true if the state is at the end of either phase and false otherwise
      */
     public static boolean isPhaseOver(String stateString){
-        System.out.println("============================");
-        System.out.println(stateString);
         Model test = new Model();
         test.toModel(stateString);
         if (BlueLagoon.generateAllValidMoves(stateString).size() == 0) {
@@ -366,8 +342,6 @@ public class BlueLagoon {
         };
         int gameState = test.gamestate;
         return test.board.checkEnd(gameState);
-        // all resources have been collected
-        //no player has valid moves
 
         // FIXME Task 9
     }
