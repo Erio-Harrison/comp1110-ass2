@@ -37,6 +37,7 @@ public class Board {
         this.islandToPoints = new ArrayList<>();
     }
 
+    // Authored by Cao Wen Xuan
     //helper function to assign resource
     public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords,Tile[] rscrsSub){
         for (int i = 0; i < count;i++){
@@ -47,6 +48,7 @@ public class Board {
         }
     }
 
+    // Authored by Cao Wen Xuan
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
     public void reset(int gamestate) {
@@ -71,6 +73,7 @@ public class Board {
         }
 
     }
+
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
     // int y -> y coordinate of tile
@@ -288,12 +291,51 @@ public class Board {
         }
         return -1;
     }
-
+   //  * A phase is over when either of the following conditions hold:
+     //       * - All resources (not including statuettes) have been collected.
+     //      * - No player has any remaining valid moves.
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
-    public static boolean checkEnd() {
+    public  boolean checkEnd(int gameState) {
+        return noValidMoves(gameState) || allResourcesCollected();
+    }
+
+
+    public boolean noValidMoves(int gameState) {
+        if (gameState == 0) {
+            for (Player player : playerList) {
+                if (player.settlers != 30 || player.villages != 5) {return false;}
+            }
+        }
+
+        if (gameState == 1) {
+            for (Player player : playerList) {
+                if (player.settlers != 30) {return false;}
+            }
+        }
         return true;
     }
+
+    public boolean allResourcesCollected() {
+        for (int row = 0; row < boardSize; row++) {
+            var len = 0;
+            if (row % 2 == 0) {
+                len = -1;
+            }
+            for (int col = 0; col < boardSize + len; col++) {
+                Tile curr = tiles[col][row];
+                if (curr != null) {
+                    if (curr.isStoneCircle) {
+                        if ((curr.resource != null) || (curr.resource != Tile.Resource.STAT)) return false;
+
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
 
     /**
      * Authored by Tay Shao An
