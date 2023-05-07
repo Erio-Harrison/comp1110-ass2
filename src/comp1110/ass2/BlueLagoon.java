@@ -357,18 +357,17 @@ public class BlueLagoon {
      * @return true if the state is at the end of either phase and false otherwise
      */
     public static boolean isPhaseOver(String stateString){
+        System.out.println("============================");
+        System.out.println(stateString);
         Model test = new Model();
         test.toModel(stateString);
+        if (BlueLagoon.generateAllValidMoves(stateString).size() == 0) {
+            return true;
+        };
         int gameState = test.gamestate;
         return test.board.checkEnd(gameState);
-
-
-
         // all resources have been collected
-
         //no player has valid moves
-
-        
 
         // FIXME Task 9
     }
@@ -554,6 +553,9 @@ public class BlueLagoon {
      * @return a string representing the new state achieved by following the end of phase rules
      */
     public static String endPhase(String stateString){
+        // count points for each player and store in playerlist
+        // reset
+
          return ""; // FIXME Task 12
     }
 

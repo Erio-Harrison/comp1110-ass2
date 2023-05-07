@@ -304,12 +304,14 @@ public class Board {
     public boolean noValidMoves(int gameState) {
         if (gameState == 0) {
             for (Player player : playerList) {
+                System.out.println("player:" + player.id + ":" + player.settlers);
                 if (player.settlers != 30 || player.villages != 5) {return false;}
             }
         }
 
         if (gameState == 1) {
             for (Player player : playerList) {
+                System.out.println("player:" + player.id + ":" + player.settlers);
                 if (player.settlers != 30) {return false;}
             }
         }
@@ -324,15 +326,14 @@ public class Board {
                     if (curr.isStoneCircle) {
                         if (curr.resource != null) {
                             if (!curr.resource.equals(Tile.Resource.STAT)) {
+                                System.out.println("resource not taken");
                                 return false;
                             }
-
                         }
                     }
                 }
             }
         }
-
         return true;
     }
 
