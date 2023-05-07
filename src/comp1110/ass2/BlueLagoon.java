@@ -524,7 +524,7 @@ public class BlueLagoon {
     }
 
     /**
-     * Given a state string representing an end of phase state, return a new state
+     * Given a state string 3representing an end of phase state, return a new state
      * achieved by following the end of phase rules. Do not move to the next player
      * here.
      * <p>

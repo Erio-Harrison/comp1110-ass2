@@ -34,9 +34,12 @@ public class Model {
         return 0;
     }
 
+    public Model() {
+    }
+
     //authored by Tay Shao An
     //takes a stateString and adds its attributes to the model
-    void toModel(String stateString) {
+    public void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");
         //==gameArrangement==
         String[] gameArrangeStatement = stateArray[0].split(" ");
@@ -225,6 +228,7 @@ public class Model {
     public int getGamestate() {
         return gamestate;
     }
+
 
     public static void main(String[] args) {
 
