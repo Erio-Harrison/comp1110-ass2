@@ -317,17 +317,17 @@ public class Board {
     }
 
     public boolean allResourcesCollected() {
-        for (int row = 0; row < boardSize; row++) {
-            var len = 0;
-            if (row % 2 == 0) {
-                len = -1;
-            }
-            for (int col = 0; col < boardSize + len; col++) {
+        for (int col = 0; col < boardSize; col++) {
+            for (int row = 0; row < boardSize; row++) {
                 Tile curr = tiles[col][row];
                 if (curr != null) {
                     if (curr.isStoneCircle) {
-                        if ((curr.resource != null) || (curr.resource != Tile.Resource.STAT)) return false;
+                        if (curr.resource != null) {
+                            if (!curr.resource.equals(Tile.Resource.STAT)) {
+                                return false;
+                            }
 
+                        }
                     }
                 }
             }
