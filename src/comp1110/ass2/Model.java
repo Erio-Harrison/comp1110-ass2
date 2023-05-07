@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -227,6 +228,57 @@ public class Model {
 
     public int getGamestate() {
         return gamestate;
+    }
+
+    public HashSet<String> allValidMoves() {
+        HashSet<String> ms=new HashSet<String>();
+        int len;
+        for (int a=0;a < board.boardSize ;a++) {
+            len = 0;
+            if (a % 2 == 0) {len = -1;}
+            for (int b = 0; b < board.boardSize + len ; b++) {
+                if (gamestate == 0) {
+                    if (board.isValidExploration(a,b,currentPlayer, 0)) {
+                        ms.add("S " + a + "," + b);
+                    }
+
+                    if (board.isValidExploration(a,b,currentPlayer, 1)) {
+                        ms.add("T " + a + "," + b);
+                    }
+                }
+                if (gamestate == 1) {
+                    if (board.isValidSettle(a,b,currentPlayer, 0)) {
+                        ms.add("S " + a + "," + b);
+                    }
+                }
+            }
+        }
+        return ms;
+    }
+
+    // resets board and progresses the game to the next phase
+    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
+    public void reset() {
+        ArrayList<Board.Tile> stoneCoords = new ArrayList<>();
+        if(gamestate == 0){
+            // resources are removed
+            for (int k = 0; k < board.boardSize; k ++) {
+                for (int i = 0; i < board.boardSize; i ++) {
+                    if (board.tiles[k][i] != null) {
+                        board.tiles[k][i].resource=null;
+                        if (board.tiles[k][i].isStoneCircle){
+                            board.tiles[k][i].village = 0;
+                            stoneCoords.add(board.tiles[k][i]);
+                        }
+                    }
+                }
+            }
+            board.assignRanResources(stoneCoords);
+        }
+    }
+
+    public  boolean checkEnd(int gameState) {
+        return allValidMoves().size() == 0 || this.board.noValidMoves(gameState) || this.board.allResourcesCollected();
     }
 
 

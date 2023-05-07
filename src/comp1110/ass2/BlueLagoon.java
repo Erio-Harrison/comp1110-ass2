@@ -123,72 +123,10 @@ public class BlueLagoon {
      * @return a string of the game state with resources randomly distributed
      */
     public static String distributeResources(String stateString){
-        var count = 0;
-        int k = 0;
-        for (int i = 0; i < stateString.length(); i++) {
-            if (stateString.charAt(i) == ';') {
-                count++;
-            }
-        }
-
-        String[] statelist = stateString.split("; ", count);
-        // Game Arrangement Statement
-        String gArrangement = statelist[0];
-
-        // Current State Statement
-        String csState = statelist[1];
-
-        // Island State Statement
-        ArrayList iState = (ArrayList) Arrays.stream(statelist).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
-        String iString= "i" + stateString.split("i", 2)[1].split("s", 2)[0];
-
-        // Stones Statement
-        String stoneState = (statelist[iState.size() + 2]);
-
-        // Players Statement
-        String playString = "p" + stateString.split("p", 2)[1];
-
-        //assign rsrcs
-        ArrayList stoneCoords = new ArrayList(Arrays.asList(stoneState.split(" ")));
-        ArrayList rsrcs = new ArrayList();
-        stoneCoords.remove(0);
-        while (stoneCoords.size() > 0) {
-            var num = 6;
-            if (stoneCoords.size() == 8) {
-                num = 8;
-            }
-
-            String[] rscrsSub = new String[num];
-            for (k = 0; k < num; k ++) {
-                int random = (int)(Math.random() * stoneCoords.size());
-                rscrsSub[k] = (String) stoneCoords.get(random);
-                stoneCoords.remove(random);
-            }
-            rsrcs.add(rscrsSub);
-        }
-        for (var t: rsrcs) {
-            System.out.println(" ");
-            for (String s: (String[]) t) {
-                System.out.print( " " + s);
-            }
-        }
-        System.out.println("stop");
-
-        // accumulate coordinates into rsrcs string
-        String rsrcAccum = "r ";
-        int j = 0;
-        char[] symbols = new char[] {'C', 'B', 'W', 'P', 'S'};
-        for (k = 0; k < rsrcs.size(); k ++) {
-            rsrcAccum += symbols[k];
-            var current = (String[]) rsrcs.get(k);
-            for (j = 0; j < current.length; j++) {
-                rsrcAccum += " " + current[j];
-            }
-            if (k!= 4) {
-                rsrcAccum += " ";
-            }
-        }
-        return gArrangement + "; " + csState + "; " + iString + stoneState + "; " + rsrcAccum + "; " + playString; // FIXME Task 6
+        Model test = new Model();
+        test.toModel(stateString);
+        test.reset();
+        return test.toStateString();
     }
 
     /**
@@ -297,30 +235,7 @@ public class BlueLagoon {
     public static Set<String> generateAllValidMoves(String stateString) {
         Model test = new Model();
         test.toModel(stateString);
-
-        HashSet<String> ms=new HashSet<String>();
-        int len;
-        for (int a=0;a < test.board.boardSize ;a++) {
-            len = 0;
-            if (a % 2 == 0) {len = -1;}
-            for (int b = 0; b < test.board.boardSize + len ; b++) {
-                if (test.gamestate == 0) {
-                    if (test.board.isValidExploration(a,b,test.currentPlayer, 0)) {
-                        ms.add("S " + a + "," + b);
-                    }
-
-                    if (test.board.isValidExploration(a,b,test.currentPlayer, 1)) {
-                        ms.add("T " + a + "," + b);
-                    }
-                }
-                if (test.gamestate == 1) {
-                    if (test.board.isValidSettle(a,b,test.currentPlayer, 0)) {
-                        ms.add("S " + a + "," + b);
-                    }
-                }
-            }
-        }
-        return ms;
+        return test.allValidMoves();
     }
 
 
@@ -337,12 +252,8 @@ public class BlueLagoon {
     public static boolean isPhaseOver(String stateString){
         Model test = new Model();
         test.toModel(stateString);
-        if (BlueLagoon.generateAllValidMoves(stateString).size() == 0) {
-            return true;
-        };
         int gameState = test.gamestate;
-        return test.board.checkEnd(gameState);
-
+        return test.checkEnd(gameState);
         // FIXME Task 9
     }
 

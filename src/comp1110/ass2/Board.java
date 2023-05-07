@@ -42,39 +42,23 @@ public class Board {
     }
 
     //helper function to assign resource
-    public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords,Tile[] rscrsSub){
+    public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords){
         for (int i = 0; i < count;i++){
             int random = (int)(Math.random() * stoneCoords.size());
-            rscrsSub[i] = stoneCoords.get(random);
-            rscrsSub[i].resource = resource;
+            stoneCoords.get(random).resource = resource;
             stoneCoords.remove(random);
         }
     }
 
-    // resets board and progresses the game to the next phase
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public void reset(int gamestate) {
-        ArrayList<Tile> stoneCoords = new ArrayList<>();
-        if(gamestate == 1){
-            // resources are removed
-            for (int k = 0; k < boardSize; k ++) {
-                for (int i = 0; i < boardSize; i ++) {
-                    tiles[k][i].resource=null;
-                    if (tiles[k][i].isStoneCircle){
-                        tiles[k][i].village = 0;
-                        stoneCoords.add(tiles[k][i]);
-                    }
-                }
-            }
-            Tile[] rscrsSub = new Tile[6];
-            helper(6, Tile.Resource.WATR,stoneCoords,rscrsSub);
-            helper(6, Tile.Resource.BBOO,stoneCoords,rscrsSub);
-            helper(6, Tile.Resource.STON,stoneCoords,rscrsSub);
-            helper(6, Tile.Resource.COCO,stoneCoords,rscrsSub);
-            helper(8, Tile.Resource.STAT,stoneCoords,rscrsSub);
-        }
+    public void assignRanResources(List<Tile> stoneCoords) {
+        helper(6, Tile.Resource.WATR,stoneCoords);
+        helper(6, Tile.Resource.BBOO,stoneCoords);
+        helper(6, Tile.Resource.STON,stoneCoords);
+        helper(6, Tile.Resource.COCO,stoneCoords);
+        helper(8, Tile.Resource.STAT,stoneCoords);
 
     }
+
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
     // int y -> y coordinate of tile
@@ -297,10 +281,6 @@ public class Board {
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
 
-    public  boolean checkEnd(int gameState) {
-        return noValidMoves(gameState) || allResourcesCollected();
-    }
-
 
     public boolean noValidMoves(int gameState) {
         if (gameState == 0) {
@@ -334,8 +314,6 @@ public class Board {
         }
         return true;
     }
-
-
 
     /**
      * Authored by Tay Shao An
