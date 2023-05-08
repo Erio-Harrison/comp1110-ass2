@@ -233,6 +233,40 @@ public class Board {
         }
     }
 
+    public List<Tile> getStoneRsrcTiles() {
+        List<Tile> stoneCoords = new ArrayList<>();
+        for (int k = 0; k < boardSize; k ++) {
+            for (int i = 0; i < boardSize; i ++) {
+                if (tiles[k][i] != null) {
+                    if (tiles[k][i].isStoneCircle){
+                        stoneCoords.add(tiles[k][i]);
+                    }
+                }
+            }
+        }
+        return stoneCoords;
+    }
+
+    public void removePieces() {
+        for (int k = 0; k < boardSize; k ++) {
+            for (int i = 0; i < boardSize; i ++) {
+                if (tiles[k][i] != null) {
+                    tiles[k][i].resource = null;
+                    // village on stone circle
+                    if (tiles[k][i].occupier != -1 && tiles[k][i].village == 1 && tiles[k][i].isStoneCircle) {
+                        tiles[k][i].occupier = -1;
+                        tiles[k][i].village = 0;
+                    }
+
+                    // settler
+                    if (tiles[k][i].occupier != -1 && tiles[k][i].village == 0) {
+                        tiles[k][i].occupier = -1;
+                    }
+                }
+            }
+        }
+    }
+
     // Authored by Tay Shao An
     // counts the total points obtained by a particular player
     // int player -> player the board is currently checking
@@ -338,6 +372,9 @@ public class Board {
             this.resources = resources;
             this.settlers = 0;
             this.villages = 0;
+        }
+        public void resetResources() {
+            this.resources = new Integer[]{0, 0, 0, 0, 0};
         }
 
         public int getSettlers() {

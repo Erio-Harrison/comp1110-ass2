@@ -125,7 +125,7 @@ public class BlueLagoon {
     public static String distributeResources(String stateString){
         Model test = new Model();
         test.toModel(stateString);
-        test.reset();
+        test.resetResources();
         return test.toStateString();
     }
 
@@ -438,10 +438,15 @@ public class BlueLagoon {
      * @return a string representing the new state achieved by following the end of phase rules
      */
     public static String endPhase(String stateString){
-        // count points for each player and store in playerlist
-        // reset
-
-         return ""; // FIXME Task 12
+        Model test = new Model();
+        test.toModel(stateString);
+        test.countAllPoints();
+        if (test.gamestate == 0) {
+            test.board.removePieces();
+            test.resetResources();
+            test.changeState();
+        }
+         return test.toStateString(); // FIXME Task 12
     }
 
     /**

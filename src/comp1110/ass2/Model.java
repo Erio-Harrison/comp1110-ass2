@@ -258,27 +258,39 @@ public class Model {
 
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public void reset() {
-        ArrayList<Board.Tile> stoneCoords = new ArrayList<>();
+    public void resetResources() {
         if(gamestate == 0){
-            // resources are removed
-            for (int k = 0; k < board.boardSize; k ++) {
-                for (int i = 0; i < board.boardSize; i ++) {
-                    if (board.tiles[k][i] != null) {
-                        board.tiles[k][i].resource=null;
-                        if (board.tiles[k][i].isStoneCircle){
-                            board.tiles[k][i].village = 0;
-                            stoneCoords.add(board.tiles[k][i]);
-                        }
-                    }
-                }
-            }
+            List<Board.Tile> stoneCoords = this.board.getStoneRsrcTiles();
             board.assignRanResources(stoneCoords);
+            for (var k = 0; k < numOfPlayers; k++) {
+                board.playerList.get(k).resetResources();
+            }
         }
     }
 
     public  boolean checkEnd(int gameState) {
         return allValidMoves().size() == 0 || this.board.noValidMoves(gameState) || this.board.allResourcesCollected();
+    }
+
+    public void countAllPoints() {
+        for (int k = 0; k < this.numOfPlayers; k ++) {
+            var points = board.countPoints(k);
+            board.playerList.get(k).points += points;
+        }
+    }
+
+
+
+
+    public void changeState() {
+        switch (gamestate) {
+            case (0) -> {
+                gamestate = 1;
+            }
+            case (1) -> {
+                gamestate = 0;
+            }
+        }
     }
 
 
