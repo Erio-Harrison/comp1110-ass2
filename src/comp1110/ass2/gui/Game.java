@@ -10,9 +10,13 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 // FIXME Task 14
@@ -26,9 +30,9 @@ public class Game extends Application {
     private static final int WINDOW_HEIGHT = 700;
     private static final String URI_BASE = "Resources/";
 
-    private static final int MARGIN_X = 420;
+    private static final int MARGIN_X = 250;
 
-    private static final int MARGIN_Y = 5;
+    private static final int MARGIN_Y = 40;
 
     private Model model;
 
@@ -44,11 +48,12 @@ public class Game extends Application {
 
 
 
-    // Display the current element of the model as the current game state
 
+    // make the elements of the board, such as the islands, stones, resources, etc.
     private void makeBoard() {
         int boardSize = this.model.getBoard().boardSize;
         Board.Tile[][] tiles = this.model.getBoard().tiles;
+
 
 
 
@@ -59,8 +64,8 @@ public class Game extends Application {
                     String path = URI_BASE + Board.toURL(curr);
                     Image image = new Image(getClass().getResource(path).toString());
                     ImageView tileImage = new ImageView(image);
-                    double width = image.getWidth()-7.5;
-                    double height = image.getHeight()-45;
+                    double width = image.getWidth();
+                    double height = image.getHeight()-42.5;
                     double offset = width/2.0;
 
                     tileImage.setLayoutX((col * width) + (MARGIN_X) + offset);
@@ -74,43 +79,53 @@ public class Game extends Application {
                     String path = URI_BASE + Board.toURL(curr);
                     Image image = new Image(Game.class.getResource(path).toString());
                     ImageView tileImage = new ImageView(image);
-                    double width = image.getWidth()-7.5;
-                    double height = image.getHeight()-45;
+                    double width = image.getWidth();
+                    double height = image.getHeight()-42.5;
                     tileImage.setLayoutX((col * width) + (MARGIN_X));
                     tileImage.setLayoutY((row * height) + (MARGIN_Y));
+
                     game.getChildren().add(tileImage);
                 }
             }
 
 
         }
-
-
+    }
+    private void makeResources() {
 
     }
-    public class gameState extends Group {
 
+    private void makeScoreboard() {
 
+        // Each player
+        Board board = this.model.getBoard();
+        int numberOfPlayers = model.numOfPlayers;
 
+        // Row Labels
+        Text playerT = new Text(10, 40, "Player: ");
+        Text islandsT = new Text(10, 60, "7/8 Islands:");
+        Text majoritiesT= new Text(10, 80, "Majority Islands:");
+        Text linksT = new Text(10, 100, "Links:");
+        Text resourcesT = new Text(10, 120, "Total Resources:");
+        Text totalT = new Text(10, 140, "Total Points:");
+        ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,totalT));
+        game.getChildren().addAll(textsL);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            PlayerPointCounter pointCounter = new PlayerPointCounter(i, board.tiles, board.numOfIslands);
 
-
-
-
-
-        public void scoreboard() {
-
+            // Scores
+            Text scoreBoard = new Text(130/2, 20, "ScoreBoard");
+            Text player = new Text(50 * i + 120, 40, ""+ i);
+            Text islands = new Text(50 * i + 120, 60, "" + pointCounter.islandsCounter());
+            Text majorityIslands = new Text(50 * i+ 120, 80, "" + pointCounter.majorityIslandsCounter(board.islandToPoints));
+            Text links = new Text(50 * i + 120, 100, "" + pointCounter.linkCounter());
+            Text resources = new Text(50 * i + 120, 120, "" + board.resourcesPoints(i));
+            Text total = new Text(50 * i + 120, 140, "" +board.countPoints(i));
+            ArrayList<Text> texts = new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total));
+            game.getChildren().addAll(texts);
         }
-
-        public static void currentPlayerInventory() {
-        }
-
-
-
-
-
-
-
     }
+
 
 
 
@@ -137,6 +152,8 @@ public class Game extends Application {
 
 
         makeBoard();
+        makeScoreboard();
+
 
 
         stage.setScene(game.getScene());
