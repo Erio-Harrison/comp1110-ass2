@@ -39,10 +39,10 @@ public class Game extends Application {
     private static final int MARGIN_Y = 40;
 
 
-    private static final double TILE_SPACING_X = 65.0;
+    private static final double TILE_SPACING_X = 60.0;
 
-    private static final double OFFSET = 32.0;
-    private static final double TILE_SPACING_Y = 47.0;
+    private static final double OFFSET = TILE_SPACING_X/2.0;
+    private static final double TILE_SPACING_Y = 42.0;
 
 
     private Model model;
@@ -78,9 +78,8 @@ public class Game extends Application {
                     double width = image.getWidth();
                     double height = image.getHeight() - 42;
                     double offset = (int) (width/2.0);
-                    System.out.println(height);
-                    tileImage.setLayoutX((col * width) + (MARGIN_X) + offset);
-                    tileImage.setLayoutY((row * height) + (MARGIN_Y));
+                    tileImage.setLayoutX((col * TILE_SPACING_X) + (MARGIN_X) + OFFSET);
+                    tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
 
                     game.getChildren().add(tileImage);
                 }
@@ -92,8 +91,8 @@ public class Game extends Application {
                     ImageView tileImage = new ImageView(image);
                     int width = (int) image.getWidth();
                     double height = image.getHeight()-42;
-                    tileImage.setLayoutX((col * width) + (MARGIN_X));
-                    tileImage.setLayoutY((row * height) + (MARGIN_Y));
+                    tileImage.setLayoutX((col * TILE_SPACING_X ) + (MARGIN_X));
+                    tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
 
                     game.getChildren().add(tileImage);
                 }
@@ -198,6 +197,8 @@ public class Game extends Application {
             });
 
             this.setOnMouseReleased(event -> {
+            int[] pos = getSnapPosition();
+            this.setLocation(pos);
 
             });
 
@@ -208,12 +209,27 @@ public class Game extends Application {
             int x;
             int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / TILE_SPACING_Y);
             if (y % 2 == 0) {
-                x = (int) Math.round((this.getLayoutY() - MARGIN_X - OFFSET) / TILE_SPACING_X);
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X - OFFSET) / TILE_SPACING_X);
             } else {
-                x = (int) Math.round((this.getLayoutY() - MARGIN_X) / TILE_SPACING_X);
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / TILE_SPACING_X);
             }
 
             return new int[]{x, y};
+        }
+
+        public void setLocation(int[] position) {
+
+            // Position is not on the board
+            if (position[0] == -1 || position[1] == -1) {
+                this.snapToHome();
+            } else {
+                this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
+                if (position[1] % 2 == 0) {
+                    this.setLayoutX(OFFSET + MARGIN_X + (position[0] * TILE_SPACING_X));
+                } else {
+                    this.setLayoutX(MARGIN_X + (position[0] * TILE_SPACING_X));
+                }
+            }
         }
 
 
@@ -230,7 +246,7 @@ public class Game extends Application {
 
     class SettlerToken extends ImageView {
 
-        String path = URI_BASE + "stone.png";
+        String path = URI_BASE + "test.png";
 
         public SettlerToken() {
             Image image = new Image(Game.class.getResource(path).toString());
