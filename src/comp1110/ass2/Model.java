@@ -30,13 +30,19 @@ public class Model {
     //Board
     public Board board;
 
-    // returns which player has the most points
-    public static int declareWinner() {
-        return 0;
-    }
-
     public Model() {
     }
+    public void changeState() {
+        switch (gamestate) {
+            case (0) -> {
+                gamestate = 1;
+            }
+            case (1) -> {
+                gamestate = 0;
+            }
+        }
+    }
+
 
     public void nextTurn() {
 
@@ -135,7 +141,9 @@ public class Model {
             for (int col = 0; col < this.board.boardSize + len; col++) {
                 if (Board.tiles[row][col].island != 0) {
                     islands.get(Board.tiles[row][col].island - 1).add(row + "," + col);}
+
                 if (Board.tiles[row][col].isStoneCircle) {stones.add(row + "," + col);}
+
                 if (Board.tiles[row][col].resource != null) {
                     resources.get(Board.resourceToInt(Board.tiles[row][col].resource)).add(row + "," + col);}
                 if (Board.tiles[row][col].occupier != -1) {
@@ -150,6 +158,8 @@ public class Model {
                 }
             }
         }
+
+        // constructs the statement
         String gameAStatement = "a " + this.board.boardSize + " " + this.numOfPlayers + ";";
 
         String csStatement = "c " + this.currentPlayer + " " + state + ";";
@@ -191,14 +201,18 @@ public class Model {
     }
 
 
+    // sets a piece at a particular tile
     public boolean setSettler(int x, int y, int piece) {
         if (((this.gamestate == 0) && this.board.isValidExploration(x,y,this.currentPlayer,piece))
         || (this.gamestate == 1 && this.board.isValidSettle(x,y,this.currentPlayer,piece))){
+
             Board.tiles[x][y].occupier = this.currentPlayer;
             Board.tiles[x][y].village = piece;
+            if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
+            else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
+
             if (Board.tiles[x][y].isStoneCircle) {
-                this.board.getPlayer(this.currentPlayer).
-                        resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
+                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
                 Board.tiles[x][y].resource = null;
             }
             return true;
@@ -238,7 +252,9 @@ public class Model {
         return gamestate;
     }
 
-    public HashSet<String> allValidMoves() {
+
+    // returns a hashset of movestrings of every valid move a player can make
+    public HashSet<String> allValidMoves(int player) {
         HashSet<String> ms=new HashSet<String>();
         int len;
         for (int a=0;a < board.boardSize ;a++) {
@@ -246,16 +262,15 @@ public class Model {
             if (a % 2 == 0) {len = -1;}
             for (int b = 0; b < board.boardSize + len ; b++) {
                 if (gamestate == 0) {
-                    if (board.isValidExploration(a,b,currentPlayer, 0)) {
+                    if (board.isValidExploration(a,b,player, 0)) {
                         ms.add("S " + a + "," + b);
                     }
-
-                    if (board.isValidExploration(a,b,currentPlayer, 1)) {
+                    if (board.isValidExploration(a,b,player, 1)) {
                         ms.add("T " + a + "," + b);
                     }
                 }
                 if (gamestate == 1) {
-                    if (board.isValidSettle(a,b,currentPlayer, 0)) {
+                    if (board.isValidSettle(a,b,player, 0)) {
                         ms.add("S " + a + "," + b);
                     }
                 }
@@ -276,10 +291,39 @@ public class Model {
         }
     }
 
-    public  boolean checkEnd(int gameState) {
-        return allValidMoves().size() == 0 || this.board.noValidMoves(gameState) || this.board.allResourcesCollected();
+    public void reset() {
+        countAllPoints();
+        if (gamestate == 0) {
+            board.removePieces();
+            resetResources();
+            changeState();
+        }
+
     }
 
+    public void advancePlayer() {
+        this.currentPlayer += 1;
+        if (this.currentPlayer >= this.numOfPlayers) {
+            this.currentPlayer = 0;
+        }
+        System.out.println("nextphaseplayer:" + this.currentPlayer);
+    }
+
+
+    // checks alls end of phase conditions, returns true if it the end
+    public  boolean checkEnd(int gameState) {
+        Boolean nomoremoves = true;
+        for (int k = 0; k < numOfPlayers; k++) {
+            if (allValidMoves(k).size() != 0) {nomoremoves = false;};
+        }
+        if (nomoremoves == true) {return nomoremoves;};
+        if (this.board.allResourcesCollected()) {return true;}
+        if (this.board.noValidMoves(gameState)) {return true;}
+
+        return false;
+    }
+
+    // counts all the points for each player and adds them to the playerlist
     public void countAllPoints() {
         for (int k = 0; k < this.numOfPlayers; k ++) {
             var points = board.countPoints(k);
@@ -287,42 +331,12 @@ public class Model {
         }
     }
 
-
-
-
-    public void changeState() {
-        switch (gamestate) {
-            case (0) -> {
-                gamestate = 1;
-            }
-            case (1) -> {
-                gamestate = 0;
-            }
-        }
-    }
-
-
     public static void main(String[] args) {
 
-
-        // while true:
-        //    while true:
-        //          board.setSettler(current player)
-        //          board.checkEnd()  --> (if true, breaks out of loop)
-        //          increment player by 1
-        //     board.countAll()       --> (counts all points accumulated by players adding it to allPoints)
-        //     if numOfTurn s has reached:
-        //            declareWinner()
-        //            break loop
-        //     else:
-        //            board.reset()          --> (resets board and changes to next state)
-        //
-        String SNAKE= "a 13 2; c 0 E; i 6 0,0 0,1 0,2 0,3 0,4 0,5 0,6 0,7 0,8 0,9 0,10 0,11 1,0 1,12 2,0 2,11 3,0 3,12 4,0 4,11 5,0 5,12 6,0 6,11 7,0 7,12 8,0 8,11 9,0 9,12 10,0 10,11 11,0 11,12 12,0 12,1 12,2 12,3 12,4 12,5 12,6 12,7 12,8 12,9 12,10 12,11; i 6 2,4 2,5 2,6 2,7; i 9 4,4 4,5 4,6 4,7; i 9 6,5 6,6 7,5 7,7 8,5 8,6; i 12 2,2 3,2 3,3 4,2 5,2 5,3 6,2 7,2 7,3; i 12 2,9 3,9 3,10 4,9 5,9 5,10 6,9 7,9 7,10; i 12 9,2 9,10 10,2 10,3 10,4 10,5 10,6 10,7 10,8 10,9; s 0,3 0,8 1,0 1,12 2,2 2,4 2,7 2,9 4,2 4,5 4,6 4,9 5,0 5,12 6,2 6,5 6,6 6,9 8,0 8,5 8,6 8,11 9,2 9,10 10,3 10,5 10,6 10,8 11,0 11,12 12,4 12,7; r C B W P S; p 0 0 1 2 3 4 5 S 1,2 2,2 2,3 2,4 3,4 4,4 4,5 3,6 3,7 4,7 5,7 6,6 7,6 7,2 8,2 9,2 T 9,8; p 1 0 0 0 0 0 0 S 3,2 3,3 4,2 T;";
+        String SNAKE= "a 13 2; c 0 S; i 6 0,0 0,1 0,2 0,3 1,0 1,1 1,2 1,3 1,4 2,0 2,1; i 6 0,5 0,6 0,7 1,6 1,7 1,8 2,6 2,7 2,8 3,7 3,8; i 6 7,12 8,11 9,11 9,12 10,10 10,11 11,10 11,11 11,12 12,10 12,11; i 8 0,9 0,10 0,11 1,10 1,11 1,12 2,10 2,11 3,10 3,11 3,12 4,10 4,11 5,11 5,12; i 8 4,0 5,0 5,1 6,0 6,1 7,0 7,1 7,2 8,0 8,1 8,2 9,0 9,1 9,2; i 8 10,3 10,4 11,0 11,1 11,2 11,3 11,4 11,5 12,0 12,1 12,2 12,3 12,4 12,5; i 10 3,3 3,4 3,5 4,2 4,3 4,4 4,5 5,3 5,4 5,5 5,6 6,3 6,4 6,5 6,6 7,4 7,5 7,6 8,4 8,5; i 10 5,8 5,9 6,8 6,9 7,8 7,9 7,10 8,7 8,8 8,9 9,7 9,8 9,9 10,6 10,7 10,8 11,7 11,8 12,7 12,8; s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11; r C 0,0 1,8 9,9 11,0 12,2 12,8 B 4,2 5,9 7,0 9,0 10,10 11,5 W 0,5 1,4 3,5 3,12 5,11 6,3 P 0,9 4,0 6,6 10,3 10,6 12,11 S 1,12 2,1 3,7 3,10 7,8 7,12 8,2 8,5; p 0 74 0 0 0 0 0 S T 0,6 0,7 1,6 4,5 8,1; p 1 66 0 0 0 0 0 S T 5,6 6,1 11,1 12,5;";
         Model test = new Model();
         test.toModel(SNAKE);
-        //System.out.println("test:" + test.toStateString());
-        System.out.println();
-        System.out.println(SNAKE == test.toStateString());
+        System.out.println(test.allValidMoves(test.currentPlayer));
 
     }
 }

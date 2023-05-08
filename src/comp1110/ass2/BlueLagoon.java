@@ -235,7 +235,7 @@ public class BlueLagoon {
     public static Set<String> generateAllValidMoves(String stateString) {
         Model test = new Model();
         test.toModel(stateString);
-        return test.allValidMoves();
+        return test.allValidMoves(test.currentPlayer);
     }
 
 
@@ -252,8 +252,7 @@ public class BlueLagoon {
     public static boolean isPhaseOver(String stateString){
         Model test = new Model();
         test.toModel(stateString);
-        int gameState = test.gamestate;
-        return test.checkEnd(gameState);
+        return test.checkEnd(test.gamestate);
         // FIXME Task 9
     }
 
@@ -440,13 +439,8 @@ public class BlueLagoon {
     public static String endPhase(String stateString){
         Model test = new Model();
         test.toModel(stateString);
-        test.countAllPoints();
-        if (test.gamestate == 0) {
-            test.board.removePieces();
-            test.resetResources();
-            test.changeState();
-        }
-         return test.toStateString(); // FIXME Task 12
+        test.reset();
+        return test.toStateString(); // FIXME Task 12
     }
 
     /**
@@ -462,7 +456,50 @@ public class BlueLagoon {
      * @return a string representing the new state after the move is applied to the board
      */
     public static String applyMove(String stateString, String moveString){
-         return ""; // FIXME Task 13
+        Model test = new Model();
+        test.toModel(stateString);
+        var split = moveString.split(" ");
+        Integer x = Integer.valueOf(split[1].split(",")[0]);
+        Integer y = Integer.valueOf(split[1].split(",")[1]);
+        int piece = 0;
+        if (moveString.charAt(0) == 'T') {piece =1;}
+        System.out.println("============================");
+        System.out.println("before: " + stateString);
+        test.setSettler(x, y, piece);
+        var reset = false;
+        if (test.checkEnd(test.gamestate)) {
+            var setto1 = 0;
+            if (test.gamestate == 0) {
+                test.advancePlayer();
+                setto1 = 1;
+
+            }
+            test.reset();
+            reset = true;
+            System.out.println("after:  " + test.toStateString());
+            Model test2 = new Model();
+            test2.toModel(test.toStateString());
+            System.out.println("this is a test: " + test2.allValidMoves(1));
+            if (setto1 == 1 && test2.allValidMoves(test.currentPlayer).size() == 0) {
+                    test.advancePlayer();
+                };
+            }
+
+        if (!reset) {
+            for (int k = 0; k < test.numOfPlayers; k++) {
+                System.out.println("player before");
+                System.out.println(test.board.getPlayer(test.currentPlayer).settlers);
+                System.out.println(test.board.getPlayer(test.currentPlayer).villages);
+                test.advancePlayer();
+                System.out.println("player after");
+                System.out.println(test.board.getPlayer(test.currentPlayer).settlers);
+                System.out.println(test.board.getPlayer(test.currentPlayer).villages);
+                if (test.allValidMoves(test.currentPlayer).size() != 0 &&
+                        (test.board.getPlayer(test.currentPlayer).settlers != 30 ||
+                                test.board.getPlayer(test.currentPlayer).villages != 5)) {break;}
+            }
+        }
+        return test.toStateString(); // FIXME Task 13
     }
 
     /**
