@@ -314,8 +314,6 @@ public class Board {
 
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
-
-
     public boolean noValidMoves(int gameState) {
         if (gameState == 0) {
             for (Player player : playerList) {
