@@ -124,7 +124,7 @@ public class Game extends Application {
             PlayerPointCounter pointCounter = new PlayerPointCounter(i, board.tiles, board.numOfIslands);
 
             // Scores
-            Text scoreBoard = new Text(130/2, 20, "ScoreBoard");
+            Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
             Text player = new Text(50 * i + 120, 40, ""+ i);
             Text islands = new Text(50 * i + 120, 60, "" + pointCounter.islandsCounter());
             Text majorityIslands = new Text(50 * i+ 120, 80, "" + pointCounter.majorityIslandsCounter(board.islandToPoints));
@@ -139,14 +139,16 @@ public class Game extends Application {
     private void makeGameTokens() {
 
         SettlerPiece settlerToken = new SettlerPiece();
+        VillagePiece villagePiece = new VillagePiece();
         game.getChildren().add(settlerToken);
+        game.getChildren().add(villagePiece);
     }
 
 
     private void makeCurrentInventory() {
         Board board = this.model.getBoard();
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
-        Text title = new Text(150/2, 400, "Inventory");
+        Text title = new Text(150/2., 400, "Inventory");
 
         game.getChildren().add(title);
 
@@ -167,7 +169,7 @@ public class Game extends Application {
         double homeY;
 
         public SettlerPiece() {
-            this.homeX = 50;
+            this.homeX = 20;
             this.homeY = 470;
 
             this.settler = new SettlerToken();
@@ -220,7 +222,7 @@ public class Game extends Application {
         public void setLocation(int[] position) {
 
             // Position is not on the board
-            if (position[0] == -1 || position[1] == -1) {
+            if (model.getBoard().outOfBounds(position)) {
                 this.snapToHome();
             } else {
                 this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
@@ -244,9 +246,96 @@ public class Game extends Application {
 
     }
 
+
+    class VillagePiece extends Group {
+
+        Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
+        SettlerToken settler;
+
+        double mouseX, mouseY;
+        double homeX;
+        double homeY;
+
+        public VillagePiece() {
+            this.homeX = 120;
+            this.homeY = 470;
+
+            this.settler = new SettlerToken();
+            this.getChildren().add(this.settler);
+            this.setOnMousePressed(event -> {
+                this.mouseX = event.getSceneX();
+                this.mouseY = event.getSceneY();
+
+            });
+
+            this.setOnMouseDragged(event -> {
+
+                /*
+                 Move the caterpillar by the difference in mouse position
+                 since the last drag.
+                 */
+                double diffX = event.getSceneX() - mouseX;
+                double diffY = event.getSceneY() - mouseY;
+                this.setLayoutX(this.getLayoutX() + diffX);
+                this.setLayoutY(this.getLayoutY() + diffY);
+
+                /*
+                 Update `mouseX` and `mouseY` and repeat the process.
+                 */
+                this.mouseX = event.getSceneX();
+                this.mouseY = event.getSceneY();
+            });
+
+            this.setOnMouseReleased(event -> {
+                int[] pos = getSnapPosition();
+                this.setLocation(pos);
+
+            });
+
+            this.snapToHome();
+        }
+        // get the resource coordinate in terms of (0,0)
+        public int[] getSnapPosition() {
+            int x;
+            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / TILE_SPACING_Y);
+            if (y % 2 == 0) {
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X - OFFSET) / TILE_SPACING_X);
+            } else {
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / TILE_SPACING_X);
+            }
+
+            return new int[]{x, y};
+        }
+
+        public void setLocation(int[] position) {
+
+            // Position is not on the board
+            if (model.getBoard().outOfBounds(position)) {
+                this.snapToHome();
+            } else {
+                this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
+                if (position[1] % 2 == 0) {
+                    this.setLayoutX(OFFSET + MARGIN_X + (position[0] * TILE_SPACING_X));
+                } else {
+                    this.setLayoutX(MARGIN_X + (position[0] * TILE_SPACING_X));
+                }
+            }
+        }
+
+
+        private void snapToHome() {
+            this.setLayoutX(this.homeX);
+            this.setLayoutY(this.homeY);
+        }
+
+
+
+
+
+    }
     class SettlerToken extends ImageView {
 
-        String path = URI_BASE + "test.png";
+        String path = URI_BASE + "sand.png";
 
         public SettlerToken() {
             Image image = new Image(Game.class.getResource(path).toString());

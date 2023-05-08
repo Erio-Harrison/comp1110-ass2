@@ -379,6 +379,18 @@ public class Board {
      * Stores current state of a player
      */
 
+    public boolean outOfBounds(int[] coordinates) {
+        int x = coordinates[0];
+        int y = coordinates[1];
+        if (y % 2 == 0) {
+            if (x < 0 || x > boardSize-2 || y < 0 || y > boardSize -1) return true;
+
+        } else {
+            if ((x < 0 || x > boardSize-1|| y < 0 || y > boardSize -1)) return true;
+        }
+
+        return false;
+    }
     //used to store the points and resources of each player
     public static class Player {
         int id;
