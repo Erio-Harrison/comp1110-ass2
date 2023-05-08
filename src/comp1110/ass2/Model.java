@@ -38,6 +38,13 @@ public class Model {
     public Model() {
     }
 
+    public void nextTurn() {
+
+    }
+
+    public void previousTurn() {
+
+    }
     //authored by Tay Shao An
     //takes a stateString and adds its attributes to the model
     public void toModel(String stateString) {
@@ -83,6 +90,7 @@ public class Model {
             this.board.setBoardAttributes(stateArray[k], 2, id);
         }
     }
+
 
     // converts model to a statestring
     public String toStateString() {

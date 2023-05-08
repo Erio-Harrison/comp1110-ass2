@@ -11,6 +11,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -33,6 +37,8 @@ public class Game extends Application {
     private static final int MARGIN_X = 250;
 
     private static final int MARGIN_Y = 40;
+
+
 
     private Model model;
 
@@ -65,9 +71,8 @@ public class Game extends Application {
                     Image image = new Image(getClass().getResource(path).toString());
                     ImageView tileImage = new ImageView(image);
                     double width = image.getWidth();
-                    double height = image.getHeight()-42.5;
-                    double offset = width/2.0;
-
+                    double height = image.getHeight() - 42;
+                    double offset = (int) (width/2.0);
                     tileImage.setLayoutX((col * width) + (MARGIN_X) + offset);
                     tileImage.setLayoutY((row * height) + (MARGIN_Y));
 
@@ -79,8 +84,8 @@ public class Game extends Application {
                     String path = URI_BASE + Board.toURL(curr);
                     Image image = new Image(Game.class.getResource(path).toString());
                     ImageView tileImage = new ImageView(image);
-                    double width = image.getWidth();
-                    double height = image.getHeight()-42.5;
+                    int width = (int) image.getWidth();
+                    double height = image.getHeight()-42;
                     tileImage.setLayoutX((col * width) + (MARGIN_X));
                     tileImage.setLayoutY((row * height) + (MARGIN_Y));
 
@@ -126,18 +131,106 @@ public class Game extends Application {
         }
     }
 
+    private void makeGameTokens() {
+
+        SettlerPiece settlerToken = new SettlerPiece(1);
+        game.getChildren().add(settlerToken);
+    }
+
+
+    private void makeCurrentInventory() {
+        Board board = this.model.getBoard();
+        Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
+        Text title = new Text(150/2, 400, "Inventory");
+
+        game.getChildren().add(title);
+
+        Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getVillages()) + " Left");
+        Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getSettlers()) + " Left");
+        game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
+    }
+
+
+
+    class SettlerPiece extends Group {
+
+        Color[] tokenColours = new Color[]{Color.YELLOW,Color.PURPLE, Color.ORANGE, Color.BLUE};
+        SettlerToken settler;
+
+        double mouseX, mouseY;
+        double homeX;
+        double homeY;
+
+        public SettlerPiece(int currentPlayer) {
+           this.homeX = 10;
+           this.homeY = 10;
+
+            this.settler =new SettlerToken(homeX,homeY,20,tokenColours[currentPlayer]);
+
+            this.setOnMousePressed(event -> {
+
+                // Set these values to prepare for drag-and-drop
+                this.mouseX = event.getSceneX();
+                this.mouseY = event.getSceneY();
+            });
+
+            this.setOnMouseDragged(event -> {
+
+                /*
+                 Move the caterpillar by the difference in mouse position
+                 since the last drag.
+                 */
+                double diffX = event.getSceneX() - mouseX;
+                double diffY = event.getSceneY() - mouseY;
+                this.setLayoutX(this.getLayoutX() + diffX);
+                this.setLayoutY(this.getLayoutY() + diffY);
+                this.mouseX = event.getSceneX();
+                this.mouseY = event.getSceneY();
+
+
+            });
+
+            this.setOnMouseReleased(event -> {
+                int[] position = snapToTile();
+            });
+
+            this.snapToHome();
+        }
+
+        public int[] snapToTile() {
+            int x;
+            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / 42);
+            if (y % 2 == 0) {
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X + 32) / 65);
+            } else {
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / 65);
+            }
+            return new int[]{x,y};
+        }
+
+
+
+        public void snapToHome() {
+            /*
+             Place the caterpillar at the location corresponding to the home position.
+             */
+            this.setLayoutX(this.homeX);
+            this.setLayoutY(this.homeY);
+        }
 
 
 
 
 
-
-    public class Tile {
 
     }
 
-    public class BoardTile {
 
+    class SettlerToken extends Circle {
+
+        public SettlerToken(double centerX, double centerY, double radius, Paint fill) {
+            super(centerX, centerY, radius, fill);
+        }
     }
 
 
@@ -145,16 +238,14 @@ public class Game extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Scene scene2 = new Scene(this.menu, WINDOW_WIDTH, WINDOW_HEIGHT);
-        Scene scene3 = new Scene(this.game, WINDOW_WIDTH,WINDOW_HEIGHT);
-        Scene scene = new Scene(this.root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(this.game, WINDOW_WIDTH, WINDOW_HEIGHT);
         setModel(DEFAULT_GAME);
 
 
         makeBoard();
         makeScoreboard();
-
-
+        makeCurrentInventory();
+        makeGameTokens();
 
         stage.setScene(game.getScene());
         stage.show();

@@ -312,6 +312,33 @@ public class Board {
         return -1;
     }
 
+    public String resourceToString(Tile.Resource resource) {
+        switch (resource) {
+            case COCO -> {
+                return "coconut";
+            }
+            case BBOO -> {
+                return "bamboo";
+            }
+            case WATR -> {
+                return "water";
+            }
+            case STON -> {
+                return "preciousStone";
+            }
+            case STAT -> {
+                return "statuette";
+            }
+            case SETTLER -> {
+                return "settler";
+            }
+            case VILLAGER -> {
+                return "village";
+            }
+        }
+        return "";
+    }
+
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
 
@@ -426,7 +453,9 @@ public class Board {
         // land = 1, water = 0
         int type;
         public enum Resource {
-            COCO, BBOO, WATR, STON, STAT;
+            COCO, BBOO, WATR, STON, STAT, SETTLER,VILLAGER;
+
+
         }
         // sets the occupier of the tile
         // int player -> player
