@@ -39,6 +39,11 @@ public class Game extends Application {
     private static final int MARGIN_Y = 40;
 
 
+    private static final double TILE_SPACING_X = 65.0;
+
+    private static final double OFFSET = 32.0;
+    private static final double TILE_SPACING_Y = 47.0;
+
 
     private Model model;
 
@@ -73,6 +78,7 @@ public class Game extends Application {
                     double width = image.getWidth();
                     double height = image.getHeight() - 42;
                     double offset = (int) (width/2.0);
+                    System.out.println(height);
                     tileImage.setLayoutX((col * width) + (MARGIN_X) + offset);
                     tileImage.setLayoutY((row * height) + (MARGIN_Y));
 
@@ -133,7 +139,7 @@ public class Game extends Application {
 
     private void makeGameTokens() {
 
-        SettlerPiece settlerToken = new SettlerPiece(1);
+        SettlerPiece settlerToken = new SettlerPiece();
         game.getChildren().add(settlerToken);
     }
 
@@ -154,24 +160,23 @@ public class Game extends Application {
 
     class SettlerPiece extends Group {
 
-        Color[] tokenColours = new Color[]{Color.YELLOW,Color.PURPLE, Color.ORANGE, Color.BLUE};
+        Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
         SettlerToken settler;
 
         double mouseX, mouseY;
         double homeX;
         double homeY;
 
-        public SettlerPiece(int currentPlayer) {
-           this.homeX = 10;
-           this.homeY = 10;
+        public SettlerPiece() {
+            this.homeX = 50;
+            this.homeY = 470;
 
-            this.settler =new SettlerToken(homeX,homeY,20,tokenColours[currentPlayer]);
-
+            this.settler = new SettlerToken();
+            this.getChildren().add(this.settler);
             this.setOnMousePressed(event -> {
-
-                // Set these values to prepare for drag-and-drop
                 this.mouseX = event.getSceneX();
                 this.mouseY = event.getSceneY();
+
             });
 
             this.setOnMouseDragged(event -> {
@@ -184,36 +189,35 @@ public class Game extends Application {
                 double diffY = event.getSceneY() - mouseY;
                 this.setLayoutX(this.getLayoutX() + diffX);
                 this.setLayoutY(this.getLayoutY() + diffY);
+
+                /*
+                 Update `mouseX` and `mouseY` and repeat the process.
+                 */
                 this.mouseX = event.getSceneX();
                 this.mouseY = event.getSceneY();
-
-
             });
 
             this.setOnMouseReleased(event -> {
-                int[] position = snapToTile();
+
             });
 
             this.snapToHome();
         }
-
-        public int[] snapToTile() {
+// get the resource coordinate in terms of (0,0)
+        public int[] getSnapPosition() {
             int x;
-            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / 42);
+            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / TILE_SPACING_Y);
             if (y % 2 == 0) {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X + 32) / 65);
+                x = (int) Math.round((this.getLayoutY() - MARGIN_X - OFFSET) / TILE_SPACING_X);
             } else {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / 65);
+                x = (int) Math.round((this.getLayoutY() - MARGIN_X) / TILE_SPACING_X);
             }
-            return new int[]{x,y};
+
+            return new int[]{x, y};
         }
 
 
-
-        public void snapToHome() {
-            /*
-             Place the caterpillar at the location corresponding to the home position.
-             */
+        private void snapToHome() {
             this.setLayoutX(this.homeX);
             this.setLayoutY(this.homeY);
         }
@@ -222,15 +226,18 @@ public class Game extends Application {
 
 
 
-
     }
 
+    class SettlerToken extends ImageView {
 
-    class SettlerToken extends Circle {
+        String path = URI_BASE + "stone.png";
 
-        public SettlerToken(double centerX, double centerY, double radius, Paint fill) {
-            super(centerX, centerY, radius, fill);
+        public SettlerToken() {
+            Image image = new Image(Game.class.getResource(path).toString());
+            this.setImage(image);
+
         }
+
     }
 
 
