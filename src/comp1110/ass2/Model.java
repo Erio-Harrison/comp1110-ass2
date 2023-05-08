@@ -13,22 +13,22 @@ import java.util.stream.Collectors;
 public class Model {
 
     // the num of players in the game
-    int numOfPlayers;
+    public int numOfPlayers;
 
     // exploration(0) or settling(1) phase
-    int gamestate;
+    public int gamestate;
 
     //current player
-    int currentPlayer;
+    public int currentPlayer;
 
     // array with the points of each player
-    int[] allPoints;
+    public int[] allPoints;
 
     // numOfTurns before gameEnds
-    int numOfTurns;
+    public int numOfTurns;
 
     //Board
-    Board board;
+    public Board board;
 
     public Model() {
     }

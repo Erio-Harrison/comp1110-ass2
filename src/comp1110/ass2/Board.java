@@ -441,5 +441,22 @@ public class Board {
             this.village = 0;
         }
 
+        public Boolean getStoneCircle() {
+            return isStoneCircle;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+    }
+
+    public static String toURL(Tile tile) {
+
+        if (tile != null) {
+            if (tile.isStoneCircle) return "stone.png";
+            else if (tile.type == 1) return "grass.png";
+        }
+        return "water.png";
     }
 }
