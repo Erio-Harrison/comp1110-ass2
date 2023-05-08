@@ -198,14 +198,14 @@ public class Model {
         if (((this.gamestate == 0) && this.board.isValidExploration(x,y,this.currentPlayer,piece))
         || (this.gamestate == 1 && this.board.isValidSettle(x,y,this.currentPlayer,piece))){
 
-            Board.tiles[x][y].occupier = this.currentPlayer;
-            Board.tiles[x][y].village = piece;
+            board.tiles[x][y].occupier = this.currentPlayer;
+            board.tiles[x][y].village = piece;
             if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
             else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
-            if (Board.tiles[x][y].isStoneCircle) {
+            if (board.tiles[x][y].isStoneCircle) {
                 this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
-                Board.tiles[x][y].resource = null;
+                board.tiles[x][y].resource = null;
             }
             return true;
         }
@@ -247,7 +247,7 @@ public class Model {
 
     // returns a hashset of movestrings of every valid move a player can make
     public HashSet<String> allValidMoves(int player) {
-        HashSet<String> ms=new HashSet<String>();
+        HashSet<String> ms = new HashSet<>();
         int len;
         for (int a=0;a < board.boardSize ;a++) {
             len = 0;
@@ -298,7 +298,6 @@ public class Model {
         if (this.currentPlayer >= this.numOfPlayers) {
             this.currentPlayer = 0;
         }
-        System.out.println("nextphaseplayer:" + this.currentPlayer);
     }
 
 
