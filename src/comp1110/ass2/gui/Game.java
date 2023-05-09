@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -141,7 +142,6 @@ public class Game extends Application {
         SettlerPiece settlerToken = new SettlerPiece();
         VillagePiece villagePiece = new VillagePiece();
         game.getChildren().add(settlerToken);
-        game.getChildren().add(villagePiece);
     }
 
 
@@ -157,6 +157,44 @@ public class Game extends Application {
         game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
     }
 
+    private void updateGUI(int x, int y, int piece) {
+        this.model.setSettler(x,y,piece);
+        if (model.gamestate == 0) {
+            if (model.checkEnd(0)) {
+                model.reset();
+            } else {
+                this.model.advancePlayer();
+            }
+            game.getChildren().clear();
+            makeState();
+        } else {
+            if (model.checkEnd(1)) {
+                Alert winner = new Alert(Alert.AlertType.INFORMATION);
+                winner.setTitle("PHASE ENDED");
+                winner.setHeaderText("WINNER: " + model.board.declareWinner().getId());
+                winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
+                winner.show();
+
+            } else {
+                this.model.advancePlayer();
+                game.getChildren().clear();
+                makeState();
+            }
+
+        }
+    }
+
+
+    private void makeState() {
+        makeScoreboard();
+        makeGameTokens();
+        makeBoard();
+        makeSettlersAndVillagers();
+        makeCurrentInventory();
+    }
+    private void makeSettlersAndVillagers() {
+
+    }
 
 
     class SettlerPiece extends Group {
@@ -200,7 +238,16 @@ public class Game extends Application {
 
             this.setOnMouseReleased(event -> {
             int[] pos = getSnapPosition();
-            this.setLocation(pos);
+
+            boolean onXOdd = (pos[0] >= 0 && pos[0] <= 12) && pos[1] % 2 == 0;
+            boolean onXEven = (pos[0] >= 0 && pos[0] <= 11) && (pos[1] % 2) != 0;
+            boolean onX = onXOdd || onXEven;
+            boolean onY = pos[1] >= 0 && pos[1] <= 12;
+            if (onX && onY) {
+                model.setSettler(pos[0],pos[1],0);
+
+            }
+                this.setLocation(pos);
 
             });
 
@@ -222,7 +269,7 @@ public class Game extends Application {
         public void setLocation(int[] position) {
 
             // Position is not on the board
-            if (model.getBoard().outOfBounds(position)) {
+            if (model.getBoard().outOfBounds(position) || model.isMoveValid(position[0],position[1],0)) {
                 this.snapToHome();
             } else {
                 this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
@@ -288,6 +335,8 @@ public class Game extends Application {
 
             this.setOnMouseReleased(event -> {
                 int[] pos = getSnapPosition();
+                boolean onX = pos[0] >= 0 && pos[0] <= 12;
+                boolean onY = pos[1] >= 0 && pos[1] <= 12;
                 this.setLocation(pos);
 
             });
@@ -333,6 +382,9 @@ public class Game extends Application {
 
 
     }
+
+
+
     class SettlerToken extends ImageView {
 
         String path = URI_BASE + "sand.png";

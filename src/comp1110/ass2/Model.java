@@ -44,13 +44,9 @@ public class Model {
     }
 
 
-    public void nextTurn() {
 
-    }
 
-    public void previousTurn() {
 
-    }
     //authored by Tay Shao An
     //takes a stateString and adds its attributes to the model
     public void toModel(String stateString) {
@@ -97,7 +93,10 @@ public class Model {
         }
     }
 
-
+    public boolean isMoveValid(int x,int y,int piece) {
+        return (((this.gamestate == 0) && this.board.isValidExploration(x,y,this.currentPlayer,piece))
+                || (this.gamestate == 1 && this.board.isValidSettle(x,y,this.currentPlayer,piece)));
+    }
     // converts model to a statestring
     public String toStateString() {
         String state;
@@ -116,6 +115,7 @@ public class Model {
             currentAL.add(resourceChar[i]);
             resources.add(currentAL);
         }
+
 
         //player statement
         List<List<String>> players = new ArrayList<>();
@@ -201,11 +201,10 @@ public class Model {
     }
 
 
+
     // sets a piece at a particular tile
     public boolean setSettler(int x, int y, int piece) {
-        if (((this.gamestate == 0) && this.board.isValidExploration(x,y,this.currentPlayer,piece))
-        || (this.gamestate == 1 && this.board.isValidSettle(x,y,this.currentPlayer,piece))){
-
+        if (isMoveValid(x,y,piece)){
             Board.tiles[x][y].occupier = this.currentPlayer;
             Board.tiles[x][y].village = piece;
             if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
@@ -221,6 +220,13 @@ public class Model {
     }
 
 
+    public void previousTurn() {
+
+            this.currentPlayer--;
+            if (this.currentPlayer <= 0) {
+                this.currentPlayer = numOfPlayers;
+            }
+    }
     private static String getStatement(String stateString, char start, char end) {
         int startIndex = 0;
         int endIndex = 0;
@@ -251,6 +257,7 @@ public class Model {
     public int getGamestate() {
         return gamestate;
     }
+
 
 
     // returns a hashset of movestrings of every valid move a player can make
@@ -295,8 +302,8 @@ public class Model {
         countAllPoints();
         if (gamestate == 0) {
             board.removePieces();
-            resetResources();
-            changeState();
+            this.resetResources();
+            this.changeState();
         }
 
     }
@@ -330,6 +337,7 @@ public class Model {
             board.playerList.get(k).points += points;
         }
     }
+
 
     public static void main(String[] args) {
 

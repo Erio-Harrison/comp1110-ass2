@@ -1,9 +1,5 @@
 package comp1110.ass2;
 
-import javafx.scene.Node;
-import comp1110.ass2.Model;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board {
@@ -50,6 +46,15 @@ public class Board {
         }
     }
 
+    public Player declareWinner() {
+        Optional<Player> max = playerList.stream()
+                .max(Comparator.comparing(Player::getPoints)
+                        .thenComparing(Player::resourcesCount));
+             return max.get();
+
+
+    }
+
     public void assignRanResources(List<Tile> stoneCoords) {
         helper(6, Tile.Resource.WATR,stoneCoords);
         helper(6, Tile.Resource.BBOO,stoneCoords);
@@ -65,6 +70,9 @@ public class Board {
     // int player -> player
     // int piece -> int representing the piece 0 = settler 1 = village
     //
+
+
+
     public boolean isValidSettle(int x, int y, int player, int piece) {
         int len = 0;
         if (x % 2 == 0) {len = -1;}
@@ -432,6 +440,11 @@ public class Board {
 
         public int getPoints() {
             return points;
+        }
+        public int resourcesCount() {
+            return Arrays.stream(resources)
+                    .mapToInt(Integer::intValue)
+                    .sum();
         }
     }
 
