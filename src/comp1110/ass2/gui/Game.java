@@ -4,17 +4,14 @@ import comp1110.ass2.Board;
 import comp1110.ass2.Model;
 import comp1110.ass2.PlayerPointCounter;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -54,7 +51,9 @@ public class Game extends Application {
     // Use a state-string to initialise the game.
     private void setModel(String statestring) {
         this.model = new Model();
-        model.toModel(statestring);
+        this.model.toModel(statestring);
+        List<Board.Tile> stoneCoords = this.model.board.getStoneRsrcTiles();
+        this.model.board.assignRanResources(stoneCoords);
     }
 
 
@@ -103,8 +102,52 @@ public class Game extends Application {
         }
     }
     private void makeResources() {
+        ArrayList< Board.Position> stoneCoords = model.board.getStoneCoordinates();
+        for (Board.Position coords : stoneCoords) {
+            int x = coords.getX();
+            int y = coords.getY();
+            double boardX;
+            double boardY;
+            Board.Tile.Resource resource = model.board.tiles[x][y].getResource();
+            if (y % 2 == 0) {
+                boardX = x * TILE_SPACING_X + OFFSET + MARGIN_X;
+            } else boardX = x * TILE_SPACING_X + MARGIN_X;
+            boardY = y * TILE_SPACING_Y + MARGIN_Y;
+            resourceToShape(boardX,boardY,resource);
+
+
+        }
 
     }
+
+    public void resourceToShape(double x, double y, Board.Tile.Resource resource) {
+        switch (resource) {
+            case STON -> {
+                Rectangle rectangle = new Rectangle(x,y,10,20);
+                rectangle.setFill(Color.GREEN);
+                game.getChildren().add(rectangle);
+            }
+            case COCO -> {
+                Circle circle = new Circle(x,y,20,Color.WHITE);
+                game.getChildren().add(circle);
+            }
+            case BBOO -> {
+                Rectangle rectangle = new Rectangle(x,y,10,20);
+                rectangle.setFill(Color.YELLOW);
+                game.getChildren().add(rectangle);
+            }
+            case STAT -> {
+                Rectangle rectangle = new Rectangle(x,y,10,20);
+                rectangle.setFill(Color.FIREBRICK);
+                game.getChildren().add(rectangle);
+            }
+            case WATR -> {
+                Circle circle = new Circle(x,y,20,Color.FIREBRICK);
+                game.getChildren().add(circle);
+            }
+        }
+    }
+
 
     private void makeScoreboard() {
 
@@ -132,24 +175,26 @@ public class Game extends Application {
             Text links = new Text(50 * i + 120, 100, "" + pointCounter.linkCounter());
             Text resources = new Text(50 * i + 120, 120, "" + board.resourcesPoints(i));
             Text total = new Text(50 * i + 120, 140, "" +board.countPoints(i));
-            ArrayList<Text> texts = new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total));
-            game.getChildren().addAll(texts);
+
+            game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total)));
         }
     }
 
     private void makeGameTokens() {
 
+
         SettlerPiece settlerToken = new SettlerPiece();
         VillagePiece villagePiece = new VillagePiece();
-        game.getChildren().add(settlerToken);
+        game.getChildren().addAll(settlerToken,villagePiece);
+
     }
 
 
     private void makeCurrentInventory() {
         Board board = this.model.getBoard();
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
-        Text title = new Text(150/2., 400, "Inventory");
-        Text phase = new Text(150/2., 380, "PHASE: " + model.getGamestate());
+        Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
+        Text phase = new Text(150/4., 380, "PHASE: " + model.phaseToString());
         game.getChildren().addAll(title,phase);
 
         Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getVillages()) + " Left");
@@ -180,6 +225,7 @@ public class Game extends Application {
                 winner.setHeaderText("WINNER: " + model.board.declareWinner().getId());
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
+                newGame();
 
             } else {
                 this.model.advancePlayer();
@@ -199,6 +245,7 @@ public class Game extends Application {
     private void makeState() {
         makeScoreboard();
         makeBoard();
+        makeResources();
         makeSettlersAndVillagers();
         makeCurrentInventory();
         makeGameTokens();
@@ -345,8 +392,13 @@ public class Game extends Application {
 
             this.setOnMouseReleased(event -> {
                 int[] pos = getSnapPosition();
-                boolean onX = pos[0] >= 0 && pos[0] <= 12;
+                boolean onXOdd = (pos[0] >= 0 && pos[0] <= 12) && pos[1] % 2 == 0;
+                boolean onXEven = (pos[0] >= 0 && pos[0] <= 11) && (pos[1] % 2) != 0;
+                boolean onX = onXOdd || onXEven;
                 boolean onY = pos[1] >= 0 && pos[1] <= 12;
+                if (onX && onY) {
+                    updateGUI(pos[0],pos[1],0);
+                }
                 this.setLocation(pos);
 
             });

@@ -1,5 +1,6 @@
 package comp1110.ass2;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board {
@@ -241,6 +242,8 @@ public class Board {
         }
     }
 
+
+
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -248,6 +251,35 @@ public class Board {
                 if (tiles[k][i] != null) {
                     if (tiles[k][i].isStoneCircle){
                         stoneCoords.add(tiles[k][i]);
+                    }
+                }
+            }
+        }
+        return stoneCoords;
+    }
+public class Position {
+        int x;
+        int y;
+        public Position(int x, int y) {
+            this.x = x;
+            this.y=y;
+        }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+}
+    public ArrayList<Position> getStoneCoordinates() {
+        ArrayList<Position> stoneCoords = new ArrayList<>();
+        for (int k = 0; k < boardSize; k ++) {
+            for (int i = 0; i < boardSize; i ++) {
+                if (tiles[k][i] != null) {
+                    if (tiles[k][i].isStoneCircle){
+                        stoneCoords.add(new Position(k,i));
                     }
                 }
             }
@@ -503,7 +535,11 @@ public class Board {
             return type;
         }
 
+        public Resource getResource() {
+            return resource;
+        }
     }
+
 
     public static String toURL(Tile tile) {
 
