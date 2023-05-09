@@ -149,8 +149,8 @@ public class Game extends Application {
         Board board = this.model.getBoard();
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory");
-
-        game.getChildren().add(title);
+        Text phase = new Text(150/2., 380, "PHASE: " + model.getGamestate());
+        game.getChildren().addAll(title,phase);
 
         Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getVillages()) + " Left");
         Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getSettlers()) + " Left");
@@ -161,7 +161,12 @@ public class Game extends Application {
         this.model.setSettler(x,y,piece);
         if (model.gamestate == 0) {
             if (model.checkEnd(0)) {
-                model.reset();
+                Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
+                endedPhase.setTitle("Exploration PHASE ENDED");
+                endedPhase.setHeaderText("Player with most points: " + model.board.declareWinner().getId());
+                endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
+                endedPhase.show();
+                this.model.reset();
             } else {
                 this.model.advancePlayer();
             }
@@ -169,8 +174,9 @@ public class Game extends Application {
             makeState();
         } else {
             if (model.checkEnd(1)) {
+                this.model.reset();
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
-                winner.setTitle("PHASE ENDED");
+                winner.setTitle("SETTLEMENT PHASE ENDED");
                 winner.setHeaderText("WINNER: " + model.board.declareWinner().getId());
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
@@ -184,13 +190,18 @@ public class Game extends Application {
         }
     }
 
+    private void newGame() {
+        game.getChildren().clear();
+        this.setModel(DEFAULT_GAME);
+        makeState();
+    }
 
     private void makeState() {
         makeScoreboard();
-        makeGameTokens();
         makeBoard();
         makeSettlersAndVillagers();
         makeCurrentInventory();
+        makeGameTokens();
     }
     private void makeSettlersAndVillagers() {
 
@@ -244,8 +255,7 @@ public class Game extends Application {
             boolean onX = onXOdd || onXEven;
             boolean onY = pos[1] >= 0 && pos[1] <= 12;
             if (onX && onY) {
-                model.setSettler(pos[0],pos[1],0);
-
+                updateGUI(pos[0],pos[1],0);
             }
                 this.setLocation(pos);
 
@@ -403,13 +413,10 @@ public class Game extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.game, WINDOW_WIDTH, WINDOW_HEIGHT);
-        setModel(DEFAULT_GAME);
+
+        newGame();
 
 
-        makeBoard();
-        makeScoreboard();
-        makeCurrentInventory();
-        makeGameTokens();
 
         stage.setScene(game.getScene());
         stage.show();
