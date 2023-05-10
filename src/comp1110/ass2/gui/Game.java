@@ -163,8 +163,6 @@ public class Game extends Application {
     private void makeGameTokens() {
         // tokens already on board
 
-
-
         // Placeable tokens
         SettlerPiece settlerToken = new SettlerPiece();
         VillagePiece villagePiece = new VillagePiece();
@@ -261,7 +259,6 @@ public class Game extends Application {
             });
 
             this.setOnMouseDragged(event -> {
-
                 /*
                  Move the caterpillar by the difference in mouse position
                  since the last drag.
@@ -278,20 +275,18 @@ public class Game extends Application {
                 this.mouseY = event.getSceneY();
             });
 
-            this.setOnMouseReleased(event -> {
-            int[] pos = getSnapPosition();
-
-            boolean onXOdd = (pos[0] >= 0 && pos[0] <= 12) && pos[1] % 2 == 0;
-            boolean onXEven = (pos[0] >= 0 && pos[0] <= 11) && (pos[1] % 2) != 0;
-            boolean onX = onXOdd || onXEven;
-            boolean onY = pos[1] >= 0 && pos[1] <= 12;
-            if (onX && onY) {
-                updateGUI(pos[0],pos[1],0);
-            }
-                this.setLocation(pos);
-
-            });
-
+            this.setOnMouseReleased(
+                    event -> {
+                        int[] pos = getSnapPosition();
+                        boolean onXOdd = (pos[0] >= 0 && pos[0] <= 12) && pos[1] % 2 == 0;
+                        boolean onXEven = (pos[0] >= 0 && pos[0] <= 11) && (pos[1] % 2) != 0;
+                        boolean onX = onXOdd || onXEven;
+                        boolean onY = pos[1] >= 0 && pos[1] <= 12;
+                        if (onX && onY) {
+                            updateGUI(pos[0],pos[1],0);
+                        }
+                        this.setLocation(pos);
+                    });
             this.snapToHome();
         }
 // get the resource coordinate in terms of (0,0)
