@@ -1,8 +1,5 @@
 package comp1110.ass2;
 
-import javafx.scene.Node;
-import comp1110.ass2.Model;
-
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -50,6 +47,15 @@ public class Board {
         }
     }
 
+    public Player declareWinner() {
+        Optional<Player> max = playerList.stream()
+                .max(Comparator.comparing(Player::getPoints)
+                        .thenComparing(Player::resourcesCount));
+             return max.get();
+
+
+    }
+
     public void assignRanResources(List<Tile> stoneCoords) {
         helper(6, Tile.Resource.WATR,stoneCoords);
         helper(6, Tile.Resource.BBOO,stoneCoords);
@@ -65,6 +71,9 @@ public class Board {
     // int player -> player
     // int piece -> int representing the piece 0 = settler 1 = village
     //
+
+
+
     public boolean isValidSettle(int x, int y, int player, int piece) {
         int len = 0;
         if (x % 2 == 0) {len = -1;}
@@ -233,6 +242,8 @@ public class Board {
         }
     }
 
+
+
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -240,6 +251,35 @@ public class Board {
                 if (tiles[k][i] != null) {
                     if (tiles[k][i].isStoneCircle){
                         stoneCoords.add(tiles[k][i]);
+                    }
+                }
+            }
+        }
+        return stoneCoords;
+    }
+public class Position {
+        int x;
+        int y;
+        public Position(int x, int y) {
+            this.x = x;
+            this.y=y;
+        }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+}
+    public ArrayList<Position> getStoneCoordinates() {
+        ArrayList<Position> stoneCoords = new ArrayList<>();
+        for (int k = 0; k < boardSize; k ++) {
+            for (int i = 0; i < boardSize; i ++) {
+                if (tiles[k][i] != null) {
+                    if (tiles[k][i].isStoneCircle){
+                        stoneCoords.add(new Position(k,i));
                     }
                 }
             }
@@ -312,6 +352,33 @@ public class Board {
         return -1;
     }
 
+    public String resourceToString(Tile.Resource resource) {
+        switch (resource) {
+            case COCO -> {
+                return "coconut";
+            }
+            case BBOO -> {
+                return "bamboo";
+            }
+            case WATR -> {
+                return "water";
+            }
+            case STON -> {
+                return "preciousStone";
+            }
+            case STAT -> {
+                return "statuette";
+            }
+            case SETTLER -> {
+                return "settler";
+            }
+            case VILLAGER -> {
+                return "village";
+            }
+        }
+        return "";
+    }
+
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
     public boolean noValidMoves(int gameState) {
@@ -352,6 +419,18 @@ public class Board {
      * Stores current state of a player
      */
 
+    public boolean outOfBounds(int[] coordinates) {
+        int x = coordinates[0];
+        int y = coordinates[1];
+        if (y % 2 == 0) {
+            if (x < 0 || x > boardSize-2 || y < 0 || y > boardSize -1) return true;
+
+        } else {
+            if ((x < 0 || x > boardSize-1|| y < 0 || y > boardSize -1)) return true;
+        }
+
+        return false;
+    }
     //used to store the points and resources of each player
     public static class Player {
         int id;
@@ -394,6 +473,11 @@ public class Board {
         public int getPoints() {
             return points;
         }
+        public int resourcesCount() {
+            return Arrays.stream(resources)
+                    .mapToInt(Integer::intValue)
+                    .sum();
+        }
     }
 
 
@@ -424,7 +508,9 @@ public class Board {
         // land = 1, water = 0
         int type;
         public enum Resource {
-            COCO, BBOO, WATR, STON, STAT;
+            COCO, BBOO, WATR, STON, STAT, SETTLER,VILLAGER;
+
+
         }
         // sets the occupier of the tile
         // int player -> player
@@ -449,7 +535,11 @@ public class Board {
             return type;
         }
 
+        public Resource getResource() {
+            return resource;
+        }
     }
+
 
     public static String toURL(Tile tile) {
 
