@@ -63,7 +63,7 @@ public class Game extends Application {
     // make the elements of the board, such as the islands, stones, resources, etc.
     private void makeBoard() {
         int boardSize = this.model.getBoard().boardSize;
-        Board.Tile[][] tiles = this.model.getBoard().tiles;
+        Board.Tile[][] tiles = Board.tiles;
 
 
 
@@ -108,7 +108,7 @@ public class Game extends Application {
             int y = coords.getY();
             double boardX;
             double boardY;
-            Board.Tile.Resource resource = model.board.tiles[x][y].getResource();
+            Board.Tile.Resource resource = Board.tiles[x][y].getResource();
             if (y % 2 == 0) {
                 boardX = x * TILE_SPACING_X + OFFSET + MARGIN_X;
             } else boardX = x * TILE_SPACING_X + MARGIN_X;
@@ -181,8 +181,11 @@ public class Game extends Application {
     }
 
     private void makeGameTokens() {
+        // tokens already on board
 
 
+
+        // Placeable tokens
         SettlerPiece settlerToken = new SettlerPiece();
         VillagePiece villagePiece = new VillagePiece();
         game.getChildren().addAll(settlerToken,villagePiece);
