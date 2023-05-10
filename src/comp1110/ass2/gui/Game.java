@@ -125,31 +125,6 @@ public class Game extends Application {
         }
     }
 
-    private void makeTiles() {
-        Board board = model.getBoard();
-        HashMap<Board.Position,Integer> occupiedTiles = board.getOccupiedTiles();
-        for (Map.Entry<Board.Position,Integer> entry : occupiedTiles.entrySet()) {
-            int row = entry.getKey().getX();
-            int col = entry.getKey().getY();
-            int player = entry.getValue();
-
-            int var = 0;
-            if (row % 2 == 0) {
-                var = 1;
-            }
-            double boardY = 0;
-            Circle settler = new Circle((col * TILE_SPACING_X) + MARGIN_X + (var * OFFSET) ,(row * TILE_SPACING_Y) + MARGIN_Y,10,Color.BLUE);
-            Circle village = new Circle((col * TILE_SPACING_X) + MARGIN_X + (var * OFFSET) ,(row * TILE_SPACING_Y) + MARGIN_Y,10,Color.RED);
-
-
-
-            if (board.tiles[col][row].village == 0) {
-                game.getChildren().add(settler);
-            } else game.getChildren().add(village);
-
-        }
-    }
-
     private void makeScoreboard() {
 
         // Each player
@@ -249,8 +224,6 @@ public class Game extends Application {
         makeResources();
         makeCurrentInventory();
         makeGameTokens();
-        makeTiles();
-        System.out.println("test");
     }
 
     class SettlerPiece extends Group {
