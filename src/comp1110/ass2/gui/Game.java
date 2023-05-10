@@ -95,6 +95,10 @@ public class Game extends Application {
 
     }
 
+
+    // When a game token is placed we want to display it on the board after the gui is completed.
+
+
     public void resourceToShape(double x, double y, Board.Tile.Resource resource) {
         switch (resource) {
             case STON -> {
@@ -123,30 +127,6 @@ public class Game extends Application {
         }
     }
 
-    private void makeTiles() {
-        Board board = model.getBoard();
-        HashMap<Board.Position,Integer> occupiedTiles = board.getOccupiedTiles();
-        for (Map.Entry<Board.Position,Integer> entry : occupiedTiles.entrySet()) {
-            int row = entry.getKey().getX();
-            int col = entry.getKey().getY();
-            int player = entry.getValue();
-
-            int var = 0;
-            if (row % 2 == 0) {
-                var = 1;
-            }
-            double boardY = 0;
-            Circle settler = new Circle((col * TILE_SPACING_X) + MARGIN_X + (var * OFFSET) ,(row * TILE_SPACING_Y) + MARGIN_Y,10,Color.BLUE);
-            Circle village = new Circle((col * TILE_SPACING_X) + MARGIN_X + (var * OFFSET) ,(row * TILE_SPACING_Y) + MARGIN_Y,10,Color.RED);
-
-
-
-            if (board.tiles[col][row].village == 0) {
-                game.getChildren().add(settler);
-            } else game.getChildren().add(village);
-
-        }
-    }
 
     private void makeScoreboard() {
 
@@ -164,7 +144,7 @@ public class Game extends Application {
         ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,totalT));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
-            PlayerPointCounter pointCounter = new PlayerPointCounter(i, board.tiles, board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(i, Board.tiles, board.numOfIslands);
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
@@ -175,7 +155,7 @@ public class Game extends Application {
             Text resources = new Text(50 * i + 120, 120, "" + board.resourcesPoints(i));
             Text total = new Text(50 * i + 120, 140, "" +board.countPoints(i));
 
-            game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total)));
+            game.getChildren().addAll(scoreBoard,player,islands,majorityIslands,links,resources,total);
         }
     }
 
@@ -237,24 +217,21 @@ public class Game extends Application {
     }
 
     private void newGame() {
-        game.getChildren().clear();
         this.setModel(DEFAULT_GAME);
         makeState();
     }
 
     private void makeState() {
+
         makeScoreboard();
         makeBoard();
         makeResources();
-        makeSettlersAndVillagers();
         makeCurrentInventory();
         makeGameTokens();
-        makeTiles();
+
         System.out.println("test");
     }
-    private void makeSettlersAndVillagers() {
 
-    }
 
 
     class SettlerPiece extends Group {

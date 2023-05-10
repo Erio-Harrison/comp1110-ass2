@@ -287,19 +287,6 @@ public class Position {
         return stoneCoords;
     }
 
-    public HashMap<Position,Integer> getOccupiedTiles() {
-        HashMap<Position,Integer> occupied = new HashMap<>();
-        for (int k = 0; k < boardSize; k ++) {
-            for (int i = 0; i < boardSize; i ++) {
-                if (tiles[k][i] != null) {
-                    if (tiles[k][i].occupier != -1){
-                        occupied.put(new Position(k,i),tiles[k][i].occupier );
-                    }
-                }
-            }
-        }
-        return occupied;
-    }
     public void removePieces() {
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
