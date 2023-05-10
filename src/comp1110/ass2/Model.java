@@ -203,20 +203,16 @@ public class Model {
 
 
     // sets a piece at a particular tile
-    public boolean setSettler(int x, int y, int piece) {
-        if (isMoveValid(x,y,piece)){
-            Board.tiles[x][y].occupier = this.currentPlayer;
-            Board.tiles[x][y].village = piece;
-            if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
-            else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
+    public void setSettler(int x, int y, int piece) {
+        Board.tiles[x][y].occupier = this.currentPlayer;
+        Board.tiles[x][y].village = piece;
+        if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
+        else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
-            if (Board.tiles[x][y].isStoneCircle) {
-                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
-                Board.tiles[x][y].resource = null;
-            }
-            return true;
+        if (Board.tiles[x][y].isStoneCircle) {
+            this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
+            Board.tiles[x][y].resource = null;
         }
-        return false;
     }
 
 
@@ -314,7 +310,6 @@ public class Model {
         if (this.currentPlayer >= this.numOfPlayers) {
             this.currentPlayer = 0;
         }
-        System.out.println("nextphaseplayer:" + this.currentPlayer);
     }
 
 

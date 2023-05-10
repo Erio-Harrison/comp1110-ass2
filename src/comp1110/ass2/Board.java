@@ -544,8 +544,10 @@ public class Position {
     public static String toURL(Tile tile) {
 
         if (tile != null) {
-            if (tile.isStoneCircle) return "stone.png";
-            else if (tile.type == 1) return "grass.png";
+            if (tile.occupier != -1 && tile.village == 0) {return "settler.png";};
+            if (tile.occupier != -1 && tile.village == 1) {return "village.png";};
+            if (tile.isStoneCircle) {return "stone.png";};
+            if (tile.type == 1) {return "grass.png";};
         }
         return "water.png";
     }

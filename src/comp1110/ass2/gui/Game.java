@@ -158,7 +158,6 @@ public class Game extends Application {
 
     private void makeGameTokens() {
         // tokens already on board
-
         // Placeable tokens
         SettlerPiece settlerToken = new SettlerPiece(0, this.model);
         SettlerPiece villagePiece = new SettlerPiece(1, this.model);
@@ -179,8 +178,7 @@ public class Game extends Application {
         game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
     }
 
-    private void updateGUI(int x, int y, int piece) {
-        this.model.setSettler(x,y,piece);
+    private void updateGUI() {
         if (model.gamestate == 0) {
             if (model.checkEnd(0)) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
@@ -220,18 +218,13 @@ public class Game extends Application {
     }
 
     private void makeState() {
+        System.out.println("test");
         makeScoreboard();
         makeBoard();
         makeResources();
-        makeSettlersAndVillagers();
         makeCurrentInventory();
         makeGameTokens();
-        System.out.println("test");
     }
-    private void makeSettlersAndVillagers() {
-
-    }
-
 
     class SettlerPiece extends Group {
         Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
@@ -249,7 +242,9 @@ public class Game extends Application {
             if (village == 1) {this.homeX += 100;};
             this.homeY = 470;
 
-            this.settler = new SettlerToken();
+            if (village == 1) {this.settler = new SettlerToken("village.png");}
+            else {this.settler = new SettlerToken("settler.png");}
+
             this.getChildren().add(this.settler);
             this.setOnMousePressed(event -> {
                 this.mouseX = event.getSceneX();
@@ -279,7 +274,8 @@ public class Game extends Application {
                         System.out.println(model.isMoveValid(pos[1], pos[0], village));
                         if (model.isMoveValid(pos[1], pos[0], village)) {
                             System.out.println("update gui");
-                            updateGUI(pos[0],pos[1],0);
+                            model.setSettler(pos[1], pos[0], village);
+                            updateGUI();
                         }
                         this.setLocation(pos);
                     });
@@ -312,7 +308,6 @@ public class Game extends Application {
             }
         }
 
-
         private void snapToHome() {
             this.setLayoutX(this.homeX);
             this.setLayoutY(this.homeY);
@@ -320,8 +315,8 @@ public class Game extends Application {
     }
     class SettlerToken extends ImageView {
         String path = URI_BASE + "sand.png";
-        public SettlerToken() {
-            Image image = new Image(Game.class.getResource(path).toString());
+        public SettlerToken(String filename) {
+            Image image = new Image(Game.class.getResource( URI_BASE  + filename).toString());
             this.setImage(image);
         }
     }
