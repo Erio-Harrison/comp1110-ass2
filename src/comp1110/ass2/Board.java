@@ -287,6 +287,19 @@ public class Position {
         return stoneCoords;
     }
 
+    public HashMap<Position,Integer> getOccupiedTiles() {
+        HashMap<Position,Integer> occupied = new HashMap<>();
+        for (int k = 0; k < boardSize; k ++) {
+            for (int i = 0; i < boardSize; i ++) {
+                if (tiles[k][i] != null) {
+                    if (tiles[k][i].occupier != -1){
+                        occupied.put(new Position(k,i),tiles[k][i].occupier );
+                    }
+                }
+            }
+        }
+        return occupied;
+    }
     public void removePieces() {
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
@@ -497,8 +510,8 @@ public class Position {
         // -1 indicates no occupier
         public int occupier;
 
-        // village = 1, novillage = 0
-        int village;
+        // village = 1, settler = 0
+        public int village;
 
         // island which the tile is a part of
         // 0 indicates no island
