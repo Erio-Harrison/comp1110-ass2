@@ -275,7 +275,9 @@ public class BlueLagoon {
         Integer y = Integer.valueOf(split[1].split(",")[1]);
         int piece = 0;
         if (moveString.charAt(0) == 'T') {piece =1;}
-        test.setSettler(x, y, piece);
+        if (test.isMoveValid(x,y,piece)){
+            test.setSettler(x, y, piece);
+        }
         return test.toStateString(); // FIXME Task 10
     }
 

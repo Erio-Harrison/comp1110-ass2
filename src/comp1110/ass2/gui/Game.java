@@ -17,7 +17,9 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 // FIXME Task 14
@@ -30,22 +32,13 @@ public class Game extends Application {
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 700;
     private static final String URI_BASE = "Resources/";
-
     private static final int MARGIN_X = 250;
-
     private static final int MARGIN_Y = 40;
-
-
     private static final double TILE_SPACING_X = 60.0;
-
     private static final double OFFSET = TILE_SPACING_X/2.0;
     private static final double TILE_SPACING_Y = 42.0;
-
-
     private Model model;
-
     public static final String DEFAULT_GAME = "a 13 2; c 0 E; i 6 0,0 0,1 0,2 0,3 1,0 1,1 1,2 1,3 1,4 2,0 2,1; i 6 0,5 0,6 0,7 1,6 1,7 1,8 2,6 2,7 2,8 3,7 3,8; i 6 7,12 8,11 9,11 9,12 10,10 10,11 11,10 11,11 11,12 12,10 12,11; i 8 0,9 0,10 0,11 1,10 1,11 1,12 2,10 2,11 3,10 3,11 3,12 4,10 4,11 5,11 5,12; i 8 4,0 5,0 5,1 6,0 6,1 7,0 7,1 7,2 8,0 8,1 8,2 9,0 9,1 9,2; i 8 10,3 10,4 11,0 11,1 11,2 11,3 11,4 11,5 12,0 12,1 12,2 12,3 12,4 12,5; i 10 3,3 3,4 3,5 4,2 4,3 4,4 4,5 5,3 5,4 5,5 5,6 6,3 6,4 6,5 6,6 7,4 7,5 7,6 8,4 8,5; i 10 5,8 5,9 6,8 6,9 7,8 7,9 7,10 8,7 8,8 8,9 9,7 9,8 9,9 10,6 10,7 10,8 11,7 11,8 12,7 12,8; s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11; r C B W P S; p 0 0 0 0 0 0 0 S T; p 1 0 0 0 0 0 0 S T;";
-
 
     // Use a state-string to initialise the game.
     private void setModel(String statestring) {
@@ -86,18 +79,16 @@ public class Game extends Application {
             double boardX;
             double boardY;
             Board.Tile.Resource resource = Board.tiles[row][col].getResource();
-            if (row % 2 == 0) {
-                boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
-            } else boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
-            boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
-            resourceToShape(boardX,boardY,resource);
+            if (resource != null) {
+                if (row % 2 == 0) {
+                    boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
+                } else boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
+                boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
+                resourceToShape(boardX,boardY,resource);
+            }
         }
 
     }
-
-
-    // When a game token is placed we want to display it on the board after the gui is completed.
-
 
     public void resourceToShape(double x, double y, Board.Tile.Resource resource) {
         switch (resource) {
@@ -127,9 +118,7 @@ public class Game extends Application {
         }
     }
 
-
     private void makeScoreboard() {
-
         // Each player
         Board board = this.model.getBoard();
         int numberOfPlayers = model.numOfPlayers;
@@ -144,7 +133,7 @@ public class Game extends Application {
         ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,totalT));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
-            PlayerPointCounter pointCounter = new PlayerPointCounter(i, Board.tiles, board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(i, board.tiles, board.numOfIslands);
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
@@ -155,20 +144,18 @@ public class Game extends Application {
             Text resources = new Text(50 * i + 120, 120, "" + board.resourcesPoints(i));
             Text total = new Text(50 * i + 120, 140, "" +board.countPoints(i));
 
-            game.getChildren().addAll(scoreBoard,player,islands,majorityIslands,links,resources,total);
+            game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total)));
         }
     }
 
     private void makeGameTokens() {
         // tokens already on board
-
         // Placeable tokens
         SettlerPiece settlerToken = new SettlerPiece(0, this.model);
         SettlerPiece villagePiece = new SettlerPiece(1, this.model);
         game.getChildren().addAll(settlerToken,villagePiece);
 
     }
-
 
     private void makeCurrentInventory() {
         Board board = this.model.getBoard();
@@ -182,8 +169,7 @@ public class Game extends Application {
         game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
     }
 
-    private void updateGUI(int x, int y, int piece) {
-        this.model.setSettler(x,y,piece);
+    private void updateGUI() {
         if (model.gamestate == 0) {
             if (model.checkEnd(0)) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
@@ -217,22 +203,18 @@ public class Game extends Application {
     }
 
     private void newGame() {
+        game.getChildren().clear();
         this.setModel(DEFAULT_GAME);
         makeState();
     }
 
     private void makeState() {
-
         makeScoreboard();
         makeBoard();
         makeResources();
         makeCurrentInventory();
         makeGameTokens();
-
-        System.out.println("test");
     }
-
-
 
     class SettlerPiece extends Group {
         Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
@@ -250,7 +232,9 @@ public class Game extends Application {
             if (village == 1) {this.homeX += 100;};
             this.homeY = 470;
 
-            this.settler = new SettlerToken();
+            if (village == 1) {this.settler = new SettlerToken("village.png");}
+            else {this.settler = new SettlerToken("settler.png");}
+
             this.getChildren().add(this.settler);
             this.setOnMousePressed(event -> {
                 this.mouseX = event.getSceneX();
@@ -280,7 +264,8 @@ public class Game extends Application {
                         System.out.println(model.isMoveValid(pos[1], pos[0], village));
                         if (model.isMoveValid(pos[1], pos[0], village)) {
                             System.out.println("update gui");
-                            updateGUI(pos[0],pos[1],0);
+                            model.setSettler(pos[1], pos[0], village);
+                            updateGUI();
                         }
                         this.setLocation(pos);
                     });
@@ -313,16 +298,14 @@ public class Game extends Application {
             }
         }
 
-
         private void snapToHome() {
             this.setLayoutX(this.homeX);
             this.setLayoutY(this.homeY);
         }
     }
     class SettlerToken extends ImageView {
-        String path = URI_BASE + "sand.png";
-        public SettlerToken() {
-            Image image = new Image(Game.class.getResource(path).toString());
+        public SettlerToken(String filename) {
+            Image image = new Image(Game.class.getResource( URI_BASE  + filename).toString());
             this.setImage(image);
         }
     }
