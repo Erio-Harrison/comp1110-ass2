@@ -56,10 +56,6 @@ public class Game extends Application {
         this.model.board.assignRanResources(stoneCoords);
     }
 
-
-
-
-
     // make the elements of the board, such as the islands, stones, resources, etc.
     private void makeBoard() {
         int boardSize = this.model.getBoard().boardSize;
@@ -164,8 +160,8 @@ public class Game extends Application {
         // tokens already on board
 
         // Placeable tokens
-        SettlerPiece settlerToken = new SettlerPiece();
-        VillagePiece villagePiece = new VillagePiece();
+        SettlerPiece settlerToken = new SettlerPiece(0, this.model);
+        SettlerPiece villagePiece = new SettlerPiece(1, this.model);
         game.getChildren().addAll(settlerToken,villagePiece);
 
     }
@@ -238,16 +234,19 @@ public class Game extends Application {
 
 
     class SettlerPiece extends Group {
-
         Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
         SettlerToken settler;
+
+        Integer village;
 
         double mouseX, mouseY;
         double homeX;
         double homeY;
 
-        public SettlerPiece() {
+        public SettlerPiece(Integer village, Model model) {
+            this.village = village;
             this.homeX = 20;
+            if (village == 1) {this.homeX += 100;};
             this.homeY = 470;
 
             this.settler = new SettlerToken();
@@ -255,7 +254,6 @@ public class Game extends Application {
             this.setOnMousePressed(event -> {
                 this.mouseX = event.getSceneX();
                 this.mouseY = event.getSceneY();
-
             });
 
             this.setOnMouseDragged(event -> {
@@ -267,7 +265,6 @@ public class Game extends Application {
                 double diffY = event.getSceneY() - mouseY;
                 this.setLayoutX(this.getLayoutX() + diffX);
                 this.setLayoutY(this.getLayoutY() + diffY);
-
                 /*
                  Update `mouseX` and `mouseY` and repeat the process.
                  */
@@ -278,11 +275,10 @@ public class Game extends Application {
             this.setOnMouseReleased(
                     event -> {
                         int[] pos = getSnapPosition();
-                        boolean onXOdd = (pos[0] >= 0 && pos[0] <= 12) && pos[1] % 2 == 0;
-                        boolean onXEven = (pos[0] >= 0 && pos[0] <= 11) && (pos[1] % 2) != 0;
-                        boolean onX = onXOdd || onXEven;
-                        boolean onY = pos[1] >= 0 && pos[1] <= 12;
-                        if (onX && onY) {
+                        // check if it is a valid move
+                        System.out.println(model.isMoveValid(pos[1], pos[0], village));
+                        if (model.isMoveValid(pos[1], pos[0], village)) {
+                            System.out.println("update gui");
                             updateGUI(pos[0],pos[1],0);
                         }
                         this.setLocation(pos);
@@ -303,7 +299,6 @@ public class Game extends Application {
         }
 
         public void setLocation(int[] position) {
-
             // Position is not on the board
             if (model.getBoard().outOfBounds(position) || model.isMoveValid(position[0],position[1],0)) {
                 this.snapToHome();
@@ -322,108 +317,9 @@ public class Game extends Application {
             this.setLayoutX(this.homeX);
             this.setLayoutY(this.homeY);
         }
-
-
-
-
-
     }
-
-
-    class VillagePiece extends Group {
-
-        Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
-        SettlerToken settler;
-
-        double mouseX, mouseY;
-        double homeX;
-        double homeY;
-
-        public VillagePiece() {
-            this.homeX = 120;
-            this.homeY = 470;
-
-            this.settler = new SettlerToken();
-            this.getChildren().add(this.settler);
-            this.setOnMousePressed(event -> {
-                this.mouseX = event.getSceneX();
-                this.mouseY = event.getSceneY();
-
-            });
-
-            this.setOnMouseDragged(event -> {
-
-                /*
-                 Move the caterpillar by the difference in mouse position
-                 since the last drag.
-                 */
-                double diffX = event.getSceneX() - mouseX;
-                double diffY = event.getSceneY() - mouseY;
-                this.setLayoutX(this.getLayoutX() + diffX);
-                this.setLayoutY(this.getLayoutY() + diffY);
-
-                /*
-                 Update `mouseX` and `mouseY` and repeat the process.
-                 */
-                this.mouseX = event.getSceneX();
-                this.mouseY = event.getSceneY();
-            });
-
-            this.setOnMouseReleased(event -> {
-                int[] pos = getSnapPosition();
-                boolean onXOdd = (pos[0] >= 0 && pos[0] <= 12) && pos[1] % 2 == 0;
-                boolean onXEven = (pos[0] >= 0 && pos[0] <= 11) && (pos[1] % 2) != 0;
-                boolean onX = onXOdd || onXEven;
-                boolean onY = pos[1] >= 0 && pos[1] <= 12;
-                if (onX && onY) {
-                    updateGUI(pos[0],pos[1],0);
-                }
-                this.setLocation(pos);
-
-            });
-
-            this.snapToHome();
-        }
-        // get the resource coordinate in terms of (0,0)
-        public int[] getSnapPosition() {
-            int x;
-            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / TILE_SPACING_Y);
-            if (y % 2 == 0) {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X - OFFSET) / TILE_SPACING_X);
-            } else {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / TILE_SPACING_X);
-            }
-
-            return new int[]{x, y};
-        }
-
-        public void setLocation(int[] position) {
-
-            // Position is not on the board
-            if (model.getBoard().outOfBounds(position)) {
-                this.snapToHome();
-            } else {
-                this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
-                if (position[1] % 2 == 0) {
-                    this.setLayoutX(OFFSET + MARGIN_X + (position[0] * TILE_SPACING_X));
-                } else {
-                    this.setLayoutX(MARGIN_X + (position[0] * TILE_SPACING_X));
-                }
-            }
-        }
-
-
-        private void snapToHome() {
-            this.setLayoutX(this.homeX);
-            this.setLayoutY(this.homeY);
-        }
-
-    }
-
     class SettlerToken extends ImageView {
-
         String path = URI_BASE + "sand.png";
-
         public SettlerToken() {
             Image image = new Image(Game.class.getResource(path).toString());
             this.setImage(image);

@@ -324,7 +324,7 @@ public class Model {
         for (int k = 0; k < numOfPlayers; k++) {
             if (allValidMoves(k).size() != 0) {nomoremoves = false;};
         }
-        if (nomoremoves == true) {return nomoremoves;};
+        if (nomoremoves) {return true;};
         if (this.board.allResourcesCollected()) {return true;}
         if (this.board.noValidMoves(gameState)) {return true;}
 
