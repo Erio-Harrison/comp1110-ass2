@@ -65,40 +65,20 @@ public class Game extends Application {
         int boardSize = this.model.getBoard().boardSize;
         Board.Tile[][] tiles = Board.tiles;
 
-
-
-
         for (int row = 0; row < boardSize; row++) {
+            int var = 0;
             if (row % 2 == 0) {
-                for (int col = 0; col < boardSize-1; col++) {
-                    Board.Tile curr = tiles[row][col];
-                    String path = URI_BASE + Board.toURL(curr);
-                    Image image = new Image(getClass().getResource(path).toString());
-                    ImageView tileImage = new ImageView(image);
-                    double width = image.getWidth();
-                    double height = image.getHeight() - 42;
-                    double offset = (int) (width/2.0);
-                    tileImage.setLayoutX((col * TILE_SPACING_X) + (MARGIN_X) + OFFSET);
-                    tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
-
-                    game.getChildren().add(tileImage);
-                }
-            } else {
-                for (int col = 0; col < boardSize; col++) {
-                    Board.Tile curr = tiles[row][col];
-                    String path = URI_BASE + Board.toURL(curr);
-                    Image image = new Image(Game.class.getResource(path).toString());
-                    ImageView tileImage = new ImageView(image);
-                    int width = (int) image.getWidth();
-                    double height = image.getHeight()-42;
-                    tileImage.setLayoutX((col * TILE_SPACING_X ) + (MARGIN_X));
-                    tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
-
-                    game.getChildren().add(tileImage);
-                }
+                var = 1;
             }
-
-
+            for (int col = 0; col < boardSize - var; col++) {
+                Board.Tile curr = tiles[row][col];
+                String path = URI_BASE + Board.toURL(curr);
+                Image image = new Image(getClass().getResource(path).toString());
+                ImageView tileImage = new ImageView(image);
+                tileImage.setLayoutX((col * TILE_SPACING_X) + (MARGIN_X) + var * OFFSET);
+                tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
+                game.getChildren().add(tileImage);
+            }
         }
     }
     private void makeResources() {
@@ -114,8 +94,6 @@ public class Game extends Application {
             } else boardX = x * TILE_SPACING_X + MARGIN_X;
             boardY = y * TILE_SPACING_Y + MARGIN_Y;
             resourceToShape(boardX,boardY,resource);
-
-
         }
 
     }
@@ -252,6 +230,7 @@ public class Game extends Application {
         makeSettlersAndVillagers();
         makeCurrentInventory();
         makeGameTokens();
+        System.out.println("test");
     }
     private void makeSettlersAndVillagers() {
 
@@ -442,13 +421,7 @@ public class Game extends Application {
             this.setLayoutY(this.homeY);
         }
 
-
-
-
-
     }
-
-
 
     class SettlerToken extends ImageView {
 
@@ -457,22 +430,13 @@ public class Game extends Application {
         public SettlerToken() {
             Image image = new Image(Game.class.getResource(path).toString());
             this.setImage(image);
-
         }
-
     }
-
-
-
 
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.game, WINDOW_WIDTH, WINDOW_HEIGHT);
-
         newGame();
-
-
-
         stage.setScene(game.getScene());
         stage.show();
     }
