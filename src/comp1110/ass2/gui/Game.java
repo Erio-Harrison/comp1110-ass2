@@ -81,18 +81,20 @@ public class Game extends Application {
             }
         }
     }
+
+    // sets resources on the board
     private void makeResources() {
         ArrayList< Board.Position> stoneCoords = model.board.getStoneCoordinates();
         for (Board.Position coords : stoneCoords) {
-            int x = coords.getX();
-            int y = coords.getY();
+            int row = coords.getX();
+            int col = coords.getY();
             double boardX;
             double boardY;
-            Board.Tile.Resource resource = Board.tiles[x][y].getResource();
-            if (y % 2 == 0) {
-                boardX = x * TILE_SPACING_X + OFFSET + MARGIN_X;
-            } else boardX = x * TILE_SPACING_X + MARGIN_X;
-            boardY = y * TILE_SPACING_Y + MARGIN_Y;
+            Board.Tile.Resource resource = Board.tiles[row][col].getResource();
+            if (row % 2 == 0) {
+                boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
+            } else boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
+            boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
             resourceToShape(boardX,boardY,resource);
         }
 
