@@ -16,6 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -44,40 +47,11 @@ public class Viewer extends Application {
 
     private static final String URI_BASE = "Resources/";
     private static final int MARGIN_X = 200;
-    private static final int MARGIN_Y = 40;
+    private static final int MARGIN_Y = 10;
     private static final double TILE_SPACING_X = 60.0;
     private static final double OFFSET = TILE_SPACING_X/2.0;
     private static final double TILE_SPACING_Y = 42.0;
 
-
-
-    // Constructor that is used to represent our game pieces
-    static class Tile extends Rectangle {
-        public Tile(double x, double y, double size, Color color) {
-            super(x, y, size, size);
-            this.setFill(color);
-        }
-    }
-    // Constructor Hexagon that is used to represent our board tiles, islands and stones
-    static class Hexagon extends Polygon {
-
-        Hexagon(double x, double y, double size, Color color) {
-            super();
-            this.setFill(color);
-
-            this.getPoints().addAll(
-                    -size/2, size,
-                    size/2,size,
-                    size,0.,
-                    size/2,-size,
-                    -size/2,-size,
-                    -size,0.
-            );
-            this.setRotate(30.);
-            this.setLayoutX(x);
-            this.setLayoutY(y);
-        }
-    }
 
     private void makeBoard() {
         int boardSize = this.model.getBoard().boardSize;
@@ -110,7 +84,7 @@ public class Viewer extends Application {
      */
     void displayState(String stateString) {
         // FIXME Task 5
-        if (BlueLagoon.isStateStringWellFormed(stateString) )
+        if (BlueLagoon.isStateStringWellFormed(stateString) && !stateString.isBlank())
             this.model.toModel(stateString);
             root.getChildren().clear();
             root.getChildren().add(controls);
@@ -130,46 +104,102 @@ public class Viewer extends Application {
      */
 
     private void legend() {
-        String[] legend = new String[]{"Board Tile", "Island", "Stones", "Coconuts", "Bamboo", "Water", "Precious Stone", "Statuettes", "Settlers", "Villages"};
-        Color[] colours = new Color[]{Color.BLUE,Color.GREEN,Color.GREY, Color.WHEAT, Color.YELLOW,Color.LIGHTBLUE,Color.LIGHTGREEN, Color.BROWN, Color.BLACK, Color.FIREBRICK};
-        int y = 20;
+        Rectangle backdrop = new Rectangle(1040,0, 200,210);
+        root.getChildren().add(backdrop);
+        backdrop.setFill(Color.BLUE);
+        String[] legend = new String[]{"Water Tile", "Island", "Stones", "Coconuts", "Bamboo", "Water", "Precious Stone", "Statuettes", "Settlers", "Villages"};
+        int initialY = 20;
         for (int i = 0; i < legend.length; i++) {
             Text text = new Text(legend[i]);
             text.setLayoutX(1050);
-            text.setLayoutY(y + 10);
+            text.setLayoutY(initialY);
+            legendToPic(legend[i], 1160, initialY - 20,30);
+            initialY += 20;
+
+
+
             root.getChildren().add(text);
 
-            if (i >= 8) {
-                Tile shape = new Tile(1150, y, 10, colours[i]);
-                root.getChildren().add(shape);
-            } else {
-                Hexagon shape = new Hexagon(1150, y, 10, colours[i]);
-                root.getChildren().add(shape);
-            }
-            y += 20;
         }
-
-        Text note = new Text("Number = bonus for island");
-        note.setLayoutX(1000);
-        note.setLayoutY(y + 10);
-        root.getChildren().add(note);
     }
 
+    private void legendToPic(String legend, int x, int y, double size) {
+        switch (legend) {
+            case "Water Tile" -> {
+                Image image = new Image(Game.class.getResource( URI_BASE  + "water.png").toString());
+                ImageView tileImage = new ImageView(image);
+                tileImage.setFitWidth(size);
+                tileImage.setFitHeight(size);
+                tileImage.setLayoutX(x);
+                tileImage.setLayoutY(y);
+                root.getChildren().add(tileImage);
+            }
+            case "Island" -> {
+                Image image = new Image(Game.class.getResource( URI_BASE  + "grass.png").toString());
+                ImageView tileImage = new ImageView(image);
+                tileImage.setFitWidth(size);
+                tileImage.setFitHeight(size);
+                tileImage.setLayoutX(x);
+                tileImage.setLayoutY(y);
+                root.getChildren().add(tileImage);
+            }
+
+            case "Stones" -> {
+                Image image = new Image(Game.class.getResource( URI_BASE  + "stone.png").toString());
+                ImageView tileImage = new ImageView(image);
+                tileImage.setFitWidth(size);
+                tileImage.setFitHeight(size);
+                tileImage.setLayoutX(x);
+                tileImage.setLayoutY(y);
+                root.getChildren().add(tileImage);
+            }
+            case "Settlers" -> {
+                Image image = new Image(Game.class.getResource( URI_BASE  + "settler.png").toString());
+                ImageView tileImage = new ImageView(image);
+                tileImage.setFitWidth(size);
+                tileImage.setFitHeight(size);
+                tileImage.setLayoutX(x);
+                tileImage.setLayoutY(y);
+                root.getChildren().add(tileImage);
+            }
+            case "Villages" -> {
+                Image image = new Image(Game.class.getResource( URI_BASE  + "village.png").toString());
+                ImageView tileImage = new ImageView(image);
+                tileImage.setFitWidth(size);
+                tileImage.setFitHeight(size);
+                tileImage.setLayoutX(x);
+                tileImage.setLayoutY(y);
+                root.getChildren().add(tileImage);
+            }
+            case "Coconuts" -> {
+                resourceToShape(x+20,y+10, Board.Tile.Resource.COCO,size/5);
+            }
+            case "Bamboo" -> {
+                resourceToShape(x+20,y+10, Board.Tile.Resource.BBOO,size/5);
+            }
+            case "Water" -> {
+                resourceToShape(x+20,y+10, Board.Tile.Resource.WATR,size/5);
+            }
+            case "Precious Stone" -> {
+                resourceToShape(x+20,y+10, Board.Tile.Resource.STON,size/5);
+            }
+            case "Statuettes" -> {
+                resourceToShape(x+20,y+10, Board.Tile.Resource.STAT,size/5);
+            }
+
+
+        }
+    }
     /**
      * Given the Game Arrangement Statement of a state String, display game information and
      * display the board as water tiles
      */
     private void displayArrangement() {
 
-        Text layout = new Text("Layout: " + model.board.boardSize + " high");
+        Text layout = new Text("Layout: " + model.board.boardSize + " high" + " Players: " + model.board.playerList.size());
         layout.setLayoutX(0);
         layout.setLayoutY(20);
-
-        Text players = new Text("Players: " + model.board.playerList.size());
-        players.setLayoutX(0);
-        players.setLayoutY(40);
-        Text[] arragenmentText = new Text[] {layout,players};
-        root.getChildren().addAll(arragenmentText);
+        root.getChildren().addAll(layout);
     }
     /**
      * Given the stones Statement of a state String, display the stones as grey hexagons
@@ -187,35 +217,35 @@ public class Viewer extends Application {
                     boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
                 } else boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
                 boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
-                resourceToShape(boardX,boardY,resource);
+                resourceToShape(boardX,boardY,resource, 20);
             }
         }
 
     }
 
-    public void resourceToShape(double x, double y, Board.Tile.Resource resource) {
+    public void resourceToShape(double x, double y, Board.Tile.Resource resource, double size) {
         switch (resource) {
             case STON -> {
-                Rectangle rectangle = new Rectangle(x,y,10,20);
+                Rectangle rectangle = new Rectangle(x,y,size/2,size);
                 rectangle.setFill(Color.GREEN);
                 root.getChildren().add(rectangle);
             }
             case COCO -> {
-                Circle circle = new Circle(x,y,20,Color.WHITE);
+                Circle circle = new Circle(x,y,size,Color.WHITE);
                 root.getChildren().add(circle);
             }
             case BBOO -> {
-                Rectangle rectangle = new Rectangle(x,y,10,20);
+                Rectangle rectangle = new Rectangle(x,y,size/2,size);
                 rectangle.setFill(Color.YELLOW);
                 root.getChildren().add(rectangle);
             }
             case STAT -> {
-                Rectangle rectangle = new Rectangle(x,y,10,20);
+                Rectangle rectangle = new Rectangle(x,y,size/2,size);
                 rectangle.setFill(Color.FIREBRICK);
                 root.getChildren().add(rectangle);
             }
             case WATR -> {
-                Circle circle = new Circle(x,y,20,Color.FIREBRICK);
+                Circle circle = new Circle(x,y,size,Color.FIREBRICK);
                 root.getChildren().add(circle);
             }
         }
@@ -226,8 +256,10 @@ public class Viewer extends Application {
 
 
     private void displayPlayers() {
-        int initialY = 80;
-        int playerSpacing = 80;
+        int initialY = 60;
+        int playerSpacing = 20;
+        int initialY2 = 600;
+        int initialX = VIEWER_WIDTH/3;
         List<Board.Player> players = model.board.playerList;
         for (Board.Player player : players) {
 
@@ -239,17 +271,14 @@ public class Viewer extends Application {
             initialY += 20;
             Text resources = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Resources: " + Arrays.toString(player.getResources()));
             initialY += 20;
-            Text settlers = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Settlers Placed" );
-            initialY += 20;
-            Text set = new Text(0, initialY + playerSpacing * players.indexOf(player), model.board.getOccupiedTiles(player.getId(),0).toString());
-            initialY += 20;
-            Text villages = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Villages Placed");
-            initialY += 20;
-            Text vil = new Text(0, initialY + playerSpacing * players.indexOf(player), model.board.getOccupiedTiles(player.getId(),1).toString());
+            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.getId() + ":" + model.board.getOccupiedTiles(player.getId(),0).toString() );
+            initialY2 += 8;
+            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.getId() + ":"  + model.board.getOccupiedTiles(player.getId(),1).toString());
+            settlers.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
+            villages.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
 
 
-
-            root.getChildren().addAll(playerText,score,resources, resourcesInstructions,settlers, set,villages, vil);
+            root.getChildren().addAll(playerText,score,resources, resourcesInstructions,settlers,villages);
         }
     }
 
@@ -259,7 +288,7 @@ public class Viewer extends Application {
         int currentPlayer = model.getCurrentPlayer();
         Text state = new Text("Player to Move: " + currentPlayer + " , Phase: " + model.toPhase());
         state.setLayoutX(0);
-        state.setLayoutY(60);
+        state.setLayoutY(40);
         root.getChildren().add(state);
     }
 
