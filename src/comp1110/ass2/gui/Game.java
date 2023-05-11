@@ -175,7 +175,7 @@ public class Game extends Application {
             if (model.checkEnd(0)) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
                 endedPhase.setTitle("Exploration PHASE ENDED");
-                endedPhase.setHeaderText("Player with most points: " + model.board.declareWinner().getId());
+                endedPhase.setHeaderText("Player with most points: PLAYER " + model.board.declareWinner().getId());
                 endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 endedPhase.show();
                 this.model.reset();
@@ -189,7 +189,7 @@ public class Game extends Application {
                 this.model.reset();
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("SETTLEMENT PHASE ENDED");
-                winner.setHeaderText("WINNER: " + model.board.declareWinner().getId());
+                winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().getId());
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
                 newGame();

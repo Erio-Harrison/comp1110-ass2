@@ -286,7 +286,7 @@ public class Position {
         }
         return stoneCoords;
     }
-
+// removes pieces at end of a phase and returns it to the player/
     public void removePieces() {
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
@@ -294,13 +294,16 @@ public class Position {
                     tiles[k][i].resource = null;
                     // village on stone circle
                     if (tiles[k][i].occupier != -1 && tiles[k][i].village == 1 && tiles[k][i].isStoneCircle) {
+                        playerList.get(tiles[k][i].occupier).minusVillager();
                         tiles[k][i].occupier = -1;
                         tiles[k][i].village = 0;
                     }
 
                     // settler
                     if (tiles[k][i].occupier != -1 && tiles[k][i].village == 0) {
+                        playerList.get(tiles[k][i].occupier).minusSettler();
                         tiles[k][i].occupier = -1;
+
                     }
                 }
             }
@@ -487,6 +490,15 @@ public class Position {
         public void addSettler() {
             if (this.villages == 30) return;
             this.settlers++;
+        }
+        public void minusVillager() {
+            if (this.villages == 0) return;
+            this.villages--;
+
+        }
+        public void minusSettler() {
+            if (this.villages == 0) return;
+            this.settlers--;
         }
     }
 
