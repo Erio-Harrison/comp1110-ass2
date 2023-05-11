@@ -206,8 +206,8 @@ public class Model {
     public void setSettler(int x, int y, int piece) {
         Board.tiles[x][y].occupier = this.currentPlayer;
         Board.tiles[x][y].village = piece;
-        if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
-        else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
+        if (piece == 0) {this.board.getPlayer(this.currentPlayer).addSettler();}
+        else if (piece == 1) {this.board.getPlayer(this.currentPlayer).addVillager();}
 
         if (Board.tiles[x][y].isStoneCircle) {
             this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;

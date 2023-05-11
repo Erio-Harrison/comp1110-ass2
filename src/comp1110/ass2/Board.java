@@ -478,6 +478,16 @@ public class Position {
                     .mapToInt(Integer::intValue)
                     .sum();
         }
+
+        public void addVillager() {
+            if (this.villages == 5) return;
+                this.villages++;
+
+        }
+        public void addSettler() {
+            if (this.villages == 30) return;
+            this.settlers++;
+        }
     }
 
 

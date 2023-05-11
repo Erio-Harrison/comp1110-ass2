@@ -162,10 +162,11 @@ public class Game extends Application {
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
         Text phase = new Text(150/4., 380, "PHASE: " + model.phaseToString());
-        game.getChildren().addAll(title,phase);
+        Text move = new Text(150/4., 360, "Make a Move");
+        game.getChildren().addAll(title,phase, move);
 
-        Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getVillages()) + " Left");
-        Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getSettlers()) + " Left");
+        Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getSettlers()) + " Left");
+        Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getVillages()) + " Left");
         game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
     }
 
@@ -267,7 +268,7 @@ public class Game extends Application {
                             model.setSettler(pos[1], pos[0], village);
                             updateGUI();
                         }
-                        this.setLocation(pos);
+                        this.setLocation(pos, village);
                     });
             this.snapToHome();
         }
@@ -284,9 +285,9 @@ public class Game extends Application {
             return new int[]{x, y};
         }
 
-        public void setLocation(int[] position) {
+        public void setLocation(int[] position, int piece) {
             // Position is not on the board
-            if (model.getBoard().outOfBounds(position) || model.isMoveValid(position[0],position[1],0)) {
+            if (model.getBoard().outOfBounds(position) || !model.isMoveValid(position[0],position[1],piece)) {
                 this.snapToHome();
             } else {
                 this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
