@@ -8,8 +8,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -26,7 +28,6 @@ import java.util.List;
 // FIXME Task 15
 public class Game extends Application {
 
-    private static final Group root = new Group();
     private final Group menu = new Group();
     private final Group game = new Group();
     private static final int WINDOW_WIDTH = 1200;
@@ -133,7 +134,7 @@ public class Game extends Application {
         ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,totalT));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
-            PlayerPointCounter pointCounter = new PlayerPointCounter(i, board.tiles, board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(i, Board.tiles, board.numOfIslands);
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
@@ -148,12 +149,16 @@ public class Game extends Application {
         }
     }
 
-    private void makeGameTokens() {
+    private void makeGameTokens(int phase) {
         // tokens already on board
-        // Placeable tokens
         SettlerPiece settlerToken = new SettlerPiece(0, this.model);
         SettlerPiece villagePiece = new SettlerPiece(1, this.model);
-        game.getChildren().addAll(settlerToken,villagePiece);
+        // Placeable tokens
+        if (phase == 0) {
+            game.getChildren().addAll(settlerToken,villagePiece);
+        } else game.getChildren().addAll(settlerToken);
+
+
 
     }
 
@@ -162,8 +167,7 @@ public class Game extends Application {
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
         Text phase = new Text(150/4., 380, "PHASE: " + model.phaseToString());
-        Text move = new Text(150/4., 360, "Make a Move");
-        game.getChildren().addAll(title,phase, move);
+        game.getChildren().addAll(title,phase);
 
         Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getSettlers()) + " Left");
         Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getVillages()) + " Left");
@@ -183,7 +187,7 @@ public class Game extends Application {
                 this.model.advancePlayer();
             }
             game.getChildren().clear();
-            makeState();
+            makeState(model.gamestate);
         } else {
             if (model.checkEnd(1)) {
                 this.model.reset();
@@ -192,33 +196,35 @@ public class Game extends Application {
                 winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().getId());
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
-                newGame();
+
 
             } else {
                 this.model.advancePlayer();
                 game.getChildren().clear();
-                makeState();
+                makeState(model.gamestate);
             }
 
         }
     }
 
     private void newGame() {
+
         game.getChildren().clear();
         this.setModel(DEFAULT_GAME);
-        makeState();
+        makeState(model.gamestate);
+
     }
 
-    private void makeState() {
+    private void makeState(int phase) {
         makeScoreboard();
         makeBoard();
         makeResources();
         makeCurrentInventory();
-        makeGameTokens();
+        makeGameTokens(phase);
     }
 
     class SettlerPiece extends Group {
-        Color[] tokenColours = new Color[]{Color.YELLOW, Color.PURPLE, Color.ORANGE, Color.BLUE};
+
         SettlerToken settler;
 
         Integer village;
@@ -315,7 +321,20 @@ public class Game extends Application {
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.game, WINDOW_WIDTH, WINDOW_HEIGHT);
         newGame();
-        stage.setScene(game.getScene());
+        // Debug current State as a stateString
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.D) {
+                System.out.println(model.toStateString());
+            }
+
+            // Create a new Game when you press N on Keyboard
+            if (e.getCode() == KeyCode.N) {
+                newGame();
+            }
+        });
+
+
+        stage.setScene(scene);
         stage.show();
     }
 }
