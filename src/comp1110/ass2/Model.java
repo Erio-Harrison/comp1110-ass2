@@ -44,7 +44,10 @@ public class Model {
     }
 
 
-
+public String toPhase() {
+        if (gamestate == 0) return "Exploration";
+        return "Settlement";
+}
 
 
     //authored by Tay Shao An

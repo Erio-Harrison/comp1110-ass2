@@ -242,7 +242,19 @@ public class Board {
         }
     }
 
-
+public ArrayList<Position>   getOccupiedTiles(int player, int village) {
+    ArrayList<Position> occupied = new ArrayList<>();
+    for (int k = 0; k < boardSize; k ++) {
+        for (int i = 0; i < boardSize; i ++) {
+            if (tiles[k][i] != null) {
+                if (tiles[k][i].occupier == player && tiles[k][i].village == village){
+                    occupied.add(new Position(k,i));
+                }
+            }
+        }
+    }
+    return occupied;
+}
 
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
@@ -272,6 +284,12 @@ public class Position {
     public int getY() {
         return y;
     }
+
+    @Override
+    public String toString() {
+        return "(" + getX() + "," + getY() + ")";
+    }
+
 }
     public ArrayList<Position> getStoneCoordinates() {
         ArrayList<Position> stoneCoords = new ArrayList<>();

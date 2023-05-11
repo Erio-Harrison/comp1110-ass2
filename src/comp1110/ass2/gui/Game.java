@@ -162,16 +162,20 @@ public class Game extends Application {
 
     }
 
-    private void makeCurrentInventory() {
+    private void makeCurrentInventory(int gameState) {
         Board board = this.model.getBoard();
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
-        Text phase = new Text(150/4., 380, "PHASE: " + model.phaseToString());
+        Text phase = new Text(150/4., 380, "PHASE: " + gameState);
         game.getChildren().addAll(title,phase);
 
-        Text villagerCount = new Text(10, 420, "Villagers: " + (30 - currentPlayer.getSettlers()) + " Left");
+        Text villagerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.getSettlers()) + " Left");
         Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getVillages()) + " Left");
-        game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
+
+        if (gameState == 0) {
+            game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
+        } else game.getChildren().addAll(new Text[]{villagerCount});
+
     }
 
     private void updateGUI() {
@@ -219,7 +223,7 @@ public class Game extends Application {
         makeScoreboard();
         makeBoard();
         makeResources();
-        makeCurrentInventory();
+        makeCurrentInventory(phase);
         makeGameTokens(phase);
     }
 
