@@ -72,8 +72,6 @@ public class Board {
     // int piece -> int representing the piece 0 = settler 1 = village
     //
 
-
-
     public boolean isValidSettle(int x, int y, int player, int piece) {
         int len = 0;
         if (x % 2 == 0) {len = -1;}
@@ -521,7 +519,7 @@ public class Position {
     }
 
 
-
+ 
     /**
      * Authored by Tay Shao An
      * Stores attributes about a certain tile
