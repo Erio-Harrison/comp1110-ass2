@@ -522,7 +522,7 @@ public class BlueLagoon {
         HashSet<String> movesAvailable = test.allValidMoves(test.currentPlayer);
         HashMap<String,Integer> moveScore = new HashMap<>();
         for (String move : movesAvailable){
-            String newState = placePiece(stateString,move);
+            String newState = applyMove(stateString,move);
             test.toModel(newState);
             int score = calculateScores(newState)[test.currentPlayer];
             moveScore.put(move,score);
@@ -545,7 +545,7 @@ public class BlueLagoon {
         if(depth == 0 || isPhaseOver(stateString)){
             return calculateScores(stateString)[test.currentPlayer];
         }
-        if (MaximizingPlayer == true){
+        if (MaximizingPlayer){
             int maxEval = -INFINITY;
             for (String move : movesAvailable){
                 String newState = applyMove(stateString,move);
@@ -555,7 +555,7 @@ public class BlueLagoon {
             return maxEval;
         }
         else {
-            int minEval = + INFINITY;
+            int minEval = INFINITY;
             for (String move : movesAvailable){
                 String newState = applyMove(stateString,move);
                 int score = minimax(newState,depth-1,true);
@@ -583,4 +583,9 @@ public class BlueLagoon {
         }
         return bestMove;
     }
+
+    public static void main(String[] args) {
+        System.out.println(miniMaxAI(WHEELS_GAME));
+    }
 }
+
