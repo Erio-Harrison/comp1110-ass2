@@ -431,6 +431,7 @@ private void chooseGame(String game) {
 
 
 
+
         // START GAME IS ALWAYS DEFAULT_GAME
         newGame(BlueLagoon.DEFAULT_GAME);
         // Debug current State as a stateString
@@ -461,6 +462,10 @@ private void chooseGame(String game) {
             }
             if (e.getCode() == KeyCode.DIGIT5) {
                 newGame(BlueLagoon.FACE_GAME);
+            }
+// quit back to menu
+            if (e.getCode() == KeyCode.ESCAPE) {
+                stage.setScene(scene2);
             }
 
 
