@@ -128,7 +128,7 @@ public class BlueLagoon {
     public static String distributeResources(String stateString){
         Model test = new Model();
         test.toModel(stateString);
-        test.resetResources();
+        test.resetAllResources();
         return test.toStateString();
     }
 

@@ -310,14 +310,14 @@ public class Position {
                     tiles[k][i].resource = null;
                     // village on stone circle
                     if (tiles[k][i].occupier != -1 && tiles[k][i].village == 1 && tiles[k][i].isStoneCircle) {
-                        playerList.get(tiles[k][i].occupier).minusVillager();
+                        playerList.get(tiles[k][i].occupier).villages -= 1;
                         tiles[k][i].occupier = -1;
                         tiles[k][i].village = 0;
                     }
 
                     // settler
                     if (tiles[k][i].occupier != -1 && tiles[k][i].village == 0) {
-                        playerList.get(tiles[k][i].occupier).minusSettler();
+                        playerList.get(tiles[k][i].occupier).settlers -= 1;
                         tiles[k][i].occupier = -1;
 
                     }
@@ -496,25 +496,6 @@ public class Position {
             return Arrays.stream(resources)
                     .mapToInt(Integer::intValue)
                     .sum();
-        }
-
-        public void addVillager() {
-            if (this.villages == 5) return;
-                this.villages++;
-
-        }
-        public void addSettler() {
-            if (this.villages == 30) return;
-            this.settlers++;
-        }
-        public void minusVillager() {
-            if (this.villages == 0) return;
-            this.villages--;
-
-        }
-        public void minusSettler() {
-            if (this.villages == 0) return;
-            this.settlers--;
         }
     }
 

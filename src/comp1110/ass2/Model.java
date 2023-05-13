@@ -209,8 +209,8 @@ public String toPhase() {
     public void setSettler(int x, int y, int piece) {
         Board.tiles[x][y].occupier = this.currentPlayer;
         Board.tiles[x][y].village = piece;
-        if (piece == 0) {this.board.getPlayer(this.currentPlayer).addSettler();}
-        else if (piece == 1) {this.board.getPlayer(this.currentPlayer).addVillager();}
+        if (piece == 0) {this.board.getPlayer(this.currentPlayer).villages += 1;}
+        else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
         if (Board.tiles[x][y].isStoneCircle) {
             this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
@@ -288,7 +288,7 @@ public String toPhase() {
 
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
-    public void resetResources() {
+    public void resetAllResources() {
         if(gamestate == 0){
             List<Board.Tile> stoneCoords = this.board.getStoneRsrcTiles();
             board.assignRanResources(stoneCoords);
@@ -302,7 +302,7 @@ public String toPhase() {
         countAllPoints();
         if (gamestate == 0) {
             board.removePieces();
-            this.resetResources();
+            this.resetAllResources();
             this.changeState();
         }
 
