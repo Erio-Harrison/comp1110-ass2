@@ -27,8 +27,7 @@ import java.util.List;
 // FIXME Task 14
 // FIXME Task 15
 public class Game extends Application {
-
-    private final Group menu = new Group();
+    
     private final Group game = new Group();
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 700;
@@ -83,12 +82,14 @@ public class Game extends Application {
             if (resource != null) {
                 if (row % 2 == 0) {
                     boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
-                } else boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
+                }
+                else {
+                    boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
+                }
                 boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
                 resourceToShape(boardX,boardY,resource);
             }
         }
-
     }
 
     public void resourceToShape(double x, double y, Board.Tile.Resource resource) {
@@ -138,12 +139,12 @@ public class Game extends Application {
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
-            Text player = new Text(50 * i + 120, 40, ""+ i);
-            Text islands = new Text(50 * i + 120, 60, "" + pointCounter.islandsCounter());
-            Text majorityIslands = new Text(50 * i+ 120, 80, "" + pointCounter.majorityIslandsCounter(board.islandToPoints));
-            Text links = new Text(50 * i + 120, 100, "" + pointCounter.linkCounter());
-            Text resources = new Text(50 * i + 120, 120, "" + board.resourcesPoints(i));
-            Text total = new Text(50 * i + 120, 140, "" +board.countPoints(i));
+            Text player = new Text(50 * i + 120, 40, String.valueOf(i));
+            Text islands = new Text(50 * i + 120, 60, String.valueOf(pointCounter.islandsCounter()));
+            Text majorityIslands = new Text(50 * i+ 120, 80, String.valueOf(pointCounter.majorityIslandsCounter(board.islandToPoints)));
+            Text links = new Text(50 * i + 120, 100, String.valueOf(pointCounter.linkCounter()));
+            Text resources = new Text(50 * i + 120, 120, String.valueOf(board.resourcesPoints(i)));
+            Text total = new Text(50 * i + 120, 140, String.valueOf(board.countPoints(i)));
 
             game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total)));
         }
@@ -151,15 +152,12 @@ public class Game extends Application {
 
     private void makeGameTokens(int phase) {
         // tokens already on board
-        SettlerPiece settlerToken = new SettlerPiece(0, this.model);
-        SettlerPiece villagePiece = new SettlerPiece(1, this.model);
+        Piece settlerToken = new Piece(0, this.model);
+        Piece villagePiece = new Piece(1, this.model);
         // Placeable tokens
         if (phase == 0) {
             game.getChildren().addAll(settlerToken,villagePiece);
         } else game.getChildren().addAll(settlerToken);
-
-
-
     }
 
     private void makeCurrentInventory(int gameState) {
@@ -227,9 +225,9 @@ public class Game extends Application {
         makeGameTokens(phase);
     }
 
-    class SettlerPiece extends Group {
+    class Piece extends Group {
 
-        SettlerToken settler;
+        ImageToken settler;
 
         Integer village;
 
@@ -237,14 +235,14 @@ public class Game extends Application {
         double homeX;
         double homeY;
 
-        public SettlerPiece(Integer village, Model model) {
+        public Piece(Integer village, Model model) {
             this.village = village;
             this.homeX = 20;
             if (village == 1) {this.homeX += 100;};
             this.homeY = 470;
 
-            if (village == 1) {this.settler = new SettlerToken("village.png");}
-            else {this.settler = new SettlerToken("settler.png");}
+            if (village == 1) {this.settler = new ImageToken("village.png");}
+            else {this.settler = new ImageToken("settler.png");}
 
             this.getChildren().add(this.settler);
             this.setOnMousePressed(event -> {
@@ -274,7 +272,6 @@ public class Game extends Application {
                         // check if it is a valid move
                         System.out.println(model.isMoveValid(pos[1], pos[0], village));
                         if (model.isMoveValid(pos[1], pos[0], village)) {
-                            System.out.println("update gui");
                             model.setSettler(pos[1], pos[0], village);
                             updateGUI();
                         }
@@ -314,8 +311,8 @@ public class Game extends Application {
             this.setLayoutY(this.homeY);
         }
     }
-    class SettlerToken extends ImageView {
-        public SettlerToken(String filename) {
+    static class ImageToken extends ImageView {
+        public ImageToken(String filename) {
             Image image = new Image(Game.class.getResource( URI_BASE  + filename).toString());
             this.setImage(image);
         }
