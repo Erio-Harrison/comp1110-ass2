@@ -34,6 +34,9 @@ public class Board {
         this.islandToPoints = new ArrayList<>();
     }
 
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
 
     //helper function to assign resource
     public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords){
@@ -68,6 +71,8 @@ public class Board {
     // int player -> player
     // int piece -> int representing the piece 0 = settler 1 = village
     //
+
+
 
     public boolean isValidSettle(int x, int y, int player, int piece) {
         int len = 0;
@@ -128,6 +133,8 @@ public class Board {
         }
     }
 
+
+
     // Authored by Tay Shao An
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
@@ -162,7 +169,13 @@ public class Board {
     // Authored by Tay Shao An
     // used to set attributes for each tile on a board based on a string state
     // attribute is assigned as follows:
-    // isStoneCircle = 0, resource = 1, occupier = 2, island = 3, type = 4, village = 5;
+    //            this.isStoneCircle = 0;
+    //            this.resource = 1;
+    //            this.occupier = 2;
+    //            this.island = 3;
+    //            this.type = 4;
+    //            this.village = 5;
+
     public void setBoardAttributes(String state, int attribute, int info)  {
         String[] split = state.split(" ");
         switch (attribute) {
@@ -229,19 +242,19 @@ public class Board {
         }
     }
 
-    public ArrayList<int[]> getOccupiedTiles(int player, int village) {
-        ArrayList<int[]> occupied = new ArrayList<>();
-        for (int k = 0; k < boardSize; k ++) {
-            for (int i = 0; i < boardSize; i ++) {
-                if (tiles[k][i] != null) {
-                    if (tiles[k][i].occupier == player && tiles[k][i].village == village){
-                        occupied.add(new int[] {k, i});
-                    }
+public ArrayList<Position>   getOccupiedTiles(int player, int village) {
+    ArrayList<Position> occupied = new ArrayList<>();
+    for (int k = 0; k < boardSize; k ++) {
+        for (int i = 0; i < boardSize; i ++) {
+            if (tiles[k][i] != null) {
+                if (tiles[k][i].occupier == player && tiles[k][i].village == village){
+                    occupied.add(new Position(k,i));
                 }
             }
         }
-        return occupied;
     }
+    return occupied;
+}
 
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
@@ -256,14 +269,35 @@ public class Board {
         }
         return stoneCoords;
     }
+public class Position {
+        int x;
+        int y;
+        public Position(int x, int y) {
+            this.x = x;
+            this.y=y;
+        }
 
-    public ArrayList<int[]> getStoneCoordinates() {
-        ArrayList<int[]> stoneCoords = new ArrayList<>();
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + getX() + "," + getY() + ")";
+    }
+
+}
+    public ArrayList<Position> getStoneCoordinates() {
+        ArrayList<Position> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
                 if (tiles[k][i] != null) {
                     if (tiles[k][i].isStoneCircle){
-                        stoneCoords.add(new int[] {k, i});
+                        stoneCoords.add(new Position(k,i));
                     }
                 }
             }
@@ -278,14 +312,14 @@ public class Board {
                     tiles[k][i].resource = null;
                     // village on stone circle
                     if (tiles[k][i].occupier != -1 && tiles[k][i].village == 1 && tiles[k][i].isStoneCircle) {
-                        playerList.get(tiles[k][i].occupier).villages -= 1;
+                        playerList.get(tiles[k][i].occupier).minusVillager();
                         tiles[k][i].occupier = -1;
                         tiles[k][i].village = 0;
                     }
 
                     // settler
                     if (tiles[k][i].occupier != -1 && tiles[k][i].village == 0) {
-                        playerList.get(tiles[k][i].occupier).settlers -= 1;
+                        playerList.get(tiles[k][i].occupier).minusSettler();
                         tiles[k][i].occupier = -1;
 
                     }
@@ -339,18 +373,54 @@ public class Board {
         return -1;
     }
 
-    // =====================================================================
-    // checks if all resource squares have been occupied or all players have used up their pieces
-    public boolean noValidMoves(int gameState) {
-        if (gameState == 0) {
-            for (Player player : playerList) {
-                if (player.settlers != 30 || player.villages != 5) {return false;}
+    public String resourceToString(Tile.Resource resource) {
+        switch (resource) {
+            case COCO -> {
+                return "coconut";
             }
+            case BBOO -> {
+                return "bamboo";
+            }
+            case WATR -> {
+                return "water";
+            }
+            case STON -> {
+                return "preciousStone";
+            }
+            case STAT -> {
+                return "statuette";
+            }
+            case SETTLER -> {
+                return "settler";
+            }
+            case VILLAGER -> {
+                return "village";
+            }
+        }
+        return "";
+    }
+
+    public boolean noValidMovesPlayer(Player player, int gameState) {
+        if (gameState == 0) {
+            if (player.settlers != 30 || player.villages != 5) {return false;}
         }
 
         if (gameState == 1) {
+            if (player.settlers != 30) {return false;}
+        }
+        return true;
+    }
+    // =====================================================================
+    // checks if all resource squares have been occupied or all players have used up their pieces
+    public boolean noValidMoves(int gameState) {
             for (Player player : playerList) {
-                if (player.settlers != 30) {return false;}
+                if (player.settlers != 30 || player.villages != 5) {return false;}
+            }
+
+
+        if (gameState == 1) {
+            for (Player player : playerList) {
+                if (player.settlers != 30 || player.villages != 5) {return false;}
             }
         }
         return true;
@@ -379,6 +449,18 @@ public class Board {
      * Stores current state of a player
      */
 
+    public boolean outOfBounds(int[] coordinates) {
+        int x = coordinates[0];
+        int y = coordinates[1];
+        if (y % 2 == 0) {
+            if (x < 0 || x > boardSize-2 || y < 0 || y > boardSize -1) return true;
+
+        } else {
+            if ((x < 0 || x > boardSize-1|| y < 0 || y > boardSize -1)) return true;
+        }
+
+        return false;
+    }
     //used to store the points and resources of each player
     public static class Player {
         int id;
@@ -426,8 +508,29 @@ public class Board {
                     .mapToInt(Integer::intValue)
                     .sum();
         }
+
+        public void addVillager() {
+            if (this.villages == 5) return;
+                this.villages++;
+
+        }
+        public void addSettler() {
+            if (this.villages == 30) return;
+            this.settlers++;
+        }
+        public void minusVillager() {
+            if (this.villages == 0) return;
+            this.villages--;
+
+        }
+        public void minusSettler() {
+            if (this.villages == 0) return;
+            this.settlers--;
+        }
     }
- 
+
+
+
     /**
      * Authored by Tay Shao An
      * Stores attributes about a certain tile
@@ -472,6 +575,15 @@ public class Board {
             this.type = 0;
             this.village = 0;
         }
+
+        public Boolean getStoneCircle() {
+            return isStoneCircle;
+        }
+
+        public int getType() {
+            return type;
+        }
+
         public Resource getResource() {
             return resource;
         }

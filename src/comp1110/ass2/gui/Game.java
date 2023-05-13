@@ -1,5 +1,7 @@
 package comp1110.ass2.gui;
 
+import com.sun.javafx.stage.WindowHelper;
+import comp1110.ass2.BlueLagoon;
 import comp1110.ass2.Board;
 import comp1110.ass2.Model;
 import comp1110.ass2.PlayerPointCounter;
@@ -12,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -27,18 +31,26 @@ import java.util.List;
 // FIXME Task 14
 // FIXME Task 15
 public class Game extends Application {
-    
+
+    private final Group menu = new Group();
+
+    private final Group selectGame = new Group();
     private final Group game = new Group();
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 700;
     private static final String URI_BASE = "Resources/";
-    private static final int MARGIN_X = 250;
+    private static final int MARGIN_X = 350;
     private static final int MARGIN_Y = 40;
     private static final double TILE_SPACING_X = 60.0;
     private static final double OFFSET = TILE_SPACING_X/2.0;
     private static final double TILE_SPACING_Y = 42.0;
     private Model model;
-    public static final String DEFAULT_GAME = "a 13 2; c 0 E; i 6 0,0 0,1 0,2 0,3 1,0 1,1 1,2 1,3 1,4 2,0 2,1; i 6 0,5 0,6 0,7 1,6 1,7 1,8 2,6 2,7 2,8 3,7 3,8; i 6 7,12 8,11 9,11 9,12 10,10 10,11 11,10 11,11 11,12 12,10 12,11; i 8 0,9 0,10 0,11 1,10 1,11 1,12 2,10 2,11 3,10 3,11 3,12 4,10 4,11 5,11 5,12; i 8 4,0 5,0 5,1 6,0 6,1 7,0 7,1 7,2 8,0 8,1 8,2 9,0 9,1 9,2; i 8 10,3 10,4 11,0 11,1 11,2 11,3 11,4 11,5 12,0 12,1 12,2 12,3 12,4 12,5; i 10 3,3 3,4 3,5 4,2 4,3 4,4 4,5 5,3 5,4 5,5 5,6 6,3 6,4 6,5 6,6 7,4 7,5 7,6 8,4 8,5; i 10 5,8 5,9 6,8 6,9 7,8 7,9 7,10 8,7 8,8 8,9 9,7 9,8 9,9 10,6 10,7 10,8 11,7 11,8 12,7 12,8; s 0,0 0,5 0,9 1,4 1,8 1,12 2,1 3,5 3,7 3,10 3,12 4,0 4,2 5,9 5,11 6,3 6,6 7,0 7,8 7,12 8,2 8,5 9,0 9,9 10,3 10,6 10,10 11,0 11,5 12,2 12,8 12,11; r C B W P S; p 0 0 0 0 0 0 0 S T; p 1 0 0 0 0 0 0 S T;";
+
+    private static final double DEFAULT_BOARD = 13;
+
+    private static double SIZING_RATIO;
+
+    private static String CURRENT_GAME;
 
     // Use a state-string to initialise the game.
     private void setModel(String statestring) {
@@ -50,7 +62,15 @@ public class Game extends Application {
 
     // make the elements of the board, such as the islands, stones, resources, etc.
     private void makeBoard() {
-        int boardSize = this.model.board.boardSize;
+/*        String path2 = URI_BASE + "menu.png";
+        Image background = new Image(getClass().getResource(path2).toString());
+        ImageView imageView = new ImageView(background);
+        game.getChildren().add(imageView);
+*/
+
+
+        int boardSize = this.model.getBoard().boardSize;
+        SIZING_RATIO = DEFAULT_BOARD / boardSize;
         Board.Tile[][] tiles = Board.tiles;
 
         for (int row = 0; row < boardSize; row++) {
@@ -63,8 +83,11 @@ public class Game extends Application {
                 String path = URI_BASE + Board.toURL(curr);
                 Image image = new Image(getClass().getResource(path).toString());
                 ImageView tileImage = new ImageView(image);
-                tileImage.setLayoutX((col * TILE_SPACING_X) + (MARGIN_X) + var * OFFSET);
-                tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
+                tileImage.setFitWidth(65 * SIZING_RATIO);
+                tileImage.setFitHeight(89 * SIZING_RATIO);
+                tileImage.setPreserveRatio(true);
+                tileImage.setLayoutX((col * TILE_SPACING_X * SIZING_RATIO) + (MARGIN_X) + var * OFFSET * SIZING_RATIO);
+                tileImage.setLayoutY((row * TILE_SPACING_Y * SIZING_RATIO) + (MARGIN_Y));
                 game.getChildren().add(tileImage);
             }
         }
@@ -72,57 +95,53 @@ public class Game extends Application {
 
     // sets resources on the board
     private void makeResources() {
-        ArrayList<int[]> stoneCoords = model.board.getStoneCoordinates();
-        for (int[] coords : stoneCoords) {
-            int row = coords[0];
-            int col = coords[1];
+        ArrayList< Board.Position> stoneCoords = model.board.getStoneCoordinates();
+        for (Board.Position coords : stoneCoords) {
+            int row = coords.getX();
+            int col = coords.getY();
             double boardX;
             double boardY;
             Board.Tile.Resource resource = Board.tiles[row][col].getResource();
             if (resource != null) {
                 if (row % 2 == 0) {
-                    boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
-                }
-                else {
-                    boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
-                }
-                boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
-                resourceToShape(boardX,boardY,resource);
+                    boardX = (col * TILE_SPACING_X * SIZING_RATIO) + TILE_SPACING_X/2 * SIZING_RATIO + OFFSET * SIZING_RATIO + MARGIN_X;
+                } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) + TILE_SPACING_X/2 * SIZING_RATIO + MARGIN_X;
+                boardY = row * TILE_SPACING_Y * SIZING_RATIO + 3*TILE_SPACING_Y/4 * SIZING_RATIO + MARGIN_Y;
+                resourceToShape(boardX,boardY,resource, 20 * SIZING_RATIO);
             }
         }
-    }
 
-    public void resourceToShape(double x, double y, Board.Tile.Resource resource) {
+    }
+    public void resourceToShape(double x, double y, Board.Tile.Resource resource, double size) {
         switch (resource) {
             case STON -> {
-                Rectangle rectangle = new Rectangle(x,y,10,20);
+                Rectangle rectangle = new Rectangle(x,y,size/2,size);
                 rectangle.setFill(Color.GREEN);
                 game.getChildren().add(rectangle);
             }
             case COCO -> {
-                Circle circle = new Circle(x,y,20,Color.WHITE);
+                Circle circle = new Circle(x,y,size,Color.WHITE);
                 game.getChildren().add(circle);
             }
             case BBOO -> {
-                Rectangle rectangle = new Rectangle(x,y,10,20);
+                Rectangle rectangle = new Rectangle(x,y,size/2,size);
                 rectangle.setFill(Color.YELLOW);
                 game.getChildren().add(rectangle);
             }
             case STAT -> {
-                Rectangle rectangle = new Rectangle(x,y,10,20);
+                Rectangle rectangle = new Rectangle(x,y,size/2,size);
                 rectangle.setFill(Color.FIREBRICK);
                 game.getChildren().add(rectangle);
             }
             case WATR -> {
-                Circle circle = new Circle(x,y,20,Color.FIREBRICK);
+                Circle circle = new Circle(x,y,size,Color.FIREBRICK);
                 game.getChildren().add(circle);
             }
         }
     }
-
     private void makeScoreboard() {
         // Each player
-        Board board = this.model.board;
+        Board board = this.model.getBoard();
         int numberOfPlayers = model.numOfPlayers;
 
         // Row Labels
@@ -139,12 +158,12 @@ public class Game extends Application {
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
-            Text player = new Text(50 * i + 120, 40, String.valueOf(i));
-            Text islands = new Text(50 * i + 120, 60, String.valueOf(pointCounter.islandsCounter()));
-            Text majorityIslands = new Text(50 * i+ 120, 80, String.valueOf(pointCounter.majorityIslandsCounter(board.islandToPoints)));
-            Text links = new Text(50 * i + 120, 100, String.valueOf(pointCounter.linkCounter()));
-            Text resources = new Text(50 * i + 120, 120, String.valueOf(board.resourcesPoints(i)));
-            Text total = new Text(50 * i + 120, 140, String.valueOf(board.countPoints(i)));
+            Text player = new Text(50 * i + 120, 40, ""+ i);
+            Text islands = new Text(50 * i + 120, 60, "" + pointCounter.islandsCounter());
+            Text majorityIslands = new Text(50 * i+ 120, 80, "" + pointCounter.majorityIslandsCounter(board.islandToPoints));
+            Text links = new Text(50 * i + 120, 100, "" + pointCounter.linkCounter());
+            Text resources = new Text(50 * i + 120, 120, "" + board.resourcesPoints(i));
+            Text total = new Text(50 * i + 120, 140, "" +board.countPoints(i));
 
             game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total)));
         }
@@ -152,74 +171,88 @@ public class Game extends Application {
 
     private void makeGameTokens(int phase) {
         // tokens already on board
-        Piece settlerToken = new Piece(0, this.model);
-        Piece villagePiece = new Piece(1, this.model);
+        SettlerPiece settlerToken = new SettlerPiece(0, this.model);
+        SettlerPiece villagePiece = new SettlerPiece(1, this.model);
         // Placeable tokens
         if (phase == 0) {
             game.getChildren().addAll(settlerToken,villagePiece);
         } else game.getChildren().addAll(settlerToken);
+
+
+
     }
 
     private void makeCurrentInventory(int gameState) {
-        Board board = this.model.board;
+        Board board = this.model.getBoard();
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
         Text phase = new Text(150/4., 380, "PHASE: " + gameState);
         game.getChildren().addAll(title,phase);
 
-        Text villagerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.getSettlers()) + " Left");
-        Text settlerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getVillages()) + " Left");
+        Text settlerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.getSettlers()) + " Left");
+        Text villagerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getVillages()) + " Left");
 
         if (gameState == 0) {
             game.getChildren().addAll(new Text[]{villagerCount,settlerCount});
-        } else game.getChildren().addAll(new Text[]{villagerCount});
+        } else game.getChildren().addAll(new Text[]{settlerCount});
 
     }
 
-    private void updateGUI(int num) {
+    private void updateGUI() {
         if (model.gamestate == 0) {
-            if (num == 1) {
+            if (model.checkEnd(0)) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
                 endedPhase.setTitle("Exploration PHASE ENDED");
                 endedPhase.setHeaderText("Player with most points: PLAYER " + model.board.declareWinner().getId());
                 endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 endedPhase.show();
                 this.model.reset();
+            } else {
+                this.model.advancePlayer();
+
             }
             game.getChildren().clear();
             makeState(model.gamestate);
         } else {
-            if (num == 1) {
+            if (model.checkEnd(1)) {
+                this.model.reset();
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("SETTLEMENT PHASE ENDED");
                 winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().getId());
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
+
+
+            } else {
+                this.model.advancePlayer();
+                game.getChildren().clear();
+                makeState(model.gamestate);
             }
-            game.getChildren().clear();
-            makeState(model.gamestate);
+
         }
     }
 
-    private void newGame() {
-
+    private void newGame(String stateString) {
+        CURRENT_GAME = stateString;
         game.getChildren().clear();
-        this.setModel(DEFAULT_GAME);
+        this.setModel(CURRENT_GAME);
         makeState(model.gamestate);
 
     }
 
+
     private void makeState(int phase) {
-        makeScoreboard();
+
         makeBoard();
+        makeScoreboard();
         makeResources();
         makeCurrentInventory(phase);
         makeGameTokens(phase);
     }
 
-    class Piece extends Group {
+    class SettlerPiece extends Group {
 
-        ImageToken settler;
+        SettlerToken settler;
 
         Integer village;
 
@@ -227,14 +260,14 @@ public class Game extends Application {
         double homeX;
         double homeY;
 
-        public Piece(Integer village, Model model) {
+        public SettlerPiece(Integer village, Model model) {
             this.village = village;
             this.homeX = 20;
-            if (village == 1) {this.homeX += 100;};
+            if (village == 1) {this.homeX += 100;}
             this.homeY = 470;
 
-            if (village == 1) {this.settler = new ImageToken("village.png");}
-            else {this.settler = new ImageToken("settler.png");}
+            if (village == 1) {this.settler = new SettlerToken("village.png");}
+            else {this.settler = new SettlerToken("settler.png");}
 
             this.getChildren().add(this.settler);
             this.setOnMousePressed(event -> {
@@ -264,8 +297,9 @@ public class Game extends Application {
                         // check if it is a valid move
                         System.out.println(model.isMoveValid(pos[1], pos[0], village));
                         if (model.isMoveValid(pos[1], pos[0], village)) {
-                            var num = model.applyMove(pos[1], pos[0], village);
-                            updateGUI(num);
+                            System.out.println("update gui");
+                            model.setSettler(pos[1], pos[0], village);
+                            updateGUI();
                         }
                         this.setLocation(pos, village);
                     });
@@ -274,11 +308,11 @@ public class Game extends Application {
 // get the resource coordinate in terms of (0,0)
         public int[] getSnapPosition() {
             int x;
-            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / TILE_SPACING_Y);
+            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / (TILE_SPACING_Y * SIZING_RATIO));
             if (y % 2 == 0) {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X - OFFSET) / TILE_SPACING_X);
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X - OFFSET * SIZING_RATIO) / (TILE_SPACING_X* SIZING_RATIO));
             } else {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / TILE_SPACING_X);
+                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / (TILE_SPACING_X*SIZING_RATIO));
             }
 
             return new int[]{x, y};
@@ -286,14 +320,14 @@ public class Game extends Application {
 
         public void setLocation(int[] position, int piece) {
             // Position is not on the board
-            if (!model.isMoveValid(position[0],position[1],piece)) {
+            if (model.getBoard().outOfBounds(position) || !model.isMoveValid(position[0],position[1],piece)) {
                 this.snapToHome();
             } else {
-                this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
+                this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y * SIZING_RATIO);
                 if (position[1] % 2 == 0) {
-                    this.setLayoutX(OFFSET + MARGIN_X + (position[0] * TILE_SPACING_X));
+                    this.setLayoutX(OFFSET * SIZING_RATIO + MARGIN_X + (position[0] * TILE_SPACING_X * SIZING_RATIO));
                 } else {
-                    this.setLayoutX(MARGIN_X + (position[0] * TILE_SPACING_X));
+                    this.setLayoutX(MARGIN_X + (position[0] * TILE_SPACING_X * SIZING_RATIO));
                 }
             }
         }
@@ -304,31 +338,145 @@ public class Game extends Application {
 
         }
     }
-    static class ImageToken extends ImageView {
-        public ImageToken(String filename) {
+    static class SettlerToken extends ImageView {
+        public SettlerToken(String filename) {
             Image image = new Image(Game.class.getResource( URI_BASE  + filename).toString());
             this.setImage(image);
+            this.setFitWidth(65 * SIZING_RATIO);
+            this.setFitHeight(89 * SIZING_RATIO);
+            this.setPreserveRatio(true);
         }
     }
+
+
+private void chooseGame(String game) {
+        switch (game) {
+            case "DEFAULT_GAME" -> {
+                newGame(BlueLagoon.DEFAULT_GAME);
+            }
+
+            case "FACE_GAME" -> {
+                newGame(BlueLagoon.FACE_GAME);
+            }
+
+            case "SIDES_GAME" -> {
+                newGame(BlueLagoon.SIDES_GAME);
+            }
+
+            case "SPACE_INVADERS_GAME" -> {
+                newGame(BlueLagoon.SPACE_INVADERS_GAME);
+            }
+
+            case "WHEELS_GAME" -> {
+                newGame(BlueLagoon.WHEELS_GAME);
+            }
+
+        }
+
+}
+
+
+
+
 
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.game, WINDOW_WIDTH, WINDOW_HEIGHT);
-        newGame();
+        Scene scene2 = new Scene(this.menu,WINDOW_WIDTH,WINDOW_HEIGHT);
+        Scene scene3 = new Scene(this.selectGame,WINDOW_WIDTH,WINDOW_HEIGHT);
+
+        Button button = new Button("New Game?");
+        button.setLayoutX(WINDOW_WIDTH/2);
+        button.setLayoutY(WINDOW_HEIGHT/2);
+        button.setOnAction(event -> {
+            // default
+            String[] boards = new String[]{"DEFAULT_GAME","FACE_GAME","SIDES_GAME","SPACE_INVADERS_GAME","WHEELS_GAME"};
+            int spacing = 200;
+            for (int i = 0; i < boards.length; i++) {
+                String board = boards[i];
+                String path = URI_BASE + board + ".png";
+
+
+                Image image = new Image(getClass().getResource(path).toString());
+                ImageView gameBoard = new ImageView(image);
+                gameBoard.setFitWidth(spacing);
+                gameBoard.setFitHeight(spacing);
+                gameBoard.setLayoutX((WINDOW_WIDTH/10) + (i * spacing));
+                gameBoard.setLayoutY(WINDOW_HEIGHT/2);
+                selectGame.getChildren().add(gameBoard);
+
+                gameBoard.setOnMouseClicked( (MouseEvent e) -> {
+                    chooseGame(board);
+                    stage.setScene(scene);
+                });
+
+
+            }
+            // face
+
+            // sides
+
+            // space_invaders
+
+
+
+
+
+
+            stage.setScene(scene3);
+
+        });
+
+        menu.getChildren().add(button);
+
+
+
+
+
+        // START GAME IS ALWAYS DEFAULT_GAME
+        newGame(BlueLagoon.DEFAULT_GAME);
         // Debug current State as a stateString
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.D) {
                 System.out.println(model.toStateString());
             }
 
-            // Create a new Game when you press N on Keyboard
+            // Create a new Game when you press N on Keyboard of current board
             if (e.getCode() == KeyCode.N) {
-                newGame();
+                newGame(CURRENT_GAME);
             }
+
+            // switch boards
+            if (e.getCode() == KeyCode.DIGIT1) {
+                newGame(BlueLagoon.DEFAULT_GAME);
+            }
+            if (e.getCode() == KeyCode.DIGIT2) {
+                newGame(BlueLagoon.WHEELS_GAME);
+            }
+
+            if (e.getCode() == KeyCode.DIGIT3) {
+                newGame(BlueLagoon.SIDES_GAME);
+            }
+
+            if (e.getCode() == KeyCode.DIGIT4) {
+                newGame(BlueLagoon.SPACE_INVADERS_GAME);
+            }
+            if (e.getCode() == KeyCode.DIGIT5) {
+                newGame(BlueLagoon.FACE_GAME);
+            }
+// quit back to menu
+            if (e.getCode() == KeyCode.ESCAPE) {
+                stage.setScene(scene2);
+            }
+
+
+
+
+
         });
 
 
-        stage.setScene(scene);
+        stage.setScene(scene2);
         stage.show();
     }
 }
