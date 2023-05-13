@@ -15,7 +15,7 @@ public class BlueLagoon {
     public static final String SPACE_INVADERS_GAME = "a 23 2; c 0 E; i 6 0,2 0,7 1,3 1,7 2,2 2,3 2,4 2,5 2,6 2,7 3,2 3,4 3,5 3,6 3,8 4,0 4,1 4,2 4,3 4,4 4,5 4,6 4,7 4,8 4,9 5,0 5,1 5,3 5,4 5,5 5,6 5,7 5,9 5,10 6,0 6,2 6,7 6,9 7,3 7,4 7,6 7,7; i 6 0,14 0,19 1,15 1,19 2,14 2,15 2,16 2,17 2,18 2,19 3,14 3,16 3,17 3,18 3,20 4,12 4,13 4,14 4,15 4,16 4,17 4,18 4,19 4,20 4,21 5,12 5,13 5,15 5,16 5,17 5,18 5,19 5,21 5,22 6,12 6,14 6,19 6,21 7,15 7,16 7,18 7,19; i 6 17,9 18,8 18,9 19,6 19,7 19,8 19,9 19,10 19,11 19,12 20,5 20,6 20,7 20,8 20,9 20,10 20,11 20,12 21,5 21,6 21,7 21,8 21,9 21,10 21,11 21,12 21,13 22,5 22,6 22,7 22,8 22,9 22,10 22,11 22,12; i 8 12,3 12,5 13,3 13,4 13,5 13,6 14,1 14,2 14,3 14,4 14,5 15,1 15,2 15,3 16,1 16,2; i 8 12,17 12,18 12,19 13,17 13,18 13,19 13,20 14,17 14,18 14,19 14,20 15,19 15,20 15,21 16,19 16,20; i 8 13,14 14,13 14,14 15,13 15,14 15,15 16,13 16,14; i 8 14,7 15,7 15,8 16,7; i 10 8,9 9,9 10,9 11,9; i 10 8,12 9,13 10,12 11,13; i 10 9,1 10,1 11,1 12,1; i 10 9,22 10,21 11,22 12,21; i 10 13,10 14,10 15,10; i 10 17,0 18,0 19,0 20,0; i 10 17,16 18,16 19,16 20,16; s 0,2 0,7 0,14 0,19 3,5 3,17 6,0 6,9 6,12 6,21 7,4 7,6 7,16 7,18 11,9 11,13 12,1 12,19 12,21 13,10 15,2 15,8 15,14 15,20 17,9 18,8 18,9 20,0 20,16 21,6 21,9 21,12; r C B W P S; p 0 0 0 0 0 0 0 S T; p 1 0 0 0 0 0 0 S T;";
 
 
-    static   final   int   INFINITY = 10000 ;
+    static final int INFINITY = 10000 ;
 
     /**
      * Check if the string encoding of the game state is well-formed.
@@ -468,31 +468,7 @@ public class BlueLagoon {
         Integer y = Integer.valueOf(split[1].split(",")[1]);
         int piece = 0;
         if (moveString.charAt(0) == 'T') {piece =1;}
-        test.setSettler(x, y, piece);
-        var reset = false;
-        if (test.checkEnd(test.gamestate)) {
-            var setto1 = 0;
-            reset = true;
-            if (test.gamestate == 0) {
-                test.advancePlayer();
-                setto1 = 1;
-
-            }
-            test.reset();
-            test.toModel(test.toStateString());
-            if (setto1 == 1 && test.allValidMoves(test.currentPlayer).size() == 0) {
-                    test.advancePlayer();
-                };
-            }
-
-        if (!reset) {
-            for (int k = 0; k < test.numOfPlayers; k++) {
-                test.advancePlayer();
-                if (test.allValidMoves(test.currentPlayer).size() != 0 &&
-                        (test.board.getPlayer(test.currentPlayer).settlers != 30 ||
-                                test.board.getPlayer(test.currentPlayer).villages != 5)) {break;}
-            }
-        }
+        test.applyMove(x, y, piece);
         return test.toStateString(); // FIXME Task 13
     }
 
@@ -543,7 +519,7 @@ public class BlueLagoon {
         test.toModel(stateString);
         HashSet<String> movesAvailable = test.allValidMoves(test.currentPlayer);
         if(depth == 0 || isPhaseOver(stateString)){
-            return calculateScores(stateString)[test.currentPlayer];
+            return test.board.countPoints(test.currentPlayer);
         }
         if (MaximizingPlayer){
             int maxEval = -INFINITY;
@@ -581,7 +557,7 @@ public class BlueLagoon {
                 bestMove = move;
             }
         }
-        return bestMove;
+        return " ";
     }
 
     public static void main(String[] args) {

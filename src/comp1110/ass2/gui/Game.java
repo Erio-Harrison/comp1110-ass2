@@ -176,36 +176,28 @@ public class Game extends Application {
 
     }
 
-    private void updateGUI() {
+    private void updateGUI(int num) {
         if (model.gamestate == 0) {
-            if (model.checkEnd(0)) {
+            if (num == 1) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
                 endedPhase.setTitle("Exploration PHASE ENDED");
                 endedPhase.setHeaderText("Player with most points: PLAYER " + model.board.declareWinner().getId());
                 endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 endedPhase.show();
                 this.model.reset();
-            } else {
-                this.model.advancePlayer();
             }
             game.getChildren().clear();
             makeState(model.gamestate);
         } else {
-            if (model.checkEnd(1)) {
-                this.model.reset();
+            if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("SETTLEMENT PHASE ENDED");
                 winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().getId());
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
-
-
-            } else {
-                this.model.advancePlayer();
-                game.getChildren().clear();
-                makeState(model.gamestate);
             }
-
+            game.getChildren().clear();
+            makeState(model.gamestate);
         }
     }
 
@@ -272,8 +264,8 @@ public class Game extends Application {
                         // check if it is a valid move
                         System.out.println(model.isMoveValid(pos[1], pos[0], village));
                         if (model.isMoveValid(pos[1], pos[0], village)) {
-                            model.setSettler(pos[1], pos[0], village);
-                            updateGUI();
+                            var num = model.applyMove(pos[1], pos[0], village);
+                            updateGUI(num);
                         }
                         this.setLocation(pos, village);
                     });

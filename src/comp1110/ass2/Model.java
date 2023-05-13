@@ -240,6 +240,35 @@ public String toPhase() {
         return ms;
     }
 
+    // returns 1 if checkend is true
+    public int applyMove(int x, int y, int piece) {
+        setSettler(x, y, piece);
+        if (checkEnd(gamestate)) {
+            var setto1 = 0;
+            if (gamestate == 0) {
+                advancePlayer();
+                setto1 = 1;
+            }
+            reset();
+
+            // this line makes no sense but I dont know why the whole thing falls apart if I dont have it
+            toModel(toStateString());
+
+            if (setto1 == 1 && allValidMoves(currentPlayer).size() == 0) {
+                advancePlayer();
+            };
+            return 1;
+        }
+
+        for (int k = 0; k < numOfPlayers; k++) {
+            advancePlayer();
+            if (allValidMoves(currentPlayer).size() != 0 &&
+                    (board.getPlayer(currentPlayer).settlers != 30 ||
+                            board.getPlayer(currentPlayer).villages != 5)) {break;}
+        }
+        return 0;
+    }
+
 
     // resets board and progresses the game to the next phase
     // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
