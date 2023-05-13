@@ -52,10 +52,15 @@ public class Viewer extends Application {
     private static final double OFFSET = TILE_SPACING_X/2.0;
     private static final double TILE_SPACING_Y = 42.0;
 
+    private static final double DEFAULT_BOARD = 13;
+
+    private static double SIZING_RATIO;
+
 
     private void makeBoard() {
         int boardSize = this.model.board.boardSize;
         Board.Tile[][] tiles = Board.tiles;
+        SIZING_RATIO = DEFAULT_BOARD / boardSize;
 
         for (int row = 0; row < boardSize; row++) {
             int var = 0;
@@ -67,8 +72,13 @@ public class Viewer extends Application {
                 String path = URI_BASE + Board.toURL(curr);
                 Image image = new Image(getClass().getResource(path).toString());
                 ImageView tileImage = new ImageView(image);
-                tileImage.setLayoutX((col * TILE_SPACING_X) + (MARGIN_X) + var * OFFSET);
-                tileImage.setLayoutY((row * TILE_SPACING_Y) + (MARGIN_Y));
+                tileImage.setFitWidth(65 * SIZING_RATIO);
+                tileImage.setFitHeight(89 * SIZING_RATIO);
+                tileImage.setPreserveRatio(true);
+                tileImage.setLayoutX((col * TILE_SPACING_X * SIZING_RATIO) + (MARGIN_X) + var * OFFSET * SIZING_RATIO);
+                tileImage.setLayoutY((row * TILE_SPACING_Y * SIZING_RATIO) + (MARGIN_Y));
+
+
                 root.getChildren().add(tileImage);
             }
         }
@@ -84,19 +94,20 @@ public class Viewer extends Application {
      */
     void displayState(String stateString) {
         // FIXME Task 5
-        if (BlueLagoon.isStateStringWellFormed(stateString) && !stateString.isBlank())
-            this.model.toModel(stateString);
         root.getChildren().clear();
         root.getChildren().add(controls);
         legend();
-        makeControls();
-        makeBoard();
-        displayArrangement();
-        makeResources();
-        currentState();
-        displayPlayers();
+        if (BlueLagoon.isStateStringWellFormed(stateString) && !stateString.isBlank()) {
 
+            this.model.toModel(stateString);
+            makeControls();
+            makeBoard();
+            displayArrangement();
+            makeResources();
+            currentState();
+            displayPlayers();
 
+        }
     }
 
     /**
@@ -214,10 +225,11 @@ public class Viewer extends Application {
             Board.Tile.Resource resource = Board.tiles[row][col].getResource();
             if (resource != null) {
                 if (row % 2 == 0) {
-                    boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + OFFSET + MARGIN_X;
-                } else boardX = (col * TILE_SPACING_X) + TILE_SPACING_X/2 + MARGIN_X;
-                boardY = row * TILE_SPACING_Y + 3*TILE_SPACING_Y/4 + MARGIN_Y;
-                resourceToShape(boardX,boardY,resource, 20);
+                    boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) * SIZING_RATIO + OFFSET * SIZING_RATIO+ MARGIN_X;
+                } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) * SIZING_RATIO + MARGIN_X;
+                boardY = row * TILE_SPACING_Y * SIZING_RATIO + (3*TILE_SPACING_Y/4) * SIZING_RATIO + MARGIN_Y;
+                resourceToShape(boardX,boardY,resource, 20 * SIZING_RATIO);
+
             }
         }
 
