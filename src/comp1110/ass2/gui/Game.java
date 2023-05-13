@@ -301,6 +301,7 @@ public class Game extends Application {
         private void snapToHome() {
             this.setLayoutX(this.homeX);
             this.setLayoutY(this.homeY);
+
         }
     }
     static class ImageToken extends ImageView {
