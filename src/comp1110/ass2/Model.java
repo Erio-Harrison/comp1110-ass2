@@ -290,6 +290,7 @@ public String toPhase() {
         return false;
     }
 
+    // test
     // counts all the points for each player and adds them to the playerlist
     public void countAllPoints() {
         for (int k = 0; k < this.numOfPlayers; k ++) {
