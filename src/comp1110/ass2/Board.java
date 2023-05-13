@@ -400,18 +400,27 @@ public class Position {
         return "";
     }
 
-    // =====================================================================
-    // checks if all resource squares have been occupied or all players have used up their pieces
-    public boolean noValidMoves(int gameState) {
+    public boolean noValidMovesPlayer(Player player, int gameState) {
         if (gameState == 0) {
-            for (Player player : playerList) {
-                if (player.settlers != 30 || player.villages != 5) {return false;}
-            }
+            if (player.settlers != 30 || player.villages != 5) {return false;}
         }
 
         if (gameState == 1) {
+            if (player.settlers != 30) {return false;}
+        }
+        return true;
+    }
+    // =====================================================================
+    // checks if all resource squares have been occupied or all players have used up their pieces
+    public boolean noValidMoves(int gameState) {
             for (Player player : playerList) {
-                if (player.settlers != 30) {return false;}
+                if (player.settlers != 30 || player.villages != 5) {return false;}
+            }
+
+
+        if (gameState == 1) {
+            for (Player player : playerList) {
+                if (player.settlers != 30 || player.villages != 5) {return false;}
             }
         }
         return true;

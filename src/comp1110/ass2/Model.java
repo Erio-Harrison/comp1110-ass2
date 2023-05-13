@@ -305,6 +305,7 @@ public String toPhase() {
             this.resetResources();
             this.changeState();
         }
+        countAllPoints();
 
     }
 
