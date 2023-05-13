@@ -218,9 +218,7 @@ public String toPhase() {
         }
     }
 
-    public Board getBoard() {
-        return board;
-    }
+
 
     // returns a hashset of movestrings of every valid move a player can make
     public HashSet<String> allValidMoves(int player) {

@@ -54,7 +54,7 @@ public class Viewer extends Application {
 
 
     private void makeBoard() {
-        int boardSize = this.model.getBoard().boardSize;
+        int boardSize = this.model.board.boardSize;
         Board.Tile[][] tiles = Board.tiles;
 
         for (int row = 0; row < boardSize; row++) {
@@ -205,10 +205,10 @@ public class Viewer extends Application {
      * Given the stones Statement of a state String, display the stones as grey hexagons
      */
     private void makeResources() {
-        ArrayList< Board.Position> stoneCoords = model.board.getStoneCoordinates();
-        for (Board.Position coords : stoneCoords) {
-            int row = coords.getX();
-            int col = coords.getY();
+        ArrayList<int[]> stoneCoords = model.board.getStoneCoordinates();
+        for (int[] coords : stoneCoords) {
+            int row = coords[0];
+            int col = coords[1];
             double boardX;
             double boardY;
             Board.Tile.Resource resource = Board.tiles[row][col].getResource();

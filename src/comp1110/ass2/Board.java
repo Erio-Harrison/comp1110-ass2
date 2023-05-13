@@ -240,19 +240,19 @@ public class Board {
         }
     }
 
-public ArrayList<Position>   getOccupiedTiles(int player, int village) {
-    ArrayList<Position> occupied = new ArrayList<>();
-    for (int k = 0; k < boardSize; k ++) {
-        for (int i = 0; i < boardSize; i ++) {
-            if (tiles[k][i] != null) {
-                if (tiles[k][i].occupier == player && tiles[k][i].village == village){
-                    occupied.add(new Position(k,i));
+    public ArrayList<int[]> getOccupiedTiles(int player, int village) {
+        ArrayList<int[]> occupied = new ArrayList<>();
+        for (int k = 0; k < boardSize; k ++) {
+            for (int i = 0; i < boardSize; i ++) {
+                if (tiles[k][i] != null) {
+                    if (tiles[k][i].occupier == player && tiles[k][i].village == village){
+                        occupied.add(new int[] {k, i});
+                    }
                 }
             }
         }
+        return occupied;
     }
-    return occupied;
-}
 
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
@@ -267,35 +267,14 @@ public ArrayList<Position>   getOccupiedTiles(int player, int village) {
         }
         return stoneCoords;
     }
-public class Position {
-        int x;
-        int y;
-        public Position(int x, int y) {
-            this.x = x;
-            this.y=y;
-        }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + getX() + "," + getY() + ")";
-    }
-
-}
-    public ArrayList<Position> getStoneCoordinates() {
-        ArrayList<Position> stoneCoords = new ArrayList<>();
+    public ArrayList<int[]> getStoneCoordinates() {
+        ArrayList<int[]> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
                 if (tiles[k][i] != null) {
                     if (tiles[k][i].isStoneCircle){
-                        stoneCoords.add(new Position(k,i));
+                        stoneCoords.add(new int[] {k, i});
                     }
                 }
             }
@@ -371,33 +350,6 @@ public class Position {
         return -1;
     }
 
-    public String resourceToString(Tile.Resource resource) {
-        switch (resource) {
-            case COCO -> {
-                return "coconut";
-            }
-            case BBOO -> {
-                return "bamboo";
-            }
-            case WATR -> {
-                return "water";
-            }
-            case STON -> {
-                return "preciousStone";
-            }
-            case STAT -> {
-                return "statuette";
-            }
-            case SETTLER -> {
-                return "settler";
-            }
-            case VILLAGER -> {
-                return "village";
-            }
-        }
-        return "";
-    }
-
     // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
     public boolean noValidMoves(int gameState) {
@@ -438,18 +390,6 @@ public class Position {
      * Stores current state of a player
      */
 
-    public boolean outOfBounds(int[] coordinates) {
-        int x = coordinates[0];
-        int y = coordinates[1];
-        if (y % 2 == 0) {
-            if (x < 0 || x > boardSize-2 || y < 0 || y > boardSize -1) return true;
-
-        } else {
-            if ((x < 0 || x > boardSize-1|| y < 0 || y > boardSize -1)) return true;
-        }
-
-        return false;
-    }
     //used to store the points and resources of each player
     public static class Player {
         int id;
@@ -497,10 +437,7 @@ public class Position {
                     .mapToInt(Integer::intValue)
                     .sum();
         }
-
     }
-
-
  
     /**
      * Authored by Tay Shao An
@@ -546,15 +483,6 @@ public class Position {
             this.type = 0;
             this.village = 0;
         }
-
-        public Boolean getStoneCircle() {
-            return isStoneCircle;
-        }
-
-        public int getType() {
-            return type;
-        }
-
         public Resource getResource() {
             return resource;
         }

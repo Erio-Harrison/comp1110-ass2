@@ -50,7 +50,7 @@ public class Game extends Application {
 
     // make the elements of the board, such as the islands, stones, resources, etc.
     private void makeBoard() {
-        int boardSize = this.model.getBoard().boardSize;
+        int boardSize = this.model.board.boardSize;
         Board.Tile[][] tiles = Board.tiles;
 
         for (int row = 0; row < boardSize; row++) {
@@ -72,10 +72,10 @@ public class Game extends Application {
 
     // sets resources on the board
     private void makeResources() {
-        ArrayList< Board.Position> stoneCoords = model.board.getStoneCoordinates();
-        for (Board.Position coords : stoneCoords) {
-            int row = coords.getX();
-            int col = coords.getY();
+        ArrayList<int[]> stoneCoords = model.board.getStoneCoordinates();
+        for (int[] coords : stoneCoords) {
+            int row = coords[0];
+            int col = coords[1];
             double boardX;
             double boardY;
             Board.Tile.Resource resource = Board.tiles[row][col].getResource();
@@ -122,7 +122,7 @@ public class Game extends Application {
 
     private void makeScoreboard() {
         // Each player
-        Board board = this.model.getBoard();
+        Board board = this.model.board;
         int numberOfPlayers = model.numOfPlayers;
 
         // Row Labels
@@ -161,7 +161,7 @@ public class Game extends Application {
     }
 
     private void makeCurrentInventory(int gameState) {
-        Board board = this.model.getBoard();
+        Board board = this.model.board;
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
         Text phase = new Text(150/4., 380, "PHASE: " + gameState);
@@ -294,7 +294,7 @@ public class Game extends Application {
 
         public void setLocation(int[] position, int piece) {
             // Position is not on the board
-            if (model.getBoard().outOfBounds(position) || !model.isMoveValid(position[0],position[1],piece)) {
+            if (!model.isMoveValid(position[0],position[1],piece)) {
                 this.snapToHome();
             } else {
                 this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y);
