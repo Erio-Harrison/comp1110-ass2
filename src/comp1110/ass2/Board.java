@@ -497,6 +497,7 @@ public class Position {
                     .mapToInt(Integer::intValue)
                     .sum();
         }
+
     }
 
 
