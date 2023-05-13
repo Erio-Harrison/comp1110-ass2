@@ -21,12 +21,6 @@ public class Model {
     //current player
     public int currentPlayer;
 
-    // array with the points of each player
-    public int[] allPoints;
-
-    // numOfTurns before gameEnds
-    public int numOfTurns;
-
     //Board
     public Board board;
 

@@ -34,9 +34,6 @@ public class Board {
         this.islandToPoints = new ArrayList<>();
     }
 
-    public List<Player> getPlayerList() {
-        return playerList;
-    }
 
     //helper function to assign resource
     public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords){
@@ -131,8 +128,6 @@ public class Board {
         }
     }
 
-
-
     // Authored by Tay Shao An
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
@@ -167,13 +162,7 @@ public class Board {
     // Authored by Tay Shao An
     // used to set attributes for each tile on a board based on a string state
     // attribute is assigned as follows:
-    //            this.isStoneCircle = 0;
-    //            this.resource = 1;
-    //            this.occupier = 2;
-    //            this.island = 3;
-    //            this.type = 4;
-    //            this.village = 5;
-
+    // isStoneCircle = 0, resource = 1, occupier = 2, island = 3, type = 4, village = 5;
     public void setBoardAttributes(String state, int attribute, int info)  {
         String[] split = state.split(" ");
         switch (attribute) {
