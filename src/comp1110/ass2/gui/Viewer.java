@@ -285,18 +285,12 @@ public class Viewer extends Application {
 
 
     private void currentState() {
-        int currentPlayer = model.getCurrentPlayer();
+        int currentPlayer = model.currentPlayer;
         Text state = new Text("Player to Move: " + currentPlayer + " , Phase: " + model.toPhase());
         state.setLayoutX(0);
         state.setLayoutY(40);
         root.getChildren().add(state);
     }
-
-
-
-
-
-
 
     /**
      * Create a basic text field for input and a refresh button.
