@@ -494,7 +494,7 @@ public class BlueLagoon {
         int centre = test.board.boardSize/2;
         minmaxNode bestNode = new minmaxNode(0, 0, 0, 0);
         minmaxNode closestNode = new minmaxNode(0, 0, 0, 0);
-        int dist = 100;
+        double dist = 100;
         for (minmaxNode node: accumulator) {
             if (node.points > bestNode.points) {
                 bestNode = node;
@@ -503,95 +503,20 @@ public class BlueLagoon {
             double interNodedist = Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
             if (interNodedist < dist) {
                 closestNode = node;
+                dist = interNodedist;
             }
         }
         if (bestNode.points == 0) {
             // if all nodes return same number of points, chooses piece that is closes to the center
             bestNode = closestNode;
         }
-        else {
-            test.applyMove(bestNode.row, bestNode.col, bestNode.piece);
-        }
+
         if (bestNode.piece == 0) {
             return "S " + bestNode.row + "," + bestNode.col;
         }
         else {
             return "T " + bestNode.row + "," + bestNode.col;
         }// FIXME Task 16
-    }
-
-    public static String greedyAI(String stateString){
-        //greedy
-        int highest = 0;
-        String bestMove = "";
-        Model test = new Model();
-        test.toModel(stateString);
-        HashSet<String> movesAvailable = test.allValidMoves(test.currentPlayer);
-        HashMap<String,Integer> moveScore = new HashMap<>();
-        for (String move : movesAvailable){
-            String newState = applyMove(stateString,move);
-            test.toModel(newState);
-            int score = calculateScores(newState)[test.currentPlayer];
-            moveScore.put(move,score);
-        }
-        for (Map.Entry<String, Integer> entry : moveScore.entrySet()){
-            String move = entry.getKey();
-            int score = entry.getValue();
-            if(score >= highest){
-                highest = score;
-                bestMove = move;
-            }
-        }
-        return bestMove;
-    }
-
-    public static int recursions = 0;
-
-    public static Integer minimax(String stateString, Integer depth , boolean MaximizingPlayer){
-        Model test = new Model();
-        test.toModel(stateString);
-        HashSet<String> movesAvailable = test.allValidMoves(test.currentPlayer);
-        if(depth == 0 || isPhaseOver(stateString)){
-            return test.board.countPoints(test.currentPlayer);
-        }
-        if (MaximizingPlayer){
-            int maxEval = -INFINITY;
-            for (String move : movesAvailable){
-                String newState = applyMove(stateString,move);
-                int score = minimax(newState,depth-1,false);
-                maxEval = Math.max(maxEval,score);
-            }
-            return maxEval;
-        }
-        else {
-            int minEval = INFINITY;
-            for (String move : movesAvailable){
-                String newState = applyMove(stateString,move);
-                int score = minimax(newState,depth-1,true);
-                minEval = Math.min(minEval,score);
-            }
-            return minEval;
-        }
-
-    }
-    public static String miniMaxAI(String stateString){
-        int highest = -INFINITY;
-        String bestMove = "";
-        Model test = new Model();
-        test.toModel(stateString);
-
-        var AIplayer = test.currentPlayer;
-        int depth = 3;
-        HashSet<String> movesAvailable = test.allValidMoves(AIplayer);
-        for (String move : movesAvailable){
-            Model nextModel = new Model();
-            nextModel.toModel(stateString);
-            var split = move.split(" ");
-            int piece = 0;
-            if (move.charAt(0) == 'T') {piece =1;}
-            nextModel.applyMove(Integer.parseInt(split[1].split(",")[0]), Integer.parseInt(split[1].split(",")[1]), piece);
-        }
-        return " ";
     }
 
     public static void mmrepeatAI(int depth, Model model, minmaxNode topNode, List<minmaxNode> accumulator, String statestring) {
@@ -627,10 +552,6 @@ public class BlueLagoon {
             this.points = points;
             this.piece = piece;
         }
-
-        public minmaxNode(minmaxNode anotherNode) {
-            this(anotherNode.row, anotherNode.col, anotherNode.points, anotherNode.piece);
-        }
     }
 
 
@@ -641,8 +562,5 @@ public class BlueLagoon {
     //                bestMove = move;
     //            }
 
-    public static void main(String[] args) {
-        System.out.println(miniMaxAI(WHEELS_GAME));
-    }
 }
 
