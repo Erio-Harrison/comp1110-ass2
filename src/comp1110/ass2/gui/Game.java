@@ -193,13 +193,11 @@ public class Game extends Application {
             if (num == 1) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
                 endedPhase.setTitle("Exploration PHASE ENDED");
-                endedPhase.setHeaderText("Player with most points: PLAYER " + model.board.declareWinner().getId());
+                endedPhase.setHeaderText("Highest Points: PLAYER " + model.board.declareWinner().getId());
                 endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 endedPhase.show();
                 this.model.reset();
             }
-            game.getChildren().clear();
-            makeState(model.gamestate);
         } else {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
@@ -208,9 +206,9 @@ public class Game extends Application {
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
             }
-            game.getChildren().clear();
-            makeState(model.gamestate);
         }
+        game.getChildren().clear();
+        makeState(model.gamestate);
     }
 
     private void newGame(String stateString) {
@@ -234,6 +232,7 @@ public class Game extends Application {
 
         ImageToken settler;
 
+        int currentPlayer = model.currentPlayer;
         Integer village;
 
         double mouseX, mouseY;
@@ -246,8 +245,8 @@ public class Game extends Application {
             if (village == 1) {this.homeX += 100;}
             this.homeY = 470;
 
-            if (village == 1) {this.settler = new ImageToken("village.png");}
-            else {this.settler = new ImageToken("settler.png");}
+            if (village == 1) {this.settler = new ImageToken("village" + currentPlayer + ".png");}
+            else {this.settler = new ImageToken("settler" + currentPlayer +  ".png");}
 
             this.getChildren().add(this.settler);
             this.setOnMousePressed(event -> {
@@ -320,7 +319,7 @@ public class Game extends Application {
         public ImageToken(String filename) {
             Image image = new Image(Game.class.getResource( URI_BASE  + filename).toString());
             this.setImage(image);
-            this.setFitWidth(65 * SIZING_RATIO);
+            this.setFitWidth(60 * SIZING_RATIO);
             this.setFitHeight(89 * SIZING_RATIO);
             this.setPreserveRatio(true);
 
@@ -354,8 +353,30 @@ public class Game extends Application {
 
     }
 
+    private void makeMenu() {
+        String path = URI_BASE + "menu_logo.png";
+        Image image = new Image(getClass().getResource(path).toString());
+        ImageView title = new ImageView(image);
+       title.setFitHeight(600);
+        title.setFitWidth(600);
+        title.setPreserveRatio(true);
+        title.setLayoutX(300);
+        title.setLayoutY(0);
+        menu.getChildren().add(title);
+    }
 
 
+    private void controlInstructions() {
+        Alert winner = new Alert(Alert.AlertType.INFORMATION);
+        winner.setTitle("controls");
+        winner.setHeaderText("Controls");
+        winner.setContentText("In game, make a move by dragging and dropping a piece onto the board " +
+                " In game, quit using Q " +
+                " In game restart game using N " +
+                " Choose different boards in game using Number Keys ");
+
+        winner.show();
+    }
 
 
 
@@ -365,10 +386,22 @@ public class Game extends Application {
         Scene scene2 = new Scene(this.menu,WINDOW_WIDTH,WINDOW_HEIGHT);
         Scene scene3 = new Scene(this.selectGame,WINDOW_WIDTH,WINDOW_HEIGHT);
 
+        makeMenu();
+
+        Button button2 = new Button("Controls");
+        button2.setLayoutX(WINDOW_WIDTH/2);
+        button2.setLayoutY(WINDOW_HEIGHT/2 + 100);
+        button2.setOnAction(event -> {
+            controlInstructions();
+        });
+
         Button button = new Button("New Game?");
         button.setLayoutX(WINDOW_WIDTH/2);
-        button.setLayoutY(WINDOW_HEIGHT/2);
+        button.setLayoutY(WINDOW_HEIGHT/2 + 50);
         button.setOnAction(event -> {
+
+            Text selectGameText = new Text(WINDOW_WIDTH/2.5,WINDOW_HEIGHT/2, "CHOOSE BOARD LAYOUT");
+            selectGame.getChildren().add(selectGameText);
             // default
             String[] boards = new String[]{"DEFAULT_GAME","FACE_GAME","SIDES_GAME","SPACE_INVADERS_GAME","WHEELS_GAME"};
             int spacing = 200;
@@ -392,11 +425,6 @@ public class Game extends Application {
 
 
             }
-            // face
-
-            // sides
-
-            // space_invaders
 
 
 
@@ -405,10 +433,12 @@ public class Game extends Application {
 
             stage.setScene(scene3);
 
+
+
         });
 
         menu.getChildren().add(button);
-
+        menu.getChildren().add(button2);
 
 
 
@@ -443,6 +473,9 @@ public class Game extends Application {
             }
             if (e.getCode() == KeyCode.DIGIT5) {
                 newGame(BlueLagoon.FACE_GAME);
+            }
+            if (e.getCode() == KeyCode.Q) {
+                stage.setScene(scene2);
             }
 
 

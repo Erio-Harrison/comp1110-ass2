@@ -243,6 +243,9 @@ public class Board {
         return occupied;
     }
 
+
+
+
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -481,8 +484,8 @@ public class Board {
     public static String toURL(Tile tile) {
 
         if (tile != null) {
-            if (tile.occupier != -1 && tile.village == 0) {return "settler.png";};
-            if (tile.occupier != -1 && tile.village == 1) {return "village.png";};
+            if (tile.occupier != -1 && tile.village == 0) {return "settler" + tile.occupier + ".png";};
+            if (tile.occupier != -1 && tile.village == 1) {return "village" + tile.occupier + ".png";};
             if (tile.isStoneCircle) {return "stone.png";};
             if (tile.type == 1) {return "grass.png";};
         }

@@ -57,6 +57,15 @@ public class Viewer extends Application {
     private static double SIZING_RATIO;
 
 
+    public String toPositionString(ArrayList<int[]> arrayList) {
+        String result = "";
+        for (int[] array : arrayList) {
+            result += Arrays.toString(array) + " ";
+        }
+
+        return result;
+    }
+
     private void makeBoard() {
         int boardSize = this.model.board.boardSize;
         Board.Tile[][] tiles = Board.tiles;
@@ -165,7 +174,7 @@ public class Viewer extends Application {
                 root.getChildren().add(tileImage);
             }
             case "Settlers" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "settler.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  + "settler0.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -174,7 +183,7 @@ public class Viewer extends Application {
                 root.getChildren().add(tileImage);
             }
             case "Villages" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "village.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  + "village0.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -283,9 +292,9 @@ public class Viewer extends Application {
             initialY += 20;
             Text resources = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Resources: " + Arrays.toString(player.getResources()));
             initialY += 20;
-            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.getId() + ":" + model.board.getOccupiedTiles(player.getId(),0).toString() );
+            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.getId() + ":" + toPositionString(model.board.getOccupiedTiles(player.getId(),0)));
             initialY2 += 8;
-            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.getId() + ":"  + model.board.getOccupiedTiles(player.getId(),1).toString());
+            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.getId() + ":"  + toPositionString(model.board.getOccupiedTiles(player.getId(),1)));
             settlers.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
             villages.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
 
