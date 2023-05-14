@@ -26,6 +26,14 @@ public class Model {
 
     public Model() {
     }
+
+    public Model(Model another) {
+        this.numOfPlayers = another.numOfPlayers; // you can access
+        this.gamestate = another.gamestate;
+        this.currentPlayer = another.currentPlayer;;
+        this.board = another.board;
+    }
+
     public void changeState() {
         switch (gamestate) {
             case (0) -> {
@@ -36,8 +44,6 @@ public class Model {
             }
         }
     }
-
-
     public String toPhase() {
         if (gamestate == 0) return "Exploration";
         return "Settlement";
@@ -207,7 +213,9 @@ public class Model {
         else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
         if (Board.tiles[x][y].isStoneCircle) {
-            this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
+            if (Board.tiles[x][y].resource != null) {
+                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
+            }
             Board.tiles[x][y].resource = null;
         }
     }
