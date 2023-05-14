@@ -92,19 +92,31 @@ public class PlayerPointCounter {
         List<Integer> islandsWon = new ArrayList<>();
         for (int k = 1; k < playersOnIslands.length; k ++ ) {
             var island = playersOnIslands[k];
-            var playerCount = 0;
-
+            List<majorityIslandNode> nodes = new ArrayList<>();
+            for (int p: allUniquePlayer(island)) {
+                nodes.add(new majorityIslandNode(p, 0));
+            }
             for (Integer i: island) {
-                if (i == player) {
-                    playerCount += 1;
+                for (majorityIslandNode n: nodes) {
+                    if (n.id == i) {
+                        n.count += 1;
+                        break;
+                    }
                 }
             }
             if (island.size() > 0) {
-                if (playerCount > island.size()/2) {
-                    islandsWon.add(islandToPoints.get(k - 1));
+                if (mostCounts(nodes).size() == 1) {
+                    if (mostCounts(nodes).get(0).id == player) {
+                        islandsWon.add(islandToPoints.get(k - 1));
+                    }
                 }
-                else if (playerCount == (float) (island.size())/2) {
-                    islandsWon.add(islandToPoints.get(k - 1)/2);
+                else {
+                    for (majorityIslandNode t: mostCounts(nodes)) {
+                        if (t.id == player) {
+                            islandsWon.add(islandToPoints.get(k - 1)/2);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -113,6 +125,52 @@ public class PlayerPointCounter {
             points += islandsWon.get(k);
         }
         return points;
+    }
+
+    public List<Integer> allUniquePlayer(ArrayList<Integer> array) {
+        List<Integer> returnArray = new ArrayList<>();
+        for (var k: array) {
+            boolean add = true;
+            for (var i: returnArray) {
+                if (i == k) {
+                    add = false;
+                }
+            }
+            if (add) {
+                returnArray.add(k);
+            }
+        }
+        return returnArray;
+    }
+
+    public class majorityIslandNode {
+        int id;
+        int count;
+
+        public majorityIslandNode(int id, int count) {
+            this.id = id;
+            this.count = count;
+        }
+    }
+
+    public List<majorityIslandNode> mostCounts(List<majorityIslandNode> nodes) {
+        List<majorityIslandNode> largestNode = null;
+        for (majorityIslandNode p: nodes) {
+            if (largestNode == null) {
+                largestNode = new ArrayList<>();
+                largestNode.add(p);
+            }
+            else {
+                if (p.count > largestNode.get(0).count) {
+                    largestNode = new ArrayList<>();
+                    largestNode.add(p);
+                }
+                else if (p.count == largestNode.get(0).count) {
+                    largestNode.add(p);
+                }
+            }
+        }
+        return largestNode;
     }
 
     public class PieceNode {
