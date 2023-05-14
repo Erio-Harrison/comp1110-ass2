@@ -300,9 +300,12 @@ public class BlueLagoon {
      * the score for each player
      */
     public static int[] calculateTotalIslandsScore(String stateString){
-        int[] returnValue = new int[]{0, 0};
         Model test = new Model();
         test.toModel(stateString);
+        int[] returnValue = new int[test.numOfPlayers];
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = 0;
+        }
 
         for (int k = 0; k < test.numOfPlayers; k ++) {
             PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
@@ -329,9 +332,12 @@ public class BlueLagoon {
      * the score for each player
      */
     public static int[] calculateIslandLinksScore(String stateString){
-        int[] returnValue = new int[]{0, 0};
         Model test = new Model();
         test.toModel(stateString);
+        int[] returnValue = new int[test.numOfPlayers];
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = 0;
+        }
         for (int k = 0; k < test.numOfPlayers; k ++) {
             PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
             returnValue[k] = pointCounter.linkCounter();
@@ -359,9 +365,12 @@ public class BlueLagoon {
      * of the score for each player
      */
     public static int[] calculateIslandMajoritiesScore(String stateString){
-        int[] returnValue = new int[]{0, 0};
         Model test = new Model();
         test.toModel(stateString);
+        int[] returnValue = new int[test.numOfPlayers];
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = 0;
+        }
         for (int k = 0; k < test.numOfPlayers; k ++) {
             PlayerPointCounter pointCounter = new PlayerPointCounter(k, test.board.tiles, test.board.numOfIslands);
             returnValue[k] = pointCounter.majorityIslandsCounter(test.board.islandToPoints);
@@ -393,9 +402,12 @@ public class BlueLagoon {
      * portions of the score for each player
      */
     public static int[] calculateResourcesAndStatuettesScore(String stateString){
-        int[] returnValue = new int[]{0, 0};
         Model test = new Model();
         test.toModel(stateString);
+        int[] returnValue = new int[test.numOfPlayers];
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = 0;
+        }
         for (int k = 0; k < test.numOfPlayers; k ++) {
             returnValue[k] = test.board.resourcesPoints(k);
         }
@@ -414,9 +426,12 @@ public class BlueLagoon {
      * @return an integer array containing the calculated scores for each player
      */
     public static int[] calculateScores(String stateString){
-        int[] returnValue = new int[]{0, 0};
         Model test = new Model();
         test.toModel(stateString);
+        int[] returnValue = new int[test.numOfPlayers];
+        for (int k = 0; k < test.numOfPlayers; k ++) {
+            returnValue[k] = 0;
+        }
         for (int k = 0; k < test.numOfPlayers; k ++) {
             var points = test.board.countPoints(k);
             returnValue[k] = points;
