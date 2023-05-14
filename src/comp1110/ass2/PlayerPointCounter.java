@@ -113,7 +113,7 @@ public class PlayerPointCounter {
                 else {
                     for (majorityIslandNode t: mostCounts(nodes)) {
                         if (t.id == player) {
-                            islandsWon.add(islandToPoints.get(k - 1)/2);
+                            islandsWon.add(islandToPoints.get(k - 1)/mostCounts(nodes).size());
                             break;
                         }
                     }
