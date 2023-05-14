@@ -32,6 +32,7 @@ public class BlueLagoon {
      * @return true if stateString is well-formed and false otherwise
      */
     public static boolean isStateStringWellFormed(String stateString){
+        //test commit
         var count = 0;
         int k = 0;
         for (int i = 0; i < stateString.length(); i++) {
