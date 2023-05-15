@@ -297,5 +297,71 @@ public class Model {
 
         return false;
     }
+
+    public void aiMoves (List<minmaxNode> accumulator, String statestring) {
+        int player = this.currentPlayer;
+        for (String move :  this.allValidMoves(player)){
+            var split = move.split(" ");
+            int x = Integer.parseInt(split[1].split(",")[0]);
+            int y = Integer.parseInt(split[1].split(",")[1]);
+            int piece = 0;
+            if (move.charAt(0) == 'T') {piece =1;}
+
+            minmaxNode nextnode;
+            nextnode = new minmaxNode(x,y,0, piece);
+
+            Model nextModel = new Model();
+            nextModel.toModel(statestring);
+            nextModel.applyMove(x, y, piece);
+
+            nextnode.points += nextModel.board.countPoints(player);
+            accumulator.add(nextnode);
+        }
+    }
+
+    public String decisionMaker() {
+        List<Model.minmaxNode> accumulator = new ArrayList<>();
+        this.aiMoves(accumulator, this.toStateString());
+
+        int centre = this.board.boardSize/2;
+        Model.minmaxNode bestNode = new Model.minmaxNode(0, 0, 0, 0);
+        Model.minmaxNode closestNode = new Model.minmaxNode(0, 0, 0, 0);
+        double dist = 100;
+        for (Model.minmaxNode node: accumulator) {
+            if (node.points > bestNode.points) {
+                bestNode = node;
+            }
+
+            double interNodedist = Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
+            if (interNodedist < dist) {
+                closestNode = node;
+                dist = interNodedist;
+            }
+        }
+        if (bestNode.points == 0) {
+            bestNode = closestNode;
+        }
+
+        if (bestNode.piece == 0) {
+            return "S " + bestNode.row + "," + bestNode.col;
+        }
+        else {
+            return "T " + bestNode.row + "," + bestNode.col;
+        }
+    }
+
+    public static class minmaxNode {
+        int row;
+        int col;
+        int piece;
+        int points;
+
+        public minmaxNode(int row, int col, int points, int piece) {
+            this.row = row;
+            this.col = col;
+            this.points = points;
+            this.piece = piece;
+        }
+    }
 }
 
