@@ -505,7 +505,7 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         List<minmaxNode> accumulator = new ArrayList<>();
-        mmrepeatAI( 1,test, null, accumulator, stateString);
+        mmrepeatAI( test, accumulator, stateString);
 
         int centre = test.board.boardSize/2;
         minmaxNode bestNode = new minmaxNode(0, 0, 0, 0);
@@ -535,7 +535,7 @@ public class BlueLagoon {
         }// FIXME Task 16
     }
 
-    public static void mmrepeatAI(int depth, Model model, minmaxNode topNode, List<minmaxNode> accumulator, String statestring) {
+    public static void mmrepeatAI( Model model, List<minmaxNode> accumulator, String statestring) {
         int player = model.currentPlayer;
         for (String move :  model.allValidMoves(player)){
             var split = move.split(" ");
@@ -569,14 +569,5 @@ public class BlueLagoon {
             this.piece = piece;
         }
     }
-
-
-
-    //int score = minimax(newState,depth -1,true);
-    //            if(score >= highest){
-    //                highest = score;
-    //                bestMove = move;
-    //            }
-
 }
 

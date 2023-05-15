@@ -104,25 +104,19 @@ public class PlayerPointCounter {
                     }
                 }
             }
+
+            List<majorityIslandNode> islandResult = mostCounts(nodes);
             if (island.size() > 0) {
-                if (mostCounts(nodes).size() == 1) {
-                    if (mostCounts(nodes).get(0).id == player) {
-                        islandsWon.add(islandToPoints.get(k - 1));
-                    }
-                }
-                else {
-                    for (majorityIslandNode t: mostCounts(nodes)) {
-                        if (t.id == player) {
-                            islandsWon.add(islandToPoints.get(k - 1)/mostCounts(nodes).size());
-                            break;
-                        }
+                for (majorityIslandNode node: islandResult) {
+                    if (node.id == player) {
+                        islandsWon.add(islandToPoints.get(k - 1)/islandResult.size());
                     }
                 }
             }
         }
 
-        for (int k = 0; k < islandsWon.size(); k ++) {
-            points += islandsWon.get(k);
+        for (Integer num: islandsWon) {
+            points += num;
         }
         return points;
     }
@@ -134,6 +128,7 @@ public class PlayerPointCounter {
             for (var i: returnArray) {
                 if (i == k) {
                     add = false;
+                    break;
                 }
             }
             if (add) {
@@ -143,7 +138,7 @@ public class PlayerPointCounter {
         return returnArray;
     }
 
-    public class majorityIslandNode {
+    public static class majorityIslandNode {
         int id;
         int count;
 
