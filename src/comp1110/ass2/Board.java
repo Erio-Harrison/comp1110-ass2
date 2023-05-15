@@ -74,7 +74,7 @@ public class Board {
         if (gamestate == 1) {
             if (piece == 0) {
                 if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
-                return BlueLagoon.checkOccupier(pos, this, x, y, player);
+                return checkOccupier(pos, x, y, player);
             }
             else {
                 return false;
@@ -84,15 +84,65 @@ public class Board {
             if (piece == 0) {
                 if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
                 if (tiles[x][y].type == 0) {return true;}
-                return BlueLagoon.checkOccupier(pos, this, x, y, player);
+                return checkOccupier(pos,  x, y, player);
             }
             // village piece
             else {
                 if (this.getPlayer(player).villages >= 5) {return false;}
                 if (tiles[x][y].type == 0) {return false;}
-                return BlueLagoon.checkOccupier(pos, this, x, y, player);
+                return checkOccupier(pos, x, y, player);
             }
         }
+    }
+
+    // returns true if there's a piece adjacent to it that has similar occupier
+    public Boolean checkOccupier(int[] pos, int a, int b, int currentPlayerId) {
+        var evenRow = 0;
+        if (a % 2 == 0) {
+            evenRow = 1;
+        }
+
+        if ((pos[0] == -1 || pos[0] == 1)) {
+            if (pos[1] == 0) {
+                if (tiles[a][b - 1].occupier == currentPlayerId ||
+                        tiles[a][b + 1].occupier == currentPlayerId) {return true;}
+            }
+            else {
+                if (tiles[a][b - pos[1]].occupier == currentPlayerId) {return true;}
+            }
+
+            if (evenRow == 1 || pos[1] == 0) {
+                if (tiles[a - pos[0]][b].occupier == currentPlayerId ||
+                        tiles[a - pos[0]][b +  1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+            }
+            else {
+                if (tiles[a - pos[0]][b - 0].occupier == currentPlayerId) {return true;}
+            }
+        }
+
+        else if (pos[0] == 0 && (pos[1] == -1||pos[1] == 1)) {
+            if (tiles[a][b-pos[1]].occupier == currentPlayerId) {return true;}
+
+            if (pos[1] == -1 || evenRow == 1) {
+                if (tiles[a-1][b].occupier == currentPlayerId ||
+                        tiles[a+1][b].occupier == currentPlayerId) {return true;}
+
+            }
+            if (evenRow == 1 || pos[1] == 1) {
+                if (tiles[a-1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId ||
+                        tiles[a+1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+            }
+        }
+        else {
+            if (tiles[a-1][b].occupier == currentPlayerId
+                    || tiles[a+1][b].occupier == currentPlayerId
+                    || tiles[a-1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[a+1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[a][b+1].occupier == currentPlayerId
+                    || tiles[a][b-1].occupier == currentPlayerId) {return true;}
+        }
+
+        return false;
     }
 
     // Authored by Tay Shao An
@@ -402,7 +452,7 @@ public class Board {
         // land = 1, water = 0
         int type;
         public enum Resource {
-            COCO, BBOO, WATR, STON, STAT, SETTLER,VILLAGER;
+            COCO, BBOO, WATR, STON, STAT;
 
 
         }

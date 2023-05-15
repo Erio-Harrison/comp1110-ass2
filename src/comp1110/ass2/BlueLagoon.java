@@ -102,10 +102,7 @@ public class BlueLagoon {
      * @return true if moveString is well-formed and false otherwise
      */
     public static boolean isMoveStringWellFormed(String moveString){
-        if (moveString.matches("^(S|T) \\d{1,},\\d{1,}")) {
-            return true;
-        }
-        return false; // FIXME Task 4
+        return moveString.matches("^(S|T) \\d{1,},\\d{1,}");// FIXME Task 4
     }
 
     /**
@@ -160,67 +157,14 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         var split = moveString.split(" ");
-        Integer x = Integer.valueOf(split[1].split(",")[0]);
-        Integer y = Integer.valueOf(split[1].split(",")[1]);
+        int x = Integer.parseInt(split[1].split(",")[0]);
+        int y = Integer.parseInt(split[1].split(",")[1]);
         int piece = 0;
         if (moveString.charAt(0) == 'T') {
             piece = 1;
         }
-
         return test.board.isValidMove(x, y, test.currentPlayer, piece, test.gamestate);
     }
-
-
-    // returns true if there's a piece adjacent to it that has similar occupier
-    public static Boolean checkOccupier(int[] pos, Board mapstatus, int a, int b, int currentPlayerId) {
-        var evenRow = 0;
-        if (a % 2 == 0) {
-            evenRow = 1;
-        }
-
-        if ((pos[0] == -1 || pos[0] == 1)) {
-            if (pos[1] == 0) {
-                if (mapstatus.tiles[a][b - 1].occupier == currentPlayerId ||
-                        mapstatus.tiles[a][b + 1].occupier == currentPlayerId) {return true;}
-            }
-            else {
-                if (mapstatus.tiles[a][b - pos[1]].occupier == currentPlayerId) {return true;}
-            }
-
-            if (evenRow == 1 || (evenRow == 0 && pos[1] == 0)) {
-                if (mapstatus.tiles[a - pos[0]][b].occupier == currentPlayerId ||
-                        mapstatus.tiles[a - pos[0]][b +  1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
-            }
-            else if (evenRow == 0) {
-                if (mapstatus.tiles[a - pos[0]][b -(pos[1] + 1)*(1/2)].occupier == currentPlayerId) {return true;}
-            }
-        }
-
-        else if (pos[0] == 0 && (pos[1] == -1||pos[1] == 1)) {
-            if (mapstatus.tiles[a][b-pos[1]].occupier == currentPlayerId) {return true;}
-
-            if (pos[1] == -1 || (pos[1] == 1 && evenRow == 1)) {
-                if (mapstatus.tiles[a-1][b].occupier == currentPlayerId ||
-                        mapstatus.tiles[a+1][b].occupier == currentPlayerId) {return true;}
-
-            }
-            if (evenRow == 1 || (pos[1] == 1 && evenRow == 0)) {
-                if (mapstatus.tiles[a-1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId ||
-                        mapstatus.tiles[a+1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
-            }
-        }
-        else {
-            if (mapstatus.tiles[a-1][b].occupier == currentPlayerId
-                    || mapstatus.tiles[a+1][b].occupier == currentPlayerId
-                    || mapstatus.tiles[a-1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
-                    || mapstatus.tiles[a+1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
-                    || mapstatus.tiles[a][b+1].occupier == currentPlayerId
-                    || mapstatus.tiles[a][b-1].occupier == currentPlayerId) {return true;}
-        }
-
-        return false;
-    }
-
 
     /**
      * Given a state string, generate a set containing all move strings playable
@@ -270,8 +214,8 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         var split = moveString.split(" ");
-        Integer x = Integer.valueOf(split[1].split(",")[0]);
-        Integer y = Integer.valueOf(split[1].split(",")[1]);
+        int x = Integer.parseInt(split[1].split(",")[0]);
+        int y = Integer.parseInt(split[1].split(",")[1]);
         int piece = 0;
         if (moveString.charAt(0) == 'T') {piece =1;}
         if ((test.board.isValidMove(x,y,test.currentPlayer,piece, test.gamestate))){
