@@ -1,8 +1,5 @@
 package comp1110.ass2;
 
-import javafx.scene.paint.Color;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,13 +24,6 @@ public class Model {
     public Model() {
     }
 
-    public Model(Model another) {
-        this.numOfPlayers = another.numOfPlayers; // you can access
-        this.gamestate = another.gamestate;
-        this.currentPlayer = another.currentPlayer;;
-        this.board = another.board;
-    }
-
     public void changeState() {
         switch (gamestate) {
             case (0) -> {
@@ -44,11 +34,6 @@ public class Model {
             }
         }
     }
-    public String toPhase() {
-        if (gamestate == 0) return "Exploration";
-        return "Settlement";
-    }
-
 
     //authored by Tay Shao An
     //takes a stateString and adds its attributes to the model
@@ -96,10 +81,6 @@ public class Model {
         }
     }
 
-    public boolean isMoveValid(int x,int y,int piece) {
-        return (((this.gamestate == 0) && this.board.isValidExploration(x,y,this.currentPlayer,piece))
-                || (this.gamestate == 1 && this.board.isValidSettle(x,y,this.currentPlayer,piece)));
-    }
     // converts model to a statestring
     public String toStateString() {
         String state;
@@ -220,8 +201,6 @@ public class Model {
         }
     }
 
-
-
     // returns a hashset of movestrings of every valid move a player can make
     public HashSet<String> allValidMoves(int player) {
         HashSet<String> ms=new HashSet<String>();
@@ -231,15 +210,15 @@ public class Model {
             if (a % 2 == 0) {len = -1;}
             for (int b = 0; b < board.boardSize + len ; b++) {
                 if (gamestate == 0) {
-                    if (board.isValidExploration(a,b,player, 0)) {
+                    if (board.isValidMove(a,b,player, 0, 0)) {
                         ms.add("S " + a + "," + b);
                     }
-                    if (board.isValidExploration(a,b,player, 1)) {
+                    if (board.isValidMove(a,b,player, 1, 0)) {
                         ms.add("T " + a + "," + b);
                     }
                 }
                 if (gamestate == 1) {
-                    if (board.isValidSettle(a,b,player, 0)) {
+                    if (board.isValidMove(a,b,player, 0, 1)) {
                         ms.add("S " + a + "," + b);
                     }
                 }
@@ -251,27 +230,22 @@ public class Model {
     // returns 1 if checkend is true
     public int applyMove(int x, int y, int piece) {
         setSettler(x, y, piece);
-        if (checkEnd(gamestate)) {
-            var setto1 = 0;
+        if (checkEnd()) {
+            var setto1 = false;
             if (gamestate == 0) {
                 advancePlayer();
-                setto1 = 1;
+                setto1 = true;
             }
             reset();
-
             // this line makes no sense but I dont know why the whole thing falls apart if I dont have it
             toModel(toStateString());
-
-            if (setto1 == 1 && allValidMoves(currentPlayer).size() == 0) {
-                advancePlayer();
-            };
+            if (setto1 && allValidMoves(currentPlayer).size() == 0) {advancePlayer();};
             return 1;
         }
 
         for (int k = 0; k < numOfPlayers; k++) {
             advancePlayer();
-            if (allValidMoves(currentPlayer).size() != 0 &&
-                    (board.getPlayer(currentPlayer).settlers != 30 ||
+            if (allValidMoves(currentPlayer).size() != 0 && (board.getPlayer(currentPlayer).settlers != 30 ||
                             board.getPlayer(currentPlayer).villages != 5)) {break;}
         }
         return 0;
@@ -291,7 +265,10 @@ public class Model {
     }
 
     public void reset() {
-        countAllPoints();
+        for (int k = 0; k < this.numOfPlayers; k ++) {
+            var points = board.countPoints(k);
+            board.playerList.get(k).points += points;
+        }
         if (gamestate == 0) {
             board.removePieces();
             this.resetAllResources();
@@ -309,25 +286,18 @@ public class Model {
 
 
     // checks alls end of phase conditions, returns true if it the end
-    public boolean checkEnd(int gameState) {
+    public boolean checkEnd() {
         boolean nomoremoves = true;
         for (int k = 0; k < numOfPlayers; k++) {
             if (allValidMoves(k).size() != 0) {nomoremoves = false;};
         }
         if (nomoremoves) {return true;};
         if (this.board.allResourcesCollected()) {return true;}
-        if (this.board.noValidMoves(gameState)) {return true;}
+        if (this.board.noValidMoves(this.gamestate)) {return true;}
 
         return false;
     }
 
-    // test
-    // counts all the points for each player and adds them to the playerlist
-    public void countAllPoints() {
-        for (int k = 0; k < this.numOfPlayers; k ++) {
-            var points = board.countPoints(k);
-            board.playerList.get(k).points += points;
-        }
-    }
+
 }
 

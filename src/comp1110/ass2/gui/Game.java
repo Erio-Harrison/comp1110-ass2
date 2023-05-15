@@ -176,11 +176,11 @@ public class Game extends Application {
     private void makeCurrentInventory(int gameState) {
         Board board = this.model.board;
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
-        Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.getId());
+        Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.id);
         Text phase = new Text(150/4., 380, "PHASE: " + gameState);
         game.getChildren().addAll(title,phase);
-        Text settlerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.getSettlers()) + " Left");
-        Text villagerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.getVillages()) + " Left");
+        Text settlerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.settlers) + " Left");
+        Text villagerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.villages) + " Left");
 
 
         if (gameState == 0) {
@@ -193,7 +193,7 @@ public class Game extends Application {
             if (num == 1) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
                 endedPhase.setTitle("Exploration PHASE ENDED");
-                endedPhase.setHeaderText("Highest Points: PLAYER " + model.board.declareWinner().getId());
+                endedPhase.setHeaderText("Highest Points: PLAYER " + model.board.declareWinner().id);
                 endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 endedPhase.show();
                 this.model.reset();
@@ -202,7 +202,7 @@ public class Game extends Application {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("SETTLEMENT PHASE ENDED");
-                winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().getId());
+                winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().id);
                 winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
                 winner.show();
             }
@@ -274,8 +274,7 @@ public class Game extends Application {
                     event -> {
                         int[] pos = getSnapPosition();
                         // check if it is a valid move
-                        System.out.println(model.isMoveValid(pos[1], pos[0], village));
-                        if (model.isMoveValid(pos[1], pos[0], village)) {
+                        if (model.board.isValidMove(pos[1], pos[0],model.currentPlayer,village, model.gamestate)) {
                             var num = model.applyMove(pos[1], pos[0], village);
                             updateGUI(num);
                         }
@@ -298,7 +297,7 @@ public class Game extends Application {
 
         public void setLocation(int[] position, int piece) {
             // Position is not on the board
-            if (!model.isMoveValid(position[0],position[1],piece)) {
+            if (!model.board.isValidMove(position[0], position[1],model.currentPlayer, piece, model.gamestate)) {
                 this.snapToHome();
             } else {
                 this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y * SIZING_RATIO);

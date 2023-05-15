@@ -167,12 +167,7 @@ public class BlueLagoon {
             piece = 1;
         }
 
-        if (test.gamestate == 0) { //exploration
-            return test.board.isValidExploration(x, y, test.currentPlayer, piece);
-        } else if (test.gamestate == 1) { // settlement
-            return (test.board.isValidSettle(x, y, test.currentPlayer, piece));
-        }
-        return false;
+        return test.board.isValidMove(x, y, test.currentPlayer, piece, test.gamestate);
     }
 
 
@@ -256,7 +251,7 @@ public class BlueLagoon {
     public static boolean isPhaseOver(String stateString){
         Model test = new Model();
         test.toModel(stateString);
-        return test.checkEnd(test.gamestate);
+        return test.checkEnd();
         // FIXME Task 9
     }
 
@@ -279,7 +274,7 @@ public class BlueLagoon {
         Integer y = Integer.valueOf(split[1].split(",")[1]);
         int piece = 0;
         if (moveString.charAt(0) == 'T') {piece =1;}
-        if (test.isMoveValid(x,y,piece)){
+        if ((test.board.isValidMove(x,y,test.currentPlayer,piece, test.gamestate))){
             test.setSettler(x, y, piece);
         }
         return test.toStateString(); // FIXME Task 10
@@ -505,7 +500,7 @@ public class BlueLagoon {
         Model test = new Model();
         test.toModel(stateString);
         List<minmaxNode> accumulator = new ArrayList<>();
-        mmrepeatAI( test, accumulator, stateString);
+        aiMoves( test, accumulator, stateString);
 
         int centre = test.board.boardSize/2;
         minmaxNode bestNode = new minmaxNode(0, 0, 0, 0);
@@ -523,7 +518,6 @@ public class BlueLagoon {
             }
         }
         if (bestNode.points == 0) {
-            // if all nodes return same number of points, chooses piece that is closes to the center
             bestNode = closestNode;
         }
 
@@ -535,7 +529,7 @@ public class BlueLagoon {
         }// FIXME Task 16
     }
 
-    public static void mmrepeatAI( Model model, List<minmaxNode> accumulator, String statestring) {
+    public static void aiMoves ( Model model, List<minmaxNode> accumulator, String statestring) {
         int player = model.currentPlayer;
         for (String move :  model.allValidMoves(player)){
             var split = move.split(" ");

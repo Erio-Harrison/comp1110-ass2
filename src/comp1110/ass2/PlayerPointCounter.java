@@ -104,7 +104,6 @@ public class PlayerPointCounter {
                     }
                 }
             }
-
             List<majorityIslandNode> islandResult = mostCounts(nodes);
             if (island.size() > 0) {
                 for (majorityIslandNode node: islandResult) {
@@ -126,7 +125,7 @@ public class PlayerPointCounter {
         for (var k: array) {
             boolean add = true;
             for (var i: returnArray) {
-                if (i == k) {
+                if (Objects.equals(i, k)) {
                     add = false;
                     break;
                 }
@@ -168,7 +167,7 @@ public class PlayerPointCounter {
         return largestNode;
     }
 
-    public class PieceNode {
+    public static class PieceNode {
         int island;
         int x;
         int y;
@@ -191,17 +190,18 @@ public class PlayerPointCounter {
             }
 
             // for each node in this nodes' edges
-            for (int k = 0; k < this.edges.size(); k++) {
+            for (PieceNode edge : this.edges) {
                 var getnode = 1;
                 // if this node has already appeared before, ignore
                 for (PieceNode node : previousNodes) {
-                    if (node.equals(this.edges.get(k))) {
+                    if (node.equals(edge)) {
                         getnode = 0;
+                        break;
                     }
                 }
                 // runs noderunner on each of the nodes
                 if (getnode == 1) {
-                    islands.addAll(this.edges.get(k).nodeRunner(islands, previousNodes));
+                    islands.addAll(edge.nodeRunner(islands, previousNodes));
                 }
             }
             return islands;

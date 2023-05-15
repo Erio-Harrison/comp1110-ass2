@@ -33,10 +33,21 @@ public class Board {
         }
         this.islandToPoints = new ArrayList<>();
     }
+    public Player declareWinner() {
+        Optional<Player> max = playerList.stream().max(Comparator.comparing(Player::getPoints).thenComparing(Player::resourcesCount));
+        return max.get();
+    }
 
+    public void assignRanResources(List<Tile> stoneCoords) {
+        assignToStone(6, Tile.Resource.WATR,stoneCoords);
+        assignToStone(6, Tile.Resource.BBOO,stoneCoords);
+        assignToStone(6, Tile.Resource.STON,stoneCoords);
+        assignToStone(6, Tile.Resource.COCO,stoneCoords);
+        assignToStone(8, Tile.Resource.STAT,stoneCoords);
+    }
 
-    //helper function to assign resource
-    public void helper(int count,Tile.Resource resource, List<Tile> stoneCoords){
+    //assignToStone function to assign resource
+    public void assignToStone(int count,Tile.Resource resource, List<Tile> stoneCoords){
         for (int i = 0; i < count;i++){
             int random = (int)(Math.random() * stoneCoords.size());
             stoneCoords.get(random).resource = resource;
@@ -44,23 +55,6 @@ public class Board {
         }
     }
 
-    public Player declareWinner() {
-        Optional<Player> max = playerList.stream()
-                .max(Comparator.comparing(Player::getPoints)
-                        .thenComparing(Player::resourcesCount));
-        return max.get();
-
-
-    }
-
-    public void assignRanResources(List<Tile> stoneCoords) {
-        helper(6, Tile.Resource.WATR,stoneCoords);
-        helper(6, Tile.Resource.BBOO,stoneCoords);
-        helper(6, Tile.Resource.STON,stoneCoords);
-        helper(6, Tile.Resource.COCO,stoneCoords);
-        helper(8, Tile.Resource.STAT,stoneCoords);
-
-    }
 
     // checks if a tile is a valid tile for settler to be placed.
     // int x -> x coordinate of tile
@@ -68,74 +62,37 @@ public class Board {
     // int player -> player
     // int piece -> int representing the piece 0 = settler 1 = village
     //
-
-    public boolean isValidSettle(int x, int y, int player, int piece) {
+    public boolean isValidMove(int x, int y, int player, int piece, int gamestate) {
         int len = 0;
         if (x % 2 == 0) {len = -1;}
-
         int[] pos = posCreate(x, y);
 
         if (x < 0 || x > boardSize - 1 || y < 0 || y > boardSize - 1 + len) {return false;}
         if (tiles[x][y] == null || tiles[x][y].occupier != -1) {return false;}
 
         // if piece is settler
-        if (piece == 0) {
-            if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
-            return BlueLagoon.checkOccupier(pos, this, x, y, player);
+        if (gamestate == 1) {
+            if (piece == 0) {
+                if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
+                return BlueLagoon.checkOccupier(pos, this, x, y, player);
+            }
+            else {
+                return false;
+            }
         }
         else {
-            return false;
+            if (piece == 0) {
+                if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
+                if (tiles[x][y].type == 0) {return true;}
+                return BlueLagoon.checkOccupier(pos, this, x, y, player);
+            }
+            // village piece
+            else {
+                if (this.getPlayer(player).villages >= 5) {return false;}
+                if (tiles[x][y].type == 0) {return false;}
+                return BlueLagoon.checkOccupier(pos, this, x, y, player);
+            }
         }
-
-    }
-
-    /**
-     *  // Exploration
-     *     // The rules for playing a piece are as follows:
-     *     //- A settler can be placed on any unoccupied water space
-     *     //- A settler or a village can be placed on any unoccupied land space adjacent to one of their pieces.
-     *     //
-     *     //If a piece is placed on a stone circle, the player instantly claims the resource in that space
-     *     //into their hand.
-     *
-     * @param x x coodinate of a tile
-     * @param y y coordinate of a tile
-     * @param player current player
-     * @param piece village or settler piece
-     * @return true if the move can be played,
-     */
-    public boolean isValidExploration(int x, int y, int player, int piece) {
-        // Out of bounds
-        int len = 0;
-        if (x % 2 == 0) {len = -1;}
-
-        int[] pos = posCreate(x, y);
-
-        if (x < 0 || x > boardSize - 1 || y < 0 || y > boardSize - 1 + len) {return false;}
-        if (tiles[x][y] == null || tiles[x][y].occupier != -1) {return false;}
-
-        // if piece is settler
-        if (piece == 0) {
-            if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
-            if (tiles[x][y].type == 0) {return true;}
-            return BlueLagoon.checkOccupier(pos, this, x, y, player);
-        }
-        // village piece
-        else {
-            if (this.getPlayer(player).villages >= 5) {return false;}
-            if (tiles[x][y].type == 0) {return false;}
-            return BlueLagoon.checkOccupier(pos, this, x, y, player);
-        }
-    }
-
-    // Authored by Tay Shao An
-    public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
-        for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
-            String[] coord =  split[k].split(",");
-            tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].resource = resource;
-            ucrPosition += 1;
-        }
-        return ucrPosition + 1;
     }
 
     // Authored by Tay Shao An
@@ -229,6 +186,16 @@ public class Board {
         }
     }
 
+    // Authored by Tay Shao An
+    public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
+        for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
+            String[] coord =  split[k].split(",");
+            tiles[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].resource = resource;
+            ucrPosition += 1;
+        }
+        return ucrPosition + 1;
+    }
+
     public ArrayList<int[]> getOccupiedTiles(int player, int village) {
         ArrayList<int[]> occupied = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -242,9 +209,6 @@ public class Board {
         }
         return occupied;
     }
-
-
-
 
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
@@ -273,6 +237,7 @@ public class Board {
         }
         return stoneCoords;
     }
+
     // removes pieces at end of a phase and returns it to the player/
     public void removePieces() {
         for (int k = 0; k < boardSize; k ++) {
@@ -313,9 +278,7 @@ public class Board {
     }
 
     public Player getPlayer(int id) {
-        for (Player p: this.playerList) {
-            if (p.id == id) {return p;}
-        }
+        for (Player p: this.playerList) {if (p.id == id) {return p;}}
         return null;
     }
 
@@ -342,7 +305,6 @@ public class Board {
         return -1;
     }
 
-    // =====================================================================
     // checks if all resource squares have been occupied or all players have used up their pieces
     public boolean noValidMoves(int gameState) {
         if (gameState == 0) {
@@ -350,7 +312,6 @@ public class Board {
                 if (player.settlers != 30 || player.villages != 5) {return false;}
             }
         }
-
         if (gameState == 1) {
             for (Player player : playerList) {
                 if (player.settlers != 30) {return false;}
@@ -384,15 +345,15 @@ public class Board {
 
     //used to store the points and resources of each player
     public static class Player {
-        int id;
+        public int id;
 
-        int points;
+        public int points;
 
-        Integer[] resources;
+        public Integer[] resources;
 
-        int settlers;
+        public int settlers;
 
-        int villages;
+        public int villages;
 
         public Player(int id, int points, Integer[] resources) {
             this.id = id;
@@ -403,22 +364,6 @@ public class Board {
         }
         public void resetResources() {
             this.resources = new Integer[]{0, 0, 0, 0, 0};
-        }
-
-        public int getSettlers() {
-            return settlers;
-        }
-
-        public int getVillages() {
-            return villages;
-        }
-
-        public Integer[] getResources() {
-            return resources;
-        }
-
-        public int getId() {
-            return id;
         }
 
         public int getPoints() {

@@ -284,17 +284,17 @@ public class Viewer extends Application {
         List<Board.Player> players = model.board.playerList;
         for (Board.Player player : players) {
 
-            Text playerText = new Text(0,initialY + playerSpacing * players.indexOf(player), "Player: " + player.getId() + " Statistics");
+            Text playerText = new Text(0,initialY + playerSpacing * players.indexOf(player), "Player: " + player.id + " Statistics");
             initialY += 20;
             Text score = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Score: " + player.getPoints());
             initialY += 20;
             Text resourcesInstructions  = new Text(0,initialY + playerSpacing *  players.indexOf(player), "COCO,BBOO,WATR,STON,STAT");
             initialY += 20;
-            Text resources = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Resources: " + Arrays.toString(player.getResources()));
+            Text resources = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Resources: " + Arrays.toString(player.resources));
             initialY += 20;
-            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.getId() + ":" + toPositionString(model.board.getOccupiedTiles(player.getId(),0)));
+            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.id + ":" + toPositionString(model.board.getOccupiedTiles(player.id,0)));
             initialY2 += 8;
-            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.getId() + ":"  + toPositionString(model.board.getOccupiedTiles(player.getId(),1)));
+            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.id + ":"  + toPositionString(model.board.getOccupiedTiles(player.id,1)));
             settlers.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
             villages.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
 
@@ -307,7 +307,11 @@ public class Viewer extends Application {
 
     private void currentState() {
         int currentPlayer = model.currentPlayer;
-        Text state = new Text("Player to Move: " + currentPlayer + " , Phase: " + model.toPhase());
+        String gamestate = "Settler";
+        if (model.gamestate == 0) {
+            gamestate = "Exploration";
+        }
+        Text state = new Text("Player to Move: " + currentPlayer + " , Phase: " + gamestate);
         state.setLayoutX(0);
         state.setLayoutY(40);
         root.getChildren().add(state);
