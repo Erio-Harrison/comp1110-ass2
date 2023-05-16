@@ -2,6 +2,7 @@ package comp1110.ass2;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board {
     // List of players in a game
@@ -39,11 +40,35 @@ public class Board {
     /**
      * Returns the winner out of the playerList arraylist.
      */
-    public Player declareWinner() {
+    public List<Player> declareWinner() {
         Optional<Player> max = playerList.stream().max(Comparator.comparing(Player::getPoints).thenComparing(Player::resourcesCount));
-        return max.get();
+        List<Player> maxPlayers = null;
+        if (max.isPresent()) {
+            Player maxPlayer = max.get();
+
+            maxPlayers = playerList.stream()
+                    .filter(Player -> Player.equals(maxPlayer))
+                    .collect(Collectors.toList());
+        }
+        return maxPlayers;
+
     }
 
+    public ArrayList<Integer>  getIds(List<Player> players) {
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Player player : players) {
+            result.add(player.id);
+        }
+        return result;
+    }
+
+    public ArrayList<Integer>  getAllPoints(List<Player> players) {
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Player player : players) {
+            result.add(player.points);
+        }
+        return result;
+    }
     /**
      * Assigns random resources to all stone coordinate positions
      * @param stoneCoords - coordinates of all stone circle locations

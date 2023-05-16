@@ -193,8 +193,8 @@ public class Game extends Application {
             if (num == 1) {
                 Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
                 endedPhase.setTitle("Exploration PHASE ENDED");
-                endedPhase.setHeaderText("Highest Points: PLAYER " + model.board.declareWinner().id);
-                endedPhase.setContentText("Total Points: " + model.board.declareWinner().getPoints());
+                endedPhase.setHeaderText("Highest Points: PLAYER " + model.board.getIds(model.board.declareWinner()));
+                endedPhase.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
                 endedPhase.show();
                 this.model.reset();
             }
@@ -202,8 +202,8 @@ public class Game extends Application {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("SETTLEMENT PHASE ENDED");
-                winner.setHeaderText("WINNER: PLAYER:  " + model.board.declareWinner().id);
-                winner.setContentText("Total Points: " + model.board.declareWinner().getPoints());
+                winner.setHeaderText("WINNER: PLAYER:  " + model.board.getIds(model.board.declareWinner()));
+                winner.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
                 winner.show();
             }
         }
@@ -226,6 +226,14 @@ public class Game extends Application {
         makeResources();
         makeCurrentInventory(phase);
         makeGameTokens(phase);
+
+        Button button2 = new Button("Controls");
+        button2.setLayoutX(WINDOW_WIDTH- 100);
+        button2.setLayoutY(WINDOW_HEIGHT - 50);
+        button2.setOnAction(event -> {
+            controlInstructions();
+        });
+        game.getChildren().add(button2);
     }
 
     class Piece extends Group {
@@ -234,6 +242,7 @@ public class Game extends Application {
 
         int currentPlayer = model.currentPlayer;
         Integer village;
+        boolean ai;
 
         double mouseX, mouseY;
         double homeX;
@@ -369,17 +378,18 @@ public class Game extends Application {
         Alert winner = new Alert(Alert.AlertType.INFORMATION);
         winner.setTitle("controls");
         winner.setHeaderText("Controls");
-        winner.setContentText("In game, make a move by dragging and dropping a piece onto the board " +
-                " In game, quit using Q " +
-                " In game restart game using N " +
-                " Choose different boards in game using Number Keys ");
+        winner.setContentText(" \nIn game, make a move by dragging and dropping a piece onto the board " +
+                " \nIn game, quit using Q " +
+                " \nIn game create a new game using N " +
+                " \nIn game Choose different boards in game using Number Keys, there are 5 game layouts to choose " +
+                " \nIf you want the AI to choose a move do so by pressing A in the game on the current turn");
 
         winner.show();
     }
 
 // press 6 on keypad to make ai make a move
-    public void AIGame() {
-        if (model.currentPlayer == 0) {
+    public void AIGame(int player) {
+        if (model.currentPlayer == player) {
             String move = model.decisionMaker();
             int row = Integer.parseInt(String.valueOf(move.charAt(2)));
             int col = Integer.parseInt(String.valueOf(move.charAt(4)));
@@ -392,7 +402,6 @@ public class Game extends Application {
 
             var num = model.applyMove(row,col, piece);
             updateGUI(num);
-            System.out.println(move);
         }
 
 
@@ -492,9 +501,10 @@ public class Game extends Application {
             if (e.getCode() == KeyCode.DIGIT5) {
                 newGame(BlueLagoon.FACE_GAME);
             }
-            if (e.getCode() == KeyCode.DIGIT6) {
-                AIGame();
+            if (e.getCode() == KeyCode.A) {
+                AIGame(model.currentPlayer);
             }
+
 
             if (e.getCode() == KeyCode.Q) {
                 stage.setScene(scene2);
