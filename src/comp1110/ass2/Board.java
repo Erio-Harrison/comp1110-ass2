@@ -16,7 +16,9 @@ public class Board {
     public static Tile[][] tiles;
 
 
-    // Generates a board and initialises all the tiles
+    /**
+     * @param boardSize - integer representing the size of a board
+     */
     public Board(int boardSize) {
         this.boardSize = boardSize;
         this.playerList = new ArrayList<>();
@@ -33,11 +35,19 @@ public class Board {
         }
         this.islandToPoints = new ArrayList<>();
     }
+
+    /**
+     * Returns the winner out of the playerList arraylist.
+     */
     public Player declareWinner() {
         Optional<Player> max = playerList.stream().max(Comparator.comparing(Player::getPoints).thenComparing(Player::resourcesCount));
         return max.get();
     }
 
+    /**
+     * Assigns random resources to all stone coordinate positions
+     * @param stoneCoords - coordinates of all stone circle locations
+     */
     public void assignRanResources(List<Tile> stoneCoords) {
         assignToStone(6, Tile.Resource.WATR,stoneCoords);
         assignToStone(6, Tile.Resource.BBOO,stoneCoords);
@@ -46,7 +56,10 @@ public class Board {
         assignToStone(8, Tile.Resource.STAT,stoneCoords);
     }
 
-    //assignToStone function to assign resource
+    /**
+     * Assigns random resources to all stone coordinate positions
+     * @param stoneCoords - coordinates of all stone circle locations
+     */
     public void assignToStone(int count,Tile.Resource resource, List<Tile> stoneCoords){
         for (int i = 0; i < count;i++){
             int random = (int)(Math.random() * stoneCoords.size());
@@ -112,11 +125,11 @@ public class Board {
             }
 
             if (evenRow == 1 || pos[1] == 0) {
-                if (tiles[a - pos[0]][b].occupier == currentPlayerId ||
-                        tiles[a - pos[0]][b +  1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+                return tiles[a - pos[0]][b].occupier == currentPlayerId ||
+                        tiles[a - pos[0]][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
             }
             else {
-                if (tiles[a - pos[0]][b - 0].occupier == currentPlayerId) {return true;}
+                return tiles[a - pos[0]][b].occupier == currentPlayerId;
             }
         }
 
@@ -129,17 +142,17 @@ public class Board {
 
             }
             if (evenRow == 1 || pos[1] == 1) {
-                if (tiles[a-1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId ||
-                        tiles[a+1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+                return tiles[a - 1][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId ||
+                        tiles[a + 1][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
             }
         }
         else {
-            if (tiles[a-1][b].occupier == currentPlayerId
-                    || tiles[a+1][b].occupier == currentPlayerId
-                    || tiles[a-1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
-                    || tiles[a+1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
-                    || tiles[a][b+1].occupier == currentPlayerId
-                    || tiles[a][b-1].occupier == currentPlayerId) {return true;}
+            return tiles[a - 1][b].occupier == currentPlayerId
+                    || tiles[a + 1][b].occupier == currentPlayerId
+                    || tiles[a - 1][b + (2 * (evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[a + 1][b + (2 * (evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[a][b + 1].occupier == currentPlayerId
+                    || tiles[a][b - 1].occupier == currentPlayerId;
         }
 
         return false;
