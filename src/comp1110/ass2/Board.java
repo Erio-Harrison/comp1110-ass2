@@ -113,7 +113,14 @@ public class Board {
         }
     }
 
-    // returns true if there's a piece adjacent to it that has similar occupier
+    /**
+     * Checks all tiles adjacent to a tile to see if they are occupied
+     * @param pos - an integer array which specifies whether the tile is
+     *            top left, top right, bottom left, bottom right, or none
+     * @param a - x coordinate of the tile
+     * @param b - y coordinate of the tile
+     * @param currentPlayerId  - player placing the tile
+     */
     public Boolean checkOccupier(int[] pos, int a, int b, int currentPlayerId) {
         var evenRow = 0;
         if (a % 2 == 0) {
@@ -163,7 +170,11 @@ public class Board {
         return false;
     }
 
-    // Authored by Tay Shao An
+    /**
+     * Converts resources collected by a player into points
+     * @param player - integer representing the current player
+     * @return amount of points received by the player
+     */
     public int resourcesPoints(int player) {
         var points = 0;
         for (Player k: this.playerList) {
@@ -184,10 +195,13 @@ public class Board {
         return points;
     }
 
-    // Authored by Tay Shao An
-    // used to set attributes for each tile on a board based on a string state
-    // attribute is assigned as follows:
-    // isStoneCircle = 0, resource = 1, occupier = 2, island = 3, type = 4, village = 5;
+    /**
+     * Used by the toModel function to generate all attributes for the board
+     * @param state - substring received from the toModel function
+     * @param attribute - attribute to set:
+     *                  isStoneCircle = 0, resource = 1, occupier = 2, island = 3, type = 4, village = 5;
+     * @param info - additional info used by some of the attribute setting.
+     */
     public void setBoardAttributes(String state, int attribute, int info)  {
         String[] split = state.split(" ");
         switch (attribute) {
@@ -254,7 +268,13 @@ public class Board {
         }
     }
 
-    // Authored by Tay Shao An
+    /**
+     * Helper function used by setBoardAttribute to set a resource at a tile
+     * @param split - a split of the ucr string
+     * @param ucrPosition -
+     * @param resourceChar - string containing all characters of all resources
+     * @return integer representing the position of the next part of the string array
+     */
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
             String[] coord =  split[k].split(",");
