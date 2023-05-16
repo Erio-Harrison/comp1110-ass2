@@ -68,7 +68,7 @@ public class Viewer extends Application {
 
     private void makeBoard() {
         int boardSize = this.model.board.boardSize;
-        Board.Tile[][] tiles = Board.tiles;
+        Board.Tile[][] tiles = this.model.board.tiles;
         SIZING_RATIO = DEFAULT_BOARD / boardSize;
 
         for (int row = 0; row < boardSize; row++) {
@@ -231,7 +231,7 @@ public class Viewer extends Application {
             int col = coords[1];
             double boardX;
             double boardY;
-            Board.Tile.Resource resource = Board.tiles[row][col].getResource();
+            Board.Tile.Resource resource = this.model.board.tiles[row][col].resource;
             if (resource != null) {
                 if (row % 2 == 0) {
                     boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) * SIZING_RATIO + OFFSET * SIZING_RATIO+ MARGIN_X;

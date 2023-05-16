@@ -132,20 +132,20 @@ public class Model {
             var len = 0;
             if (row % 2 == 0) {len = -1;}
             for (int col = 0; col < this.board.boardSize + len; col++) {
-                if (Board.tiles[row][col].island != 0) {
-                    islands.get(Board.tiles[row][col].island - 1).add(row + "," + col);}
+                if (this.board.tiles[row][col].island != 0) {
+                    islands.get(this.board.tiles[row][col].island - 1).add(row + "," + col);}
 
-                if (Board.tiles[row][col].isStoneCircle) {stones.add(row + "," + col);}
+                if (this.board.tiles[row][col].isStoneCircle) {stones.add(row + "," + col);}
 
-                if (Board.tiles[row][col].resource != null) {
-                    resources.get(Board.resourceToInt(Board.tiles[row][col].resource)).add(row + "," + col);}
-                if (Board.tiles[row][col].occupier != -1) {
-                    if (Board.tiles[row][col].village == 1) {
-                        List<String> currentList = playerVillages.get(Board.tiles[row][col].occupier);
+                if (this.board.tiles[row][col].resource != null) {
+                    resources.get(Board.resourceToInt(this.board.tiles[row][col].resource)).add(row + "," + col);}
+                if (this.board.tiles[row][col].occupier != -1) {
+                    if (this.board.tiles[row][col].village == 1) {
+                        List<String> currentList = playerVillages.get(this.board.tiles[row][col].occupier);
                         currentList.add(row + "," + col);
                     }
-                    if (Board.tiles[row][col].village == 0) {
-                        List<String> currentList = playerSettler.get(Board.tiles[row][col].occupier);
+                    if (this.board.tiles[row][col].village == 0) {
+                        List<String> currentList = playerSettler.get(this.board.tiles[row][col].occupier);
                         currentList.add(row + "," + col);
                     }
                 }
@@ -200,16 +200,16 @@ public class Model {
      *  @param piece - (0 indicates settler, 1 indicates village)
      */
     public void setSettler(int x, int y, int piece) {
-        Board.tiles[x][y].occupier = this.currentPlayer;
-        Board.tiles[x][y].village = piece;
+        this.board.tiles[x][y].occupier = this.currentPlayer;
+        this.board.tiles[x][y].village = piece;
         if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
         else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
-        if (Board.tiles[x][y].isStoneCircle) {
-            if (Board.tiles[x][y].resource != null) {
-                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
+        if (this.board.tiles[x][y].isStoneCircle) {
+            if (this.board.tiles[x][y].resource != null) {
+                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[x][y].resource)] += 1;
             }
-            Board.tiles[x][y].resource = null;
+            this.board.tiles[x][y].resource = null;
         }
     }
 

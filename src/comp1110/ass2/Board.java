@@ -13,7 +13,7 @@ public class Board {
     // islands to points
     public List<Integer> islandToPoints;
     // array representing the tiles of the board
-    public static Tile[][] tiles;
+    public  Tile[][] tiles;
 
 
     /**
@@ -483,10 +483,10 @@ public class Board {
      */
     public static class Tile {
         // if it is a stone circle, a resource may be generated on the tile
-        Boolean isStoneCircle;
+        public Boolean isStoneCircle;
 
         // resource which is currently on the tile
-        Resource resource;
+        public Resource resource;
 
         // player who occupies the tile
         // -1 indicates no occupier
@@ -513,9 +513,6 @@ public class Board {
             this.island = 0;
             this.type = 0;
             this.village = 0;
-        }
-        public Resource getResource() {
-            return resource;
         }
     }
 
