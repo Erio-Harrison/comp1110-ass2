@@ -284,6 +284,9 @@ public class Board {
         return ucrPosition + 1;
     }
 
+    /**
+     * Gets all coordinates of tiles occupied by player
+     */
     public ArrayList<int[]> getOccupiedTiles(int player, int village) {
         ArrayList<int[]> occupied = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -298,6 +301,10 @@ public class Board {
         return occupied;
     }
 
+    /**
+     * Gets all stone circle tiles
+     * @return all stone circle tiles as a list
+     */
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -312,6 +319,10 @@ public class Board {
         return stoneCoords;
     }
 
+    /**
+     * Gets all coordinates of stone circle tiles
+     * @return all stone circle coordinates as an arraylist of int[]
+     */
     public ArrayList<int[]> getStoneCoordinates() {
         ArrayList<int[]> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -326,7 +337,9 @@ public class Board {
         return stoneCoords;
     }
 
-    // removes pieces at end of a phase and returns it to the player/
+    /**
+     * Removes all settler pieces off the board and village pieces on stone circles
+     */
     public void removePieces() {
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
@@ -350,10 +363,10 @@ public class Board {
         }
     }
 
-    // Authored by Tay Shao An
-    // counts the total points obtained by a particular player
-    // int player -> player the board is currently checking
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
+    /**
+     * counts the number of points a player has scored
+     * @param player - integer representing the player
+     */
     public int countPoints(int player) {
         int points = 0;
         PlayerPointCounter pointCounter = new PlayerPointCounter(player, tiles, this.numOfIslands);
@@ -491,14 +504,7 @@ public class Board {
         int type;
         public enum Resource {
             COCO, BBOO, WATR, STON, STAT;
-
-
         }
-        // sets the occupier of the tile
-        // int player -> player
-        public void setPlayer(int player) {
-            this.occupier = player;
-        };
         // initialises the tile.
         public Tile() {
             this.isStoneCircle = false;
