@@ -62,7 +62,7 @@ public class Game extends Application {
     // make the elements of the board, such as the islands, stones, resources, etc.
     private void makeBoard() {
         int boardSize = this.model.board.boardSize;
-        Board.Tile[][] tiles = Board.tiles;
+        Board.Tile[][] tiles = this.model.board.tiles;
         SIZING_RATIO = DEFAULT_BOARD / boardSize;
         for (int row = 0; row < boardSize; row++) {
             int var = 0;
@@ -93,7 +93,7 @@ public class Game extends Application {
             int col = coords[1];
             double boardX;
             double boardY;
-            Board.Tile.Resource resource = Board.tiles[row][col].getResource();
+            Board.Tile.Resource resource = this.model.board.tiles[row][col].resource;
             if (resource != null) {
                 if (row % 2 == 0) {
                     boardX = (col * TILE_SPACING_X * SIZING_RATIO) + TILE_SPACING_X/2 * SIZING_RATIO + OFFSET * SIZING_RATIO + MARGIN_X;
@@ -148,7 +148,7 @@ public class Game extends Application {
         ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,totalT));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
-            PlayerPointCounter pointCounter = new PlayerPointCounter(i, Board.tiles, board.numOfIslands);
+            PlayerPointCounter pointCounter = new PlayerPointCounter(i, this.model.board.tiles, board.numOfIslands);
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");

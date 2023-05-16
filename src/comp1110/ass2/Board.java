@@ -13,10 +13,12 @@ public class Board {
     // islands to points
     public List<Integer> islandToPoints;
     // array representing the tiles of the board
-    public static Tile[][] tiles;
+    public  Tile[][] tiles;
 
 
-    // Generates a board and initialises all the tiles
+    /**
+     * @param boardSize - integer representing the size of a board
+     */
     public Board(int boardSize) {
         this.boardSize = boardSize;
         this.playerList = new ArrayList<>();
@@ -33,11 +35,19 @@ public class Board {
         }
         this.islandToPoints = new ArrayList<>();
     }
+
+    /**
+     * Returns the winner out of the playerList arraylist.
+     */
     public Player declareWinner() {
         Optional<Player> max = playerList.stream().max(Comparator.comparing(Player::getPoints).thenComparing(Player::resourcesCount));
         return max.get();
     }
 
+    /**
+     * Assigns random resources to all stone coordinate positions
+     * @param stoneCoords - coordinates of all stone circle locations
+     */
     public void assignRanResources(List<Tile> stoneCoords) {
         assignToStone(6, Tile.Resource.WATR,stoneCoords);
         assignToStone(6, Tile.Resource.BBOO,stoneCoords);
@@ -46,7 +56,12 @@ public class Board {
         assignToStone(8, Tile.Resource.STAT,stoneCoords);
     }
 
-    //assignToStone function to assign resource
+    /**
+     * Helper function for assignRanResources
+     * @param count - num of tiles to assign to
+     * @param resource - resource you want to assign
+     * @param stoneCoords - coordinates of all stone circle locations
+     */
     public void assignToStone(int count,Tile.Resource resource, List<Tile> stoneCoords){
         for (int i = 0; i < count;i++){
             int random = (int)(Math.random() * stoneCoords.size());
@@ -56,12 +71,15 @@ public class Board {
     }
 
 
-    // checks if a tile is a valid tile for settler to be placed.
-    // int x -> x coordinate of tile
-    // int y -> y coordinate of tile
-    // int player -> player
-    // int piece -> int representing the piece 0 = settler 1 = village
-    //
+    /**
+     * Checks if a piece is valid
+     * @param x - x coordinate of the piece
+     * @param y - y coordinate of the piece
+     * @param player - integer representing the current player
+     * @param piece - 0 represents a settler, 1 represents a village
+     * @param gamestate - 0 represents exploration, 1 represents settlement
+     * @return returns true if piece is valid
+     */
     public boolean isValidMove(int x, int y, int player, int piece, int gamestate) {
         int len = 0;
         if (x % 2 == 0) {len = -1;}
@@ -95,7 +113,14 @@ public class Board {
         }
     }
 
-    // returns true if there's a piece adjacent to it that has similar occupier
+    /**
+     * Checks all tiles adjacent to a tile to see if they are occupied
+     * @param pos - an integer array which specifies whether the tile is
+     *            top left, top right, bottom left, bottom right, or none
+     * @param a - x coordinate of the tile
+     * @param b - y coordinate of the tile
+     * @param currentPlayerId  - player placing the tile
+     */
     public Boolean checkOccupier(int[] pos, int a, int b, int currentPlayerId) {
         var evenRow = 0;
         if (a % 2 == 0) {
@@ -112,11 +137,11 @@ public class Board {
             }
 
             if (evenRow == 1 || pos[1] == 0) {
-                if (tiles[a - pos[0]][b].occupier == currentPlayerId ||
-                        tiles[a - pos[0]][b +  1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+                return tiles[a - pos[0]][b].occupier == currentPlayerId ||
+                        tiles[a - pos[0]][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
             }
             else {
-                if (tiles[a - pos[0]][b - 0].occupier == currentPlayerId) {return true;}
+                return tiles[a - pos[0]][b].occupier == currentPlayerId;
             }
         }
 
@@ -129,23 +154,27 @@ public class Board {
 
             }
             if (evenRow == 1 || pos[1] == 1) {
-                if (tiles[a-1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId ||
-                        tiles[a+1][b + 1 +(evenRow - 1)*2].occupier == currentPlayerId) {return true;}
+                return tiles[a - 1][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId ||
+                        tiles[a + 1][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
             }
         }
         else {
-            if (tiles[a-1][b].occupier == currentPlayerId
-                    || tiles[a+1][b].occupier == currentPlayerId
-                    || tiles[a-1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
-                    || tiles[a+1][b+(2*(evenRow) - 1)].occupier == currentPlayerId
-                    || tiles[a][b+1].occupier == currentPlayerId
-                    || tiles[a][b-1].occupier == currentPlayerId) {return true;}
+            return tiles[a - 1][b].occupier == currentPlayerId
+                    || tiles[a + 1][b].occupier == currentPlayerId
+                    || tiles[a - 1][b + (2 * (evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[a + 1][b + (2 * (evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[a][b + 1].occupier == currentPlayerId
+                    || tiles[a][b - 1].occupier == currentPlayerId;
         }
 
         return false;
     }
 
-    // Authored by Tay Shao An
+    /**
+     * Converts resources collected by a player into points
+     * @param player - integer representing the current player
+     * @return amount of points received by the player
+     */
     public int resourcesPoints(int player) {
         var points = 0;
         for (Player k: this.playerList) {
@@ -166,10 +195,13 @@ public class Board {
         return points;
     }
 
-    // Authored by Tay Shao An
-    // used to set attributes for each tile on a board based on a string state
-    // attribute is assigned as follows:
-    // isStoneCircle = 0, resource = 1, occupier = 2, island = 3, type = 4, village = 5;
+    /**
+     * Used by the toModel function to generate all attributes for the board
+     * @param state - substring received from the toModel function
+     * @param attribute - attribute to set:
+     *                  isStoneCircle = 0, resource = 1, occupier = 2, island = 3, type = 4, village = 5;
+     * @param info - additional info used by some of the attribute setting.
+     */
     public void setBoardAttributes(String state, int attribute, int info)  {
         String[] split = state.split(" ");
         switch (attribute) {
@@ -236,7 +268,13 @@ public class Board {
         }
     }
 
-    // Authored by Tay Shao An
+    /**
+     * Helper function used by setBoardAttribute to set a resource at a tile
+     * @param split - a split of the ucr string
+     * @param ucrPosition -
+     * @param resourceChar - string containing all characters of all resources
+     * @return integer representing the position of the next part of the string array
+     */
     public int setResource(String[] split,Tile.Resource resource, int ucrPosition, String resourceChar) {
         for (int k = ucrPosition; !split[k].equals(resourceChar); k++) {
             String[] coord =  split[k].split(",");
@@ -246,6 +284,9 @@ public class Board {
         return ucrPosition + 1;
     }
 
+    /**
+     * Gets all coordinates of tiles occupied by player
+     */
     public ArrayList<int[]> getOccupiedTiles(int player, int village) {
         ArrayList<int[]> occupied = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -260,6 +301,10 @@ public class Board {
         return occupied;
     }
 
+    /**
+     * Gets all stone circle tiles
+     * @return all stone circle tiles as a list
+     */
     public List<Tile> getStoneRsrcTiles() {
         List<Tile> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -274,6 +319,10 @@ public class Board {
         return stoneCoords;
     }
 
+    /**
+     * Gets all coordinates of stone circle tiles
+     * @return all stone circle coordinates as an arraylist of int[]
+     */
     public ArrayList<int[]> getStoneCoordinates() {
         ArrayList<int[]> stoneCoords = new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
@@ -288,7 +337,9 @@ public class Board {
         return stoneCoords;
     }
 
-    // removes pieces at end of a phase and returns it to the player/
+    /**
+     * Removes all settler pieces off the board and village pieces on stone circles
+     */
     public void removePieces() {
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
@@ -312,10 +363,10 @@ public class Board {
         }
     }
 
-    // Authored by Tay Shao An
-    // counts the total points obtained by a particular player
-    // int player -> player the board is currently checking
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
+    /**
+     * counts the number of points a player has scored
+     * @param player - integer representing the player
+     */
     public int countPoints(int player) {
         int points = 0;
         PlayerPointCounter pointCounter = new PlayerPointCounter(player, tiles, this.numOfIslands);
@@ -432,10 +483,10 @@ public class Board {
      */
     public static class Tile {
         // if it is a stone circle, a resource may be generated on the tile
-        Boolean isStoneCircle;
+        public Boolean isStoneCircle;
 
         // resource which is currently on the tile
-        Resource resource;
+        public Resource resource;
 
         // player who occupies the tile
         // -1 indicates no occupier
@@ -453,14 +504,7 @@ public class Board {
         int type;
         public enum Resource {
             COCO, BBOO, WATR, STON, STAT;
-
-
         }
-        // sets the occupier of the tile
-        // int player -> player
-        public void setPlayer(int player) {
-            this.occupier = player;
-        };
         // initialises the tile.
         public Tile() {
             this.isStoneCircle = false;
@@ -469,9 +513,6 @@ public class Board {
             this.island = 0;
             this.type = 0;
             this.village = 0;
-        }
-        public Resource getResource() {
-            return resource;
         }
     }
 

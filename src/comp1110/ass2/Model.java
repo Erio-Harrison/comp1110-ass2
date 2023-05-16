@@ -24,6 +24,9 @@ public class Model {
     public Model() {
     }
 
+    /**
+     * Changes the gamestate from 0 to 1 or from 1 to 0.
+     */
     public void changeState() {
         switch (gamestate) {
             case (0) -> {
@@ -35,8 +38,11 @@ public class Model {
         }
     }
 
-    //authored by Tay Shao An
-    //takes a stateString and adds its attributes to the model
+    /**
+     *  Takes a statestring converts its data into attributes for the model
+     *  @param stateString a string representing a game state
+     *  @return void
+     */
     public void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");
         //==gameArrangement==
@@ -81,7 +87,10 @@ public class Model {
         }
     }
 
-    // converts model to a statestring
+    /**
+     * Converts the model into a stateString
+     * @return stateString of the model
+     */
     public String toStateString() {
         String state;
         if (this.gamestate == 0) {state = "E";}
@@ -123,20 +132,20 @@ public class Model {
             var len = 0;
             if (row % 2 == 0) {len = -1;}
             for (int col = 0; col < this.board.boardSize + len; col++) {
-                if (Board.tiles[row][col].island != 0) {
-                    islands.get(Board.tiles[row][col].island - 1).add(row + "," + col);}
+                if (this.board.tiles[row][col].island != 0) {
+                    islands.get(this.board.tiles[row][col].island - 1).add(row + "," + col);}
 
-                if (Board.tiles[row][col].isStoneCircle) {stones.add(row + "," + col);}
+                if (this.board.tiles[row][col].isStoneCircle) {stones.add(row + "," + col);}
 
-                if (Board.tiles[row][col].resource != null) {
-                    resources.get(Board.resourceToInt(Board.tiles[row][col].resource)).add(row + "," + col);}
-                if (Board.tiles[row][col].occupier != -1) {
-                    if (Board.tiles[row][col].village == 1) {
-                        List<String> currentList = playerVillages.get(Board.tiles[row][col].occupier);
+                if (this.board.tiles[row][col].resource != null) {
+                    resources.get(Board.resourceToInt(this.board.tiles[row][col].resource)).add(row + "," + col);}
+                if (this.board.tiles[row][col].occupier != -1) {
+                    if (this.board.tiles[row][col].village == 1) {
+                        List<String> currentList = playerVillages.get(this.board.tiles[row][col].occupier);
                         currentList.add(row + "," + col);
                     }
-                    if (Board.tiles[row][col].village == 0) {
-                        List<String> currentList = playerSettler.get(Board.tiles[row][col].occupier);
+                    if (this.board.tiles[row][col].village == 0) {
+                        List<String> currentList = playerSettler.get(this.board.tiles[row][col].occupier);
                         currentList.add(row + "," + col);
                     }
                 }
@@ -184,24 +193,31 @@ public class Model {
         return gameAStatement + " " + csStatement + " " + islandStatement + stoneStatement + " " + resStatement + " " + playerStatement;
     }
 
-
-
-    // sets a piece at a particular tile
+    /**
+     *  Sets a piece at a given coordinate.
+     *  @param x - x coordinate of piece
+     *  @param y - y coordinate of piece
+     *  @param piece - (0 indicates settler, 1 indicates village)
+     */
     public void setSettler(int x, int y, int piece) {
-        Board.tiles[x][y].occupier = this.currentPlayer;
-        Board.tiles[x][y].village = piece;
+        this.board.tiles[x][y].occupier = this.currentPlayer;
+        this.board.tiles[x][y].village = piece;
         if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
         else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
-        if (Board.tiles[x][y].isStoneCircle) {
-            if (Board.tiles[x][y].resource != null) {
-                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(Board.tiles[x][y].resource)] += 1;
+        if (this.board.tiles[x][y].isStoneCircle) {
+            if (this.board.tiles[x][y].resource != null) {
+                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[x][y].resource)] += 1;
             }
-            Board.tiles[x][y].resource = null;
+            this.board.tiles[x][y].resource = null;
         }
     }
 
-    // returns a hashset of movestrings of every valid move a player can make
+    /**
+     *  Outputs all valid moves a player can make in the current state
+     *  @param player - integer representing chosen player
+     *  @return hashset of all valid moves a player can make
+     */
     public HashSet<String> allValidMoves(int player) {
         HashSet<String> ms=new HashSet<String>();
         int len;
@@ -227,7 +243,13 @@ public class Model {
         return ms;
     }
 
-    // returns 1 if checkend is true
+    /**
+     * Outputs all valid moves a player can make in the current state
+     * @param x - x coordinate of piece
+     * @param y - y coordinate of piece
+     * @param piece - (0 indicates settler, 1 indicates village)
+     * @return hashset of all valid moves a player can make
+     */
     public int applyMove(int x, int y, int piece) {
         setSettler(x, y, piece);
         if (checkEnd()) {
@@ -252,8 +274,10 @@ public class Model {
     }
 
 
-    // resets board and progresses the game to the next phase
-    // int gamestate -> int representing whether it is exploration(0) or settling(1) phase
+    /**
+     * Assigns a random resource to all stone resource tiles and
+     * resets all resources that the player has obtained.
+     */
     public void resetAllResources() {
         if(gamestate == 0){
             List<Board.Tile> stoneCoords = this.board.getStoneRsrcTiles();
@@ -264,6 +288,11 @@ public class Model {
         }
     }
 
+    /**
+     * The main reset function. Counts the points obtained by every player and if
+     * it is in the exploration phase, progresses to the next state while removing
+     * all settler pieces off the board and reseting all resources.
+     */
     public void reset() {
         for (int k = 0; k < this.numOfPlayers; k ++) {
             var points = board.countPoints(k);
@@ -274,9 +303,12 @@ public class Model {
             this.resetAllResources();
             this.changeState();
         }
-
     }
 
+    /**
+     * Adds one to the currentPlayer and wraps around
+     * if currentPlayer exceeds numOfPlayers
+     */
     public void advancePlayer() {
         this.currentPlayer += 1;
         if (this.currentPlayer >= this.numOfPlayers) {
@@ -285,19 +317,25 @@ public class Model {
     }
 
 
-    // checks alls end of phase conditions, returns true if it the end
+    /**
+     * Adds one to the currentPlayer and wraps around
+     * if currentPlayer exceeds numOfPlayers
+     */
     public boolean checkEnd() {
         boolean nomoremoves = true;
         for (int k = 0; k < numOfPlayers; k++) {
             if (allValidMoves(k).size() != 0) {nomoremoves = false;};
         }
-        if (nomoremoves) {return true;};
-        if (this.board.allResourcesCollected()) {return true;}
-        if (this.board.noValidMoves(this.gamestate)) {return true;}
-
-        return false;
+        return nomoremoves || this.board.allResourcesCollected() || this.board.noValidMoves(this.gamestate);
     }
 
+    /**
+     * Applies countPoints to allValidMoves to compare the which move
+     * generates the most number of points.
+     * @param accumulator - empty list of minmaxNodes that will be populated
+     *                    with minmaxNodes representing all valid moves
+     * @param statestring - stateString representing the current gamestate
+     */
     public void aiMoves (List<minmaxNode> accumulator, String statestring) {
         int player = this.currentPlayer;
         for (String move :  this.allValidMoves(player)){
@@ -319,6 +357,9 @@ public class Model {
         }
     }
 
+    /**
+     * @return moveString representing the optimal move decided on by the AI.
+     */
     public String decisionMaker() {
         List<Model.minmaxNode> accumulator = new ArrayList<>();
         this.aiMoves(accumulator, this.toStateString());
