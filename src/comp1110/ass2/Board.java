@@ -57,7 +57,9 @@ public class Board {
     }
 
     /**
-     * Assigns random resources to all stone coordinate positions
+     * Helper function for assignRanResources
+     * @param count - num of tiles to assign to
+     * @param resource - resource you want to assign
      * @param stoneCoords - coordinates of all stone circle locations
      */
     public void assignToStone(int count,Tile.Resource resource, List<Tile> stoneCoords){
@@ -69,12 +71,15 @@ public class Board {
     }
 
 
-    // checks if a tile is a valid tile for settler to be placed.
-    // int x -> x coordinate of tile
-    // int y -> y coordinate of tile
-    // int player -> player
-    // int piece -> int representing the piece 0 = settler 1 = village
-    //
+    /**
+     * Checks if a piece is valid
+     * @param x - x coordinate of the piece
+     * @param y - y coordinate of the piece
+     * @param player - integer representing the current player
+     * @param piece - 0 represents a settler, 1 represents a village
+     * @param gamestate - 0 represents exploration, 1 represents settlement
+     * @return returns true if piece is valid
+     */
     public boolean isValidMove(int x, int y, int player, int piece, int gamestate) {
         int len = 0;
         if (x % 2 == 0) {len = -1;}
