@@ -377,8 +377,27 @@ public class Game extends Application {
         winner.show();
     }
 
+// press 6 on keypad to make ai make a move
+    public void AIGame() {
+        if (model.currentPlayer == 0) {
+            String move = model.decisionMaker();
+            int row = Integer.parseInt(String.valueOf(move.charAt(2)));
+            int col = Integer.parseInt(String.valueOf(move.charAt(4)));
+            int piece = 0;
+
+            if (move.charAt(0) == 'T') {
+                piece = 1;
+            }
 
 
+            var num = model.applyMove(row,col, piece);
+            updateGUI(num);
+            System.out.println(move);
+        }
+
+
+
+    }
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(this.game, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -473,6 +492,10 @@ public class Game extends Application {
             if (e.getCode() == KeyCode.DIGIT5) {
                 newGame(BlueLagoon.FACE_GAME);
             }
+            if (e.getCode() == KeyCode.DIGIT6) {
+                AIGame();
+            }
+
             if (e.getCode() == KeyCode.Q) {
                 stage.setScene(scene2);
             }
