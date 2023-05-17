@@ -41,7 +41,6 @@ public class Model {
     /**
      *  Takes a statestring converts its data into attributes for the model
      *  @param stateString a string representing a game state
-     *  @return void
      */
     public void toModel(String stateString) {
         String[] stateArray = stateString.split("; |;");

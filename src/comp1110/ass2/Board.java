@@ -1,6 +1,5 @@
 package comp1110.ass2;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -127,14 +126,13 @@ public class Board {
             if (piece == 0) {
                 if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
                 if (tiles[row][col].type == 0) {return true;}
-                return checkOccupier(pos,  row, col, player);
             }
             // village piece
             else {
                 if (this.getPlayer(player).villages >= 5) {return false;}
                 if (tiles[row][col].type == 0) {return false;}
-                return checkOccupier(pos, row, col, player);
             }
+            return checkOccupier(pos,  row, col, player);
         }
     }
 
