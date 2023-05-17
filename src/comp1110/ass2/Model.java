@@ -109,7 +109,6 @@ public class Model {
             resources.add(currentAL);
         }
 
-
         //player statement
         List<List<String>> players = new ArrayList<>();
         List<List<String>> playerSettler = new ArrayList<>();
@@ -151,43 +150,49 @@ public class Model {
                 }
             }
         }
-
         // constructs the statement
         String gameAStatement = "a " + this.board.boardSize + " " + this.numOfPlayers + ";";
 
         String csStatement = "c " + this.currentPlayer + " " + state + ";";
 
-        String stoneStatement = "s";
-        for (var k: stones) {stoneStatement += " " + k;}
-        stoneStatement += ";";
+        StringBuilder stoneStatement = new StringBuilder("s");
+        for (var k: stones) {
+            stoneStatement.append(" ").append(k);}
+        stoneStatement.append(";");
 
-        String islandStatement = "";
+        StringBuilder islandStatement = new StringBuilder();
         int i = 0;
         for (var k: islands) {
             i += 1;
-            String currentIS = "i " + this.board.islandToPoints.get(i - 1);
-            for (var t: k) {currentIS += " " + t;}
-            islandStatement += currentIS + "; ";
+            StringBuilder currentIS = new StringBuilder("i " + this.board.islandToPoints.get(i - 1));
+            for (var t: k) {
+                currentIS.append(" ").append(t);}
+            islandStatement.append(currentIS).append("; ");
         }
 
-        String resStatement = "r";
+        StringBuilder resStatement = new StringBuilder("r");
         for (var k: resources) {
-            for (String s: k) {resStatement += " " + s;}
+            for (String s: k) {
+                resStatement.append(" ").append(s);}
         }
-        resStatement += ";";
+        resStatement.append(";");
 
-        String playerStatement = "";
+        StringBuilder playerStatement = new StringBuilder();
         for (int k = 0; k < players.size(); k++) {
             List<String> player = players.get(k);
-            if (k > 0) {playerStatement += " ";}
-            for (var t: player) {playerStatement += t + " ";}
-            playerStatement += "S ";
+            if (k > 0) {
+                playerStatement.append(" ");}
+            for (var t: player) {
+                playerStatement.append(t).append(" ");}
+            playerStatement.append("S ");
 
-            for (var t: playerSettler.get(k)) {playerStatement += t + " ";}
-            playerStatement += "T";
+            for (var t: playerSettler.get(k)) {
+                playerStatement.append(t).append(" ");}
+            playerStatement.append("T");
 
-            for (var t: playerVillages.get(k)) {playerStatement += " " + t;}
-            playerStatement += ";";
+            for (var t: playerVillages.get(k)) {
+                playerStatement.append(" ").append(t);}
+            playerStatement.append(";");
 
         }
         return gameAStatement + " " + csStatement + " " + islandStatement + stoneStatement + " " + resStatement + " " + playerStatement;
@@ -195,21 +200,21 @@ public class Model {
 
     /**
      *  Sets a piece at a given coordinate.
-     *  @param x - x coordinate of piece
-     *  @param y - y coordinate of piece
+     *  @param row - row coordinate of piece
+     *  @param col - col coordinate of piece
      *  @param piece - (0 indicates settler, 1 indicates village)
      */
-    public void setSettler(int x, int y, int piece) {
-        this.board.tiles[x][y].occupier = this.currentPlayer;
-        this.board.tiles[x][y].village = piece;
+    public void setSettler(int row, int col, int piece) {
+        this.board.tiles[row][col].occupier = this.currentPlayer;
+        this.board.tiles[row][col].village = piece;
         if (piece == 0) {this.board.getPlayer(this.currentPlayer).settlers += 1;}
         else if (piece == 1) {this.board.getPlayer(this.currentPlayer).villages += 1;}
 
-        if (this.board.tiles[x][y].isStoneCircle) {
-            if (this.board.tiles[x][y].resource != null) {
-                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[x][y].resource)] += 1;
+        if (this.board.tiles[row][col].isStoneCircle) {
+            if (this.board.tiles[row][col].resource != null) {
+                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[row][col].resource)] += 1;
             }
-            this.board.tiles[x][y].resource = null;
+            this.board.tiles[row][col].resource = null;
         }
     }
 
@@ -221,21 +226,21 @@ public class Model {
     public HashSet<String> allValidMoves(int player) {
         HashSet<String> ms=new HashSet<String>();
         int len;
-        for (int a=0;a < board.boardSize ;a++) {
+        for (int row = 0 ;row < board.boardSize ;row ++) {
             len = 0;
-            if (a % 2 == 0) {len = -1;}
-            for (int b = 0; b < board.boardSize + len ; b++) {
+            if (row % 2 == 0) {len = -1;}
+            for (int col = 0; col < board.boardSize + len ; col ++) {
                 if (gamestate == 0) {
-                    if (board.isValidMove(a,b,player, 0, 0)) {
-                        ms.add("S " + a + "," + b);
+                    if (board.isValidMove(row ,col ,player, 0, 0)) {
+                        ms.add("S " + row + "," + col );
                     }
-                    if (board.isValidMove(a,b,player, 1, 0)) {
-                        ms.add("T " + a + "," + b);
+                    if (board.isValidMove(row ,col ,player, 1, 0)) {
+                        ms.add("T " + row + "," + col );
                     }
                 }
                 if (gamestate == 1) {
-                    if (board.isValidMove(a,b,player, 0, 1)) {
-                        ms.add("S " + a + "," + b);
+                    if (board.isValidMove(row ,col ,player, 0, 1)) {
+                        ms.add("S " + row + "," + col );
                     }
                 }
             }
@@ -245,13 +250,13 @@ public class Model {
 
     /**
      * Outputs all valid moves a player can make in the current state
-     * @param x - x coordinate of piece
-     * @param y - y coordinate of piece
+     * @param row - row coordinate of piece
+     * @param col - col coordinate of piece
      * @param piece - (0 indicates settler, 1 indicates village)
      * @return hashset of all valid moves a player can make
      */
-    public int applyMove(int x, int y, int piece) {
-        setSettler(x, y, piece);
+    public int applyMove(int row, int col, int piece) {
+        setSettler(row, col, piece);
         if (checkEnd()) {
             var setto1 = false;
             if (gamestate == 0) {
@@ -259,7 +264,6 @@ public class Model {
                 setto1 = true;
             }
             reset();
-            // this line makes no sense but I dont know why the whole thing falls apart if I dont have it
             toModel(toStateString());
             if (setto1 && allValidMoves(currentPlayer).size() == 0) {advancePlayer();};
             return 1;
@@ -340,17 +344,17 @@ public class Model {
         int player = this.currentPlayer;
         for (String move :  this.allValidMoves(player)){
             var split = move.split(" ");
-            int x = Integer.parseInt(split[1].split(",")[0]);
-            int y = Integer.parseInt(split[1].split(",")[1]);
+            int row = Integer.parseInt(split[1].split(",")[0]);
+            int col = Integer.parseInt(split[1].split(",")[1]);
             int piece = 0;
             if (move.charAt(0) == 'T') {piece =1;}
 
             minmaxNode nextnode;
-            nextnode = new minmaxNode(x,y,0, piece);
+            nextnode = new minmaxNode(row, col,0, piece);
 
             Model nextModel = new Model();
             nextModel.toModel(statestring);
-            nextModel.applyMove(x, y, piece);
+            nextModel.applyMove(row, col, piece);
 
             nextnode.points += nextModel.board.countPoints(player);
             accumulator.add(nextnode);
