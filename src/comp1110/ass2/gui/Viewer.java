@@ -78,7 +78,7 @@ public class Viewer extends Application {
             }
             for (int col = 0; col < boardSize - var; col++) {
                 Board.Tile curr = tiles[row][col];
-                String path = URI_BASE + Board.toURL(curr);
+                String path = URI_BASE + curr.toURL();
                 Image image = new Image(getClass().getResource(path).toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(65 * SIZING_RATIO);
@@ -225,7 +225,7 @@ public class Viewer extends Application {
      * Given the stones Statement of a state String, display the stones as grey hexagons
      */
     private void makeResources() {
-        ArrayList<int[]> stoneCoords = model.board.getStoneCoordinates();
+        ArrayList<int[]> stoneCoords = model.board.gettiles(1,0,0);
         for (int[] coords : stoneCoords) {
             int row = coords[0];
             int col = coords[1];
@@ -292,9 +292,9 @@ public class Viewer extends Application {
             initialY += 20;
             Text resources = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Resources: " + Arrays.toString(player.resources));
             initialY += 20;
-            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.id + ":" + toPositionString(model.board.getOccupiedTiles(player.id,0)));
+            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.id + ":" + toPositionString(model.board.gettiles(0,player.id,0)));
             initialY2 += 8;
-            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.id + ":"  + toPositionString(model.board.getOccupiedTiles(player.id,1)));
+            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.id + ":"  + toPositionString(model.board.gettiles(0, player.id,1)));
             settlers.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
             villages.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
 

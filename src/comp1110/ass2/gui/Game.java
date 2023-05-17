@@ -71,7 +71,7 @@ public class Game extends Application {
             }
             for (int col = 0; col < boardSize - var; col++) {
                 Board.Tile curr = tiles[row][col];
-                String path = URI_BASE + Board.toURL(curr);
+                String path = URI_BASE + curr.toURL();
                 Image image = new Image(getClass().getResource(path).toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(65 * SIZING_RATIO);
@@ -87,7 +87,7 @@ public class Game extends Application {
 
     // sets resources on the board
     private void makeResources() {
-        ArrayList<int[]> stoneCoords = model.board.getStoneCoordinates();
+        ArrayList<int[]> stoneCoords = model.board.gettiles(1, 0, 0);
         for (int[] coords : stoneCoords) {
             int row = coords[0];
             int col = coords[1];

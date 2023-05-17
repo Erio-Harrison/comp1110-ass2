@@ -137,7 +137,7 @@ public class Model {
                 if (this.board.tiles[row][col].isStoneCircle) {stones.add(row + "," + col);}
 
                 if (this.board.tiles[row][col].resource != null) {
-                    resources.get(Board.resourceToInt(this.board.tiles[row][col].resource)).add(row + "," + col);}
+                    resources.get(Board.Tile.resourceToInt(this.board.tiles[row][col].resource)).add(row + "," + col);}
                 if (this.board.tiles[row][col].occupier != -1) {
                     if (this.board.tiles[row][col].village == 1) {
                         List<String> currentList = playerVillages.get(this.board.tiles[row][col].occupier);
@@ -156,8 +156,7 @@ public class Model {
         String csStatement = "c " + this.currentPlayer + " " + state + ";";
 
         StringBuilder stoneStatement = new StringBuilder("s");
-        for (var k: stones) {
-            stoneStatement.append(" ").append(k);}
+        for (var k: stones) {stoneStatement.append(" ").append(k);}
         stoneStatement.append(";");
 
         StringBuilder islandStatement = new StringBuilder();
@@ -165,33 +164,26 @@ public class Model {
         for (var k: islands) {
             i += 1;
             StringBuilder currentIS = new StringBuilder("i " + this.board.islandToPoints.get(i - 1));
-            for (var t: k) {
-                currentIS.append(" ").append(t);}
+            for (var t: k) {currentIS.append(" ").append(t);}
             islandStatement.append(currentIS).append("; ");
         }
 
         StringBuilder resStatement = new StringBuilder("r");
         for (var k: resources) {
-            for (String s: k) {
-                resStatement.append(" ").append(s);}
-        }
+            for (String s: k) {resStatement.append(" ").append(s);}}
         resStatement.append(";");
 
         StringBuilder playerStatement = new StringBuilder();
         for (int k = 0; k < players.size(); k++) {
             List<String> player = players.get(k);
-            if (k > 0) {
-                playerStatement.append(" ");}
-            for (var t: player) {
-                playerStatement.append(t).append(" ");}
+            if (k > 0) {playerStatement.append(" ");}
+            for (var t: player) {playerStatement.append(t).append(" ");}
             playerStatement.append("S ");
 
-            for (var t: playerSettler.get(k)) {
-                playerStatement.append(t).append(" ");}
+            for (var t: playerSettler.get(k)) {playerStatement.append(t).append(" ");}
             playerStatement.append("T");
 
-            for (var t: playerVillages.get(k)) {
-                playerStatement.append(" ").append(t);}
+            for (var t: playerVillages.get(k)) {playerStatement.append(" ").append(t);}
             playerStatement.append(";");
 
         }
@@ -212,7 +204,7 @@ public class Model {
 
         if (this.board.tiles[row][col].isStoneCircle) {
             if (this.board.tiles[row][col].resource != null) {
-                this.board.getPlayer(this.currentPlayer).resources[Board.resourceToInt(this.board.tiles[row][col].resource)] += 1;
+                this.board.getPlayer(this.currentPlayer).resources[Board.Tile.resourceToInt(this.board.tiles[row][col].resource)] += 1;
             }
             this.board.tiles[row][col].resource = null;
         }

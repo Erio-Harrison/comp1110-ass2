@@ -98,26 +98,26 @@ public class Board {
 
     /**
      * Checks if a piece is valid
-     * @param x - x coordinate of the piece
-     * @param y - y coordinate of the piece
+     * @param row - row coordinate of the piece
+     * @param col - col coordinate of the piece
      * @param player - integer representing the current player
      * @param piece - 0 represents a settler, 1 represents a village
      * @param gamestate - 0 represents exploration, 1 represents settlement
      * @return returns true if piece is valid
      */
-    public boolean isValidMove(int x, int y, int player, int piece, int gamestate) {
+    public boolean isValidMove(int row, int col, int player, int piece, int gamestate) {
         int len = 0;
-        if (x % 2 == 0) {len = -1;}
-        int[] pos = posCreate(x, y);
+        if (row % 2 == 0) {len = -1;}
+        int[] pos = posCreate(row, col);
 
-        if (x < 0 || x > boardSize - 1 || y < 0 || y > boardSize - 1 + len) {return false;}
-        if (tiles[x][y] == null || tiles[x][y].occupier != -1) {return false;}
+        if (row < 0 || row > boardSize - 1 || col < 0 || col > boardSize - 1 + len) {return false;}
+        if (tiles[row][col] == null || tiles[row][col].occupier != -1) {return false;}
 
         // if piece is settler
         if (gamestate == 1) {
             if (piece == 0) {
                 if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
-                return checkOccupier(pos, x, y, player);
+                return checkOccupier(pos, row, col, player);
             }
             else {
                 return false;
@@ -126,14 +126,14 @@ public class Board {
         else {
             if (piece == 0) {
                 if (this.getPlayer(player).settlers >= 30 - ((this.playerList.size() - 2) * 5)) {return false;}
-                if (tiles[x][y].type == 0) {return true;}
-                return checkOccupier(pos,  x, y, player);
+                if (tiles[row][col].type == 0) {return true;}
+                return checkOccupier(pos,  row, col, player);
             }
             // village piece
             else {
                 if (this.getPlayer(player).villages >= 5) {return false;}
-                if (tiles[x][y].type == 0) {return false;}
-                return checkOccupier(pos, x, y, player);
+                if (tiles[row][col].type == 0) {return false;}
+                return checkOccupier(pos, row, col, player);
             }
         }
     }
@@ -142,54 +142,54 @@ public class Board {
      * Checks all tiles adjacent to a tile to see if they are occupied
      * @param pos - an integer array which specifies whether the tile is
      *            top left, top right, bottom left, bottom right, or none
-     * @param a - x coordinate of the tile
-     * @param b - y coordinate of the tile
+     * @param row - row coordinate of the tile
+     * @param col - col coordinate of the tile
      * @param currentPlayerId  - player placing the tile
      */
-    public Boolean checkOccupier(int[] pos, int a, int b, int currentPlayerId) {
+    public Boolean checkOccupier(int[] pos, int row, int col, int currentPlayerId) {
         var evenRow = 0;
-        if (a % 2 == 0) {
+        if (row % 2 == 0) {
             evenRow = 1;
         }
 
         if ((pos[0] == -1 || pos[0] == 1)) {
             if (pos[1] == 0) {
-                if (tiles[a][b - 1].occupier == currentPlayerId ||
-                        tiles[a][b + 1].occupier == currentPlayerId) {return true;}
+                if (tiles[row][col - 1].occupier == currentPlayerId ||
+                        tiles[row][col + 1].occupier == currentPlayerId) {return true;}
             }
             else {
-                if (tiles[a][b - pos[1]].occupier == currentPlayerId) {return true;}
+                if (tiles[row][col - pos[1]].occupier == currentPlayerId) {return true;}
             }
 
             if (evenRow == 1 || pos[1] == 0) {
-                return tiles[a - pos[0]][b].occupier == currentPlayerId ||
-                        tiles[a - pos[0]][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
+                return tiles[row - pos[0]][col].occupier == currentPlayerId ||
+                        tiles[row - pos[0]][col + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
             }
             else {
-                return tiles[a - pos[0]][b].occupier == currentPlayerId;
+                return tiles[row - pos[0]][col].occupier == currentPlayerId;
             }
         }
 
         else if (pos[0] == 0 && (pos[1] == -1||pos[1] == 1)) {
-            if (tiles[a][b-pos[1]].occupier == currentPlayerId) {return true;}
+            if (tiles[row][col-pos[1]].occupier == currentPlayerId) {return true;}
 
             if (pos[1] == -1 || evenRow == 1) {
-                if (tiles[a-1][b].occupier == currentPlayerId ||
-                        tiles[a+1][b].occupier == currentPlayerId) {return true;}
+                if (tiles[row - 1][col].occupier == currentPlayerId ||
+                        tiles[row + 1][col].occupier == currentPlayerId) {return true;}
 
             }
             if (evenRow == 1 || pos[1] == 1) {
-                return tiles[a - 1][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId ||
-                        tiles[a + 1][b + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
+                return tiles[row - 1][col + 1 + (evenRow - 1) * 2].occupier == currentPlayerId ||
+                        tiles[row + 1][col + 1 + (evenRow - 1) * 2].occupier == currentPlayerId;
             }
         }
         else {
-            return tiles[a - 1][b].occupier == currentPlayerId
-                    || tiles[a + 1][b].occupier == currentPlayerId
-                    || tiles[a - 1][b + (2 * (evenRow) - 1)].occupier == currentPlayerId
-                    || tiles[a + 1][b + (2 * (evenRow) - 1)].occupier == currentPlayerId
-                    || tiles[a][b + 1].occupier == currentPlayerId
-                    || tiles[a][b - 1].occupier == currentPlayerId;
+            return tiles[row - 1][col].occupier == currentPlayerId
+                    || tiles[row + 1][col].occupier == currentPlayerId
+                    || tiles[row - 1][col + (2 * (evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[row + 1][col + (2 * (evenRow) - 1)].occupier == currentPlayerId
+                    || tiles[row][col + 1].occupier == currentPlayerId
+                    || tiles[row][col - 1].occupier == currentPlayerId;
         }
 
         return false;
@@ -213,7 +213,6 @@ public class Board {
                     if (k.resources[i] == 0) {
                         bonusP = 0;}
                 }
-                //statuettes
                 points += k.resources[k.resources.length - 1] * 4 + (bonusP * 10);
             }
         }
@@ -309,21 +308,24 @@ public class Board {
         return ucrPosition + 1;
     }
 
+
     /**
      * Gets all coordinates of tiles occupied by player
+     * selection -> 0 = getsoccupiedtiles, 1= stonecircle tiles
      */
-    public ArrayList<int[]> getOccupiedTiles(int player, int village) {
-        ArrayList<int[]> occupied = new ArrayList<>();
+    public ArrayList<int[]> gettiles(int selection, int player, int village) {
+        ArrayList<int[]> result= new ArrayList<>();
         for (int k = 0; k < boardSize; k ++) {
             for (int i = 0; i < boardSize; i ++) {
                 if (tiles[k][i] != null) {
-                    if (tiles[k][i].occupier == player && tiles[k][i].village == village){
-                        occupied.add(new int[] {k, i});
-                    }
+                    if ((selection == 0 && tiles[k][i].occupier == player && tiles[k][i].village == village) ||
+                            (selection == 1 && tiles[k][i].isStoneCircle)){
+                            result.add(new int[] {k, i});
+                        }
                 }
             }
         }
-        return occupied;
+        return result;
     }
 
     /**
@@ -344,23 +346,6 @@ public class Board {
         return stoneCoords;
     }
 
-    /**
-     * Gets all coordinates of stone circle tiles
-     * @return all stone circle coordinates as an arraylist of int[]
-     */
-    public ArrayList<int[]> getStoneCoordinates() {
-        ArrayList<int[]> stoneCoords = new ArrayList<>();
-        for (int k = 0; k < boardSize; k ++) {
-            for (int i = 0; i < boardSize; i ++) {
-                if (tiles[k][i] != null) {
-                    if (tiles[k][i].isStoneCircle){
-                        stoneCoords.add(new int[] {k, i});
-                    }
-                }
-            }
-        }
-        return stoneCoords;
-    }
 
     /**
      * Removes all settler pieces off the board and village pieces on stone circles
@@ -408,27 +393,16 @@ public class Board {
         return null;
     }
 
-    public int[] posCreate(int x, int y) {
+    public int[] posCreate(int row, int col) {
         int len = 0;
-        if (x % 2 == 0) {len = -1;}
+        if (row % 2 == 0) {len = -1;}
 
         int[] pos = {0, 0};
-        if (x - 1 == -1) {pos[0] = -1;}
-        else if (x + 1 == boardSize) {pos[0] = 1;}
-        if (y - 1 == -1) {pos[1] = -1;}
-        else if (y + 1 == boardSize + len ) {pos[1] = 1;}
+        if (row - 1 == -1) {pos[0] = -1;}
+        else if (row + 1 == boardSize) {pos[0] = 1;}
+        if (col - 1 == -1) {pos[1] = -1;}
+        else if (col + 1 == boardSize + len ) {pos[1] = 1;}
         return  pos;
-    }
-
-    public static int resourceToInt(Tile.Resource rsrc) {
-        switch (rsrc) {
-            case COCO -> {return 0;}
-            case BBOO -> {return 1;}
-            case WATR -> {return 2;}
-            case STON -> {return 3;}
-            case STAT -> {return 4;}
-        }
-        return -1;
     }
 
     // checks if all resource squares have been occupied or all players have used up their pieces
@@ -472,13 +446,10 @@ public class Board {
     //used to store the points and resources of each player
     public static class Player {
         public int id;
-
         public int points;
 
         public Integer[] resources;
-
         public int settlers;
-
         public int villages;
 
         public Player(int id, int points, Integer[] resources) {
@@ -539,18 +510,25 @@ public class Board {
             this.type = 0;
             this.village = 0;
         }
-    }
 
-
-    public static String toURL(Tile tile) {
-
-        if (tile != null) {
-            if (tile.occupier != -1 && tile.village == 0) {return "settler" + tile.occupier + ".png";};
-            if (tile.occupier != -1 && tile.village == 1) {return "village" + tile.occupier + ".png";};
-            if (tile.isStoneCircle) {return "stone.png";};
-            if (tile.type == 1) {return "grass.png";};
+        public static int resourceToInt(Tile.Resource rsrc) {
+            switch (rsrc) {
+                case COCO -> {return 0;}
+                case BBOO -> {return 1;}
+                case WATR -> {return 2;}
+                case STON -> {return 3;}
+                case STAT -> {return 4;}
+            }
+            return -1;
         }
-        return "water.png";
+
+        public String toURL() {
+            if (this.occupier != -1 && this.village == 0) {return "settler" + this.occupier + ".png";};
+            if (this.occupier != -1 && this.village == 1) {return "village" + this.occupier + ".png";};
+            if (this.isStoneCircle) {return "stone.png";};
+            if (this.type == 1) {return "grass.png";};
+            return "water.png";
+        }
     }
 }
 
