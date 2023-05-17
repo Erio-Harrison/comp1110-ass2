@@ -44,7 +44,7 @@ public class Game extends Application {
     private static final double OFFSET = TILE_SPACING_X/2.0;
     private static final double TILE_SPACING_Y = 42.0;
     private Model model;
-
+    private static boolean ai_mode = false;
     private static final double DEFAULT_BOARD = 13;
 
     private static double SIZING_RATIO;
@@ -165,8 +165,8 @@ public class Game extends Application {
 
     private void makeGameTokens(int phase) {
         // tokens already on board
-        Piece settlerToken = new Piece(0, this.model);
-        Piece villagePiece = new Piece(1, this.model);
+        Piece settlerToken = new Piece(0, this.model,ai_mode);
+        Piece villagePiece = new Piece(1, this.model,ai_mode);
         // Placeable tokens
         if (phase == 0) {
             game.getChildren().addAll(settlerToken,villagePiece);
@@ -201,7 +201,7 @@ public class Game extends Application {
         } else {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
-                winner.setTitle("SETTLEMENT PHASE ENDED");
+                winner.setTitle("GAME ENDED");
                 winner.setHeaderText("WINNER: PLAYER:  " + model.board.getIds(model.board.declareWinner()));
                 winner.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
                 winner.show();
@@ -227,32 +227,35 @@ public class Game extends Application {
         makeCurrentInventory(phase);
         makeGameTokens(phase);
 
+        Text text = new Text(1100,20,"AI GAME:" + ai_mode);
+
         Button button2 = new Button("Controls");
         button2.setLayoutX(WINDOW_WIDTH- 100);
         button2.setLayoutY(WINDOW_HEIGHT - 50);
         button2.setOnAction(event -> {
             controlInstructions();
         });
-        game.getChildren().add(button2);
+        game.getChildren().addAll(button2,text);
     }
 
     class Piece extends Group {
 
         ImageToken settler;
-
+        boolean ai;
         int currentPlayer = model.currentPlayer;
         Integer village;
-        boolean ai;
+
 
         double mouseX, mouseY;
         double homeX;
         double homeY;
 
-        public Piece(Integer village, Model model) {
+        public Piece(Integer village, Model model, boolean ai) {
             this.village = village;
             this.homeX = 20;
             if (village == 1) {this.homeX += 100;}
             this.homeY = 470;
+this.ai = ai;
 
             if (village == 1) {this.settler = new ImageToken("village" + currentPlayer + ".png");}
             else {this.settler = new ImageToken("settler" + currentPlayer +  ".png");}
@@ -286,6 +289,9 @@ public class Game extends Application {
                         if (model.board.isValidMove(pos[1], pos[0],model.currentPlayer,village, model.gamestate)) {
                             var num = model.applyMove(pos[1], pos[0], village);
                             updateGUI(num);
+                            if (ai && currentPlayer != model.currentPlayer) {
+                                AIGame(model.currentPlayer);
+                            }
                         }
                         this.setLocation(pos, village);
                     });
@@ -422,6 +428,15 @@ public class Game extends Application {
             controlInstructions();
         });
 
+        Button aiButton = new Button("AI Mode?");
+        aiButton.setLayoutX(WINDOW_WIDTH/2);
+        aiButton.setLayoutY(WINDOW_HEIGHT/2 + 150);
+        aiButton.setOnAction(event -> {
+            ai_mode = !ai_mode;
+            System.out.println(ai_mode);
+        });
+
+
         Button button = new Button("New Game?");
         button.setLayoutX(WINDOW_WIDTH/2);
         button.setLayoutY(WINDOW_HEIGHT/2 + 50);
@@ -464,8 +479,8 @@ public class Game extends Application {
 
         });
 
-        menu.getChildren().add(button);
-        menu.getChildren().add(button2);
+        menu.getChildren().addAll(button,button2,aiButton);
+
 
 
 
