@@ -486,6 +486,7 @@ public class Board {
                     .mapToInt(Integer::intValue)
                     .sum();
         }
+
     }
 
     /**

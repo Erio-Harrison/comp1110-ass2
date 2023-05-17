@@ -144,8 +144,9 @@ public class Game extends Application {
         Text majoritiesT= new Text(10, 80, "Majority Islands:");
         Text linksT = new Text(10, 100, "Links:");
         Text resourcesT = new Text(10, 120, "Total Resources:");
-        Text totalT = new Text(10, 140, "Total Points:");
-        ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,totalT));
+        Text phaseP = new Text(10, 140, "Points this phase:");
+        Text totalP = new Text(10, 160, "Total Points:");
+        ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,phaseP,totalP));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
             PlayerPointCounter pointCounter = new PlayerPointCounter(i, this.model.board.tiles, board.numOfIslands);
@@ -157,9 +158,9 @@ public class Game extends Application {
             Text majorityIslands = new Text(50 * i+ 120, 80, String.valueOf(pointCounter.majorityIslandsCounter(board.islandToPoints)));
             Text links = new Text(50 * i + 120, 100, String.valueOf(pointCounter.linkCounter()));
             Text resources = new Text(50 * i + 120, 120, String.valueOf(board.resourcesPoints(i)));
-            Text total = new Text(50 * i + 120, 140, String.valueOf(board.countPoints(i)));
-
-            game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,total)));
+            Text phase = new Text(50 * i + 120, 140, String.valueOf(board.countPoints(i)));
+            Text total = new Text(50 * i + 120, 160, String.valueOf(board.playerList.get(i).points));
+            game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,phase,total)));
         }
     }
 
@@ -174,10 +175,12 @@ public class Game extends Application {
     }
 
     private void makeCurrentInventory(int gameState) {
+        String gameStateText = "Exploration";
+        if (gameState == 1) gameStateText = "Settlement";
         Board board = this.model.board;
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
         Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.id);
-        Text phase = new Text(150/4., 380, "PHASE: " + gameState);
+        Text phase = new Text(150/4., 380, "PHASE: " + gameStateText);
         game.getChildren().addAll(title,phase);
         Text settlerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.settlers) + " Left");
         Text villagerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.villages) + " Left");
@@ -201,8 +204,8 @@ public class Game extends Application {
         } else {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
-                winner.setTitle("GAME ENDED");
-                winner.setHeaderText("WINNER: PLAYER:  " + model.board.getIds(model.board.declareWinner()));
+                winner.setTitle("PHASE OVER");
+                winner.setHeaderText("HIGHEST POINTS PLAYER:  " + model.board.getIds(model.board.declareWinner()));
                 winner.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
                 winner.show();
             }
@@ -255,7 +258,7 @@ public class Game extends Application {
             this.homeX = 20;
             if (village == 1) {this.homeX += 100;}
             this.homeY = 470;
-this.ai = ai;
+            this.ai = ai;
 
             if (village == 1) {this.settler = new ImageToken("village" + currentPlayer + ".png");}
             else {this.settler = new ImageToken("settler" + currentPlayer +  ".png");}
