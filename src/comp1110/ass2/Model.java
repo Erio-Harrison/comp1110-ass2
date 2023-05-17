@@ -62,7 +62,9 @@ public class Model {
 
         //==islands==
         int i = 2;
-        ArrayList islandState = (ArrayList) Arrays.stream(stateArray).collect(Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
+        ArrayList islandState = (ArrayList)
+                Arrays.stream(stateArray).collect(
+                        Collectors.partitioningBy(n -> n.charAt(0) == 'i')).values().toArray()[1];
         // setting islands on board
         int islandNum = 0;
         for (Object j : islandState) {
@@ -203,7 +205,8 @@ public class Model {
 
         if (this.board.tiles[row][col].isStoneCircle) {
             if (this.board.tiles[row][col].resource != null) {
-                this.board.getPlayer(this.currentPlayer).resources[Board.Tile.resourceToInt(this.board.tiles[row][col].resource)] += 1;
+                this.board.getPlayer(this.currentPlayer).
+                        resources[Board.Tile.resourceToInt(this.board.tiles[row][col].resource)] += 1;
             }
             this.board.tiles[row][col].resource = null;
         }
@@ -368,7 +371,8 @@ public class Model {
                 bestNode = node;
             }
 
-            double interNodedist = Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
+            double interNodedist =
+                    Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
             if (interNodedist < dist) {
                 closestNode = node;
                 dist = interNodedist;

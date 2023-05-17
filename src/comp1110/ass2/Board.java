@@ -40,7 +40,8 @@ public class Board {
      * Returns the winner out of the playerList arraylist.
      */
     public List<Player> declareWinner() {
-        Optional<Player> max = playerList.stream().max(Comparator.comparing(Player::getPoints).thenComparing(Player::resourcesCount));
+        Optional<Player> max = playerList.stream().
+                max(Comparator.comparing(Player::getPoints).thenComparing(Player::resourcesCount));
         List<Player> maxPlayers = null;
         if (max.isPresent()) {
             Player maxPlayer = max.get();
