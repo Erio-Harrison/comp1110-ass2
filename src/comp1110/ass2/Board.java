@@ -309,7 +309,7 @@ public class Board {
 
     /**
      * Gets all coordinates of tiles occupied by player
-     * selection -> 0 = getsoccupiedtiles, 1= stonecircle tiles
+     * @param selection - 0 = occupied tiles, 1= stonecircle tiles
      */
     public ArrayList<int[]> gettiles(int selection, int player, int village) {
         ArrayList<int[]> result= new ArrayList<>();
@@ -386,11 +386,21 @@ public class Board {
         return points;
     }
 
+    /**
+     * Gets a certain player from the playerList based on its id
+     * @param id - integer representing the player id
+     */
     public Player getPlayer(int id) {
         for (Player p: this.playerList) {if (p.id == id) {return p;}}
         return null;
     }
 
+    /**
+     * used to detect whether a tile is at the top right, top left, bottom right, bottom left of the board
+     * @param row - integer representing the row coordinate
+     * @param col - integer representing the col coordinate
+     * @return int array representing the attributes of the coordinate
+     */
     public int[] posCreate(int row, int col) {
         int len = 0;
         if (row % 2 == 0) {len = -1;}
@@ -403,7 +413,11 @@ public class Board {
         return  pos;
     }
 
-    // checks if all resource squares have been occupied or all players have used up their pieces
+    /**
+     * detect if a player has run out of settlers and villages or just settlers depending on the
+     * gamestate
+     * @param gameState - current gamestate
+     */
     public boolean noValidMoves(int gameState) {
         if (gameState == 0) {
             for (Player player : playerList) {
@@ -418,6 +432,10 @@ public class Board {
         return true;
     }
 
+    /**
+     * Detect if all resources have been collected off the board
+     * @return boolean representing the results
+     */
     public boolean allResourcesCollected() {
         for (int col = 0; col < boardSize; col++) {
             for (int row = 0; row < boardSize; row++) {
@@ -440,8 +458,6 @@ public class Board {
      * Authored by Tay Shao An
      * Stores current state of a player
      */
-
-    //used to store the points and resources of each player
     public static class Player {
         public int id;
         public int points;
