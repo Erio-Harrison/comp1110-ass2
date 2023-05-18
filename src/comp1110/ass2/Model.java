@@ -299,7 +299,7 @@ public class Model {
         if (gamestate == 0) {
             board.removePieces();
             this.resetAllResources();
-            this.changeState();
+
         }
     }
 

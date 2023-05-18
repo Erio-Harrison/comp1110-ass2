@@ -27,10 +27,6 @@ declaration: >-
 #
 # Add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
-code:
-  - comment: Used code that extracts substring from a start and end index with substring() used in getStatement()
-    url: https://stackoverflow.com/a/12595052
-    licence: https://creativecommons.org/licenses/by-sa/4.0/
 
 # I wish to submit the following classes as entirely my own (remove this if
 # you want to just submit methods):
@@ -38,8 +34,6 @@ code:
 
 # I wish to submit the following methods as entirely my own (remove this if
 # you want to just submit classes):
-method:
-   - https://gitlab.cecs.anu.edu.au/u7553225/comp1110-ass2/-/blob/master/src/comp1110/ass2/gui/Viewer.java#L67-103
 
 
 # sign *your* name and uid here
