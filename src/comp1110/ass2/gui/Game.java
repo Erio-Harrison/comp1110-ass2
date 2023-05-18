@@ -5,7 +5,6 @@ import comp1110.ass2.Board;
 import comp1110.ass2.Model;
 import comp1110.ass2.PlayerPointCounter;
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -17,13 +16,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 // FIXME Task 14
@@ -229,8 +228,11 @@ public class Game extends Application {
         makeResources();
         makeCurrentInventory(phase);
         makeGameTokens(phase);
-
-        Text text = new Text(1100,20,"AI GAME:" + ai_mode);
+        String gameMode = "2 Player";
+        if (ai_mode) {
+            gameMode = "Versus AI";
+        }
+        Text text = new Text(1050,20,"Game Mode: " + gameMode);
 
         Button button2 = new Button("Controls");
         button2.setLayoutX(WINDOW_WIDTH- 100);
@@ -431,12 +433,21 @@ public class Game extends Application {
             controlInstructions();
         });
 
-        Button aiButton = new Button("AI Mode?");
-        aiButton.setLayoutX(WINDOW_WIDTH/2);
-        aiButton.setLayoutY(WINDOW_HEIGHT/2 + 150);
+
+        AtomicReference<String> onOFF = new AtomicReference<>("OFF");
+
+
+
+        Button aiButton = new Button("AI Mode: " + onOFF);
+        aiButton.setLayoutX(WINDOW_WIDTH/2.);
+        aiButton.setLayoutY(WINDOW_HEIGHT/2. + 150);
+
         aiButton.setOnAction(event -> {
             ai_mode = !ai_mode;
-            System.out.println(ai_mode);
+            if (ai_mode) {
+                onOFF.set("ON");
+            } else onOFF.set("OFF");
+            aiButton.setText("AI Mode: " + onOFF);
         });
 
 
@@ -519,11 +530,12 @@ public class Game extends Application {
             if (e.getCode() == KeyCode.DIGIT5) {
                 newGame(BlueLagoon.FACE_GAME);
             }
+            // let ai make a move (testing Purposes)
             if (e.getCode() == KeyCode.A) {
                 AIGame(model.currentPlayer);
             }
 
-
+            // quit to baord
             if (e.getCode() == KeyCode.Q) {
                 stage.setScene(scene2);
             }
