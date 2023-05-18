@@ -51,7 +51,7 @@ public class PlayerPointCounter {
         }
     }
 
-    public List<PieceNode> addNodePieces(Board.Tile tile, int x, int y, int shortlong) {
+    public void addNodePieces(Board.Tile tile, int x, int y, int shortlong) {
         PieceNode currentNode = new PieceNode(tile.island, x, y, shortlong);
         this.allPieces.add(currentNode);
         for (PieceNode node: this.allPieces) {
@@ -65,7 +65,6 @@ public class PlayerPointCounter {
                 currentNode.edges.add(node);
             }
         }
-        return allPieces;
     }
 
     public int islandsCounter() {
@@ -74,6 +73,9 @@ public class PlayerPointCounter {
         return 0;
     }
 
+    /**
+     * Used to calculate the points from links
+     */
     public int linkCounter() {
         // processing nodes
         List<Integer> branchLen = new ArrayList<>();
@@ -87,6 +89,9 @@ public class PlayerPointCounter {
         return 0;
     }
 
+    /**
+     * Used to calculate the number of points won from being the majority on islands
+     */
     public int majorityIslandsCounter(List<Integer> islandToPoints) {
         Integer points = 0;
         List<Integer> islandsWon = new ArrayList<>();
@@ -120,6 +125,9 @@ public class PlayerPointCounter {
         return points;
     }
 
+    /**
+     * Finds all unique players which appear on an island
+     */
     public List<Integer> allUniquePlayer(ArrayList<Integer> array) {
         List<Integer> returnArray = new ArrayList<>();
         for (var k: array) {
@@ -147,6 +155,9 @@ public class PlayerPointCounter {
         }
     }
 
+    /**
+     * Used for checking if a player occupies majority tiles on an island
+     */
     public List<majorityIslandNode> mostCounts(List<majorityIslandNode> nodes) {
         List<majorityIslandNode> largestNode = null;
         for (majorityIslandNode p: nodes) {
@@ -167,6 +178,9 @@ public class PlayerPointCounter {
         return largestNode;
     }
 
+    /**
+     * Used to detect links between tiles
+     */
     public static class PieceNode {
         int island;
         int x;
@@ -182,7 +196,12 @@ public class PlayerPointCounter {
             this.edges = new ArrayList<>();
         }
 
-        //returns all islands that the edges of this node spans
+        /**
+         * returns all islands that the edges of this node spans
+         * @param islands - islands that this particular link spans
+         * @param previousNodes - nodes that we have already checked
+         * @return set containing all islands that this link spans
+         */
         public Set<Integer> nodeRunner(Set<Integer> islands, List<PieceNode> previousNodes) {
             previousNodes.add(this);
             if (this.island != 0) {
