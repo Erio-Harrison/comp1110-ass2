@@ -51,7 +51,6 @@ public class Board {
                     .collect(Collectors.toList());
         }
         return maxPlayers;
-
     }
 
     public ArrayList<Integer>  getIds(List<Player> players) {
@@ -138,6 +137,26 @@ public class Board {
     }
 
     /**
+     * used to detect whether a tile is at the top right, top left, bottom right, bottom left of the board.
+     * Used by the check occupier function
+     * @param row - integer representing the row coordinate
+     * @param col - integer representing the col coordinate
+     * @return int array representing the attributes of the coordinate
+     */
+    public int[] posCreate(int row, int col) {
+        int len = 0;
+        if (row % 2 == 0) {len = -1;}
+
+        int[] pos = {0, 0};
+        if (row - 1 == -1) {pos[0] = -1;}
+        else if (row + 1 == boardSize) {pos[0] = 1;}
+        if (col - 1 == -1) {pos[1] = -1;}
+        else if (col + 1 == boardSize + len ) {pos[1] = 1;}
+        return  pos;
+    }
+
+
+    /**
      * Checks all tiles adjacent to a tile to see if they are occupied
      * @param pos - an integer array which specifies whether the tile is
      *            top left, top right, bottom left, bottom right, or none
@@ -193,6 +212,22 @@ public class Board {
 
         return false;
     }
+
+    /**
+     * counts the number of points a player has scored
+     * @param player - integer representing the player
+     */
+    public int countPoints(int player) {
+        int points = 0;
+        PlayerPointCounter pointCounter = new PlayerPointCounter(player, tiles, this.numOfIslands);
+        points += pointCounter.islandsCounter();
+        points += pointCounter.majorityIslandsCounter(this.islandToPoints);
+        points += pointCounter.linkCounter();
+        points += resourcesPoints(player);
+
+        return points;
+    }
+
 
     /**
      * Converts resources collected by a player into points
@@ -291,6 +326,7 @@ public class Board {
         }
     }
 
+
     /**
      * Helper function used by setBoardAttribute to set a resource at a tile
      * @param split - a split of the ucr string
@@ -309,7 +345,7 @@ public class Board {
 
 
     /**
-     * Gets all coordinates of tiles occupied by player
+     * Gets all coordinates of tiles occupied by player or all stonecircle tiles
      * @param selection - 0 = occupied tiles, 1= stonecircle tiles
      */
     public ArrayList<int[]> gettiles(int selection, int player, int village) {
@@ -325,6 +361,32 @@ public class Board {
             }
         }
         return result;
+    }
+
+    public int findIsland(int row, int col) {
+        for (int i = 0; i < this.boardSize; i++) {
+            for (int k = 0; k< this.boardSize; k++) {
+                if (this.tiles[i][k] != null) {
+                    if (i == row && k == col) {
+                        return this .tiles[i][k].island;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public boolean doesIslandHaveVillage(int island) {
+        for (int i = 0; i < this.boardSize; i++) {
+            for (int k = 0; k< this.boardSize; k++) {
+                if (this.tiles[i][k] != null) {
+                    if (this.tiles[i][k].island == island && this.tiles[i][k].village == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -372,20 +434,6 @@ public class Board {
         }
     }
 
-    /**
-     * counts the number of points a player has scored
-     * @param player - integer representing the player
-     */
-    public int countPoints(int player) {
-        int points = 0;
-        PlayerPointCounter pointCounter = new PlayerPointCounter(player, tiles, this.numOfIslands);
-        points += pointCounter.islandsCounter();
-        points += pointCounter.majorityIslandsCounter(this.islandToPoints);
-        points += pointCounter.linkCounter();
-        points += resourcesPoints(player);
-
-        return points;
-    }
 
     /**
      * Gets a certain player from the playerList based on its id
@@ -396,27 +444,10 @@ public class Board {
         return null;
     }
 
-    /**
-     * used to detect whether a tile is at the top right, top left, bottom right, bottom left of the board
-     * @param row - integer representing the row coordinate
-     * @param col - integer representing the col coordinate
-     * @return int array representing the attributes of the coordinate
-     */
-    public int[] posCreate(int row, int col) {
-        int len = 0;
-        if (row % 2 == 0) {len = -1;}
-
-        int[] pos = {0, 0};
-        if (row - 1 == -1) {pos[0] = -1;}
-        else if (row + 1 == boardSize) {pos[0] = 1;}
-        if (col - 1 == -1) {pos[1] = -1;}
-        else if (col + 1 == boardSize + len ) {pos[1] = 1;}
-        return  pos;
-    }
 
     /**
      * detect if a player has run out of settlers and villages or just settlers depending on the
-     * gamestate
+     * gamestate. Used by the checkend function in model
      * @param gameState - current gamestate
      */
     public boolean noValidMoves(int gameState) {
@@ -434,7 +465,7 @@ public class Board {
     }
 
     /**
-     * Detect if all resources have been collected off the board
+     * Detect if all resources have been collected off the board. Used by the checkend function in model
      * @return boolean representing the results
      */
     public boolean allResourcesCollected() {
