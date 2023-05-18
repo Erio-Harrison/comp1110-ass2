@@ -40,23 +40,27 @@ public class Viewer extends Application {
     private final Group controls = new Group();
     private TextField stateTextField;
 
+    // instance of our game
     private Model model = new Model();
 
-    Game game = new Game();
 
 
+    // Path to get to our resource folder
     private static final String URI_BASE = "Resources/";
+    // Margins of the board
     private static final int MARGIN_X = 200;
     private static final int MARGIN_Y = 10;
+    // spacing between images
     private static final double TILE_SPACING_X = 60.0;
+    // offset used for moving tile son even rows
     private static final double OFFSET = TILE_SPACING_X/2.0;
     private static final double TILE_SPACING_Y = 42.0;
-
+    // Used to calculate current board relative to default board size
     private static final double DEFAULT_BOARD = 13;
-
+    // Used to modify the size of the tiles for different board sizes
     private static double SIZING_RATIO;
 
-
+    // Used to convert an arrayList with positions to coordinates.
     public String toPositionString(ArrayList<int[]> arrayList) {
         String result = "";
         for (int[] array : arrayList) {
@@ -65,7 +69,7 @@ public class Viewer extends Application {
 
         return result;
     }
-
+    // displays the board, islands, stones, resources
     private void makeBoard() {
         int boardSize = this.model.board.boardSize;
         Board.Tile[][] tiles = this.model.board.tiles;
@@ -143,6 +147,7 @@ public class Viewer extends Application {
         }
     }
 
+    // create a legend showing what icons represent
     private void legendToPic(String legend, int x, int y, double size) {
         switch (legend) {
             case "Water Tile" -> {
@@ -244,6 +249,7 @@ public class Viewer extends Application {
 
     }
 
+    // Convert resources into shapes that can be displayed
     public void resourceToShape(double x, double y, Board.Tile.Resource resource, double size) {
         switch (resource) {
             case STON -> {
@@ -275,7 +281,7 @@ public class Viewer extends Application {
 
 
 
-
+// display player statistics
     private void displayPlayers() {
         int initialY = 60;
         int playerSpacing = 20;
@@ -305,6 +311,7 @@ public class Viewer extends Application {
 
 
 
+    // display information about the current state
     private void currentState() {
         int currentPlayer = model.currentPlayer;
         String gamestate = "Settler";
