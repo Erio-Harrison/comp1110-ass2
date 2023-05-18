@@ -401,9 +401,10 @@ public class Game extends Application {
 // press 6 on keypad to make ai make a move
     public void AIGame(int player) {
         if (model.currentPlayer == player) {
-            String move = model.decisionMaker();
-            int row = Integer.parseInt(String.valueOf(move.charAt(2)));
-            int col = Integer.parseInt(String.valueOf(move.charAt(4)));
+            String move= model.decisionMaker();
+            var split = move.split(" ");
+            int row = Integer.parseInt(split[1].split(",")[0]);
+            int col = Integer.parseInt(split[1].split(",")[1]);
             int piece = 0;
 
             if (move.charAt(0) == 'T') {

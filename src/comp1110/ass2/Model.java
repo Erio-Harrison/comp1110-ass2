@@ -363,8 +363,8 @@ public class Model {
         this.aiMoves(accumulator, this.toStateString());
 
         int centre = this.board.boardSize/2;
-        Model.minmaxNode bestNode = new Model.minmaxNode(0, 0, 0, 0);
-        Model.minmaxNode closestNode = new Model.minmaxNode(0, 0, 0, 0);
+        Model.minmaxNode bestNode = new Model.minmaxNode();
+        Model.minmaxNode closestNode = new Model.minmaxNode();
         double dist = 100;
         for (Model.minmaxNode node: accumulator) {
             if (node.points > bestNode.points) {
@@ -401,6 +401,13 @@ public class Model {
             this.col = col;
             this.points = points;
             this.piece = piece;
+        }
+
+        public minmaxNode() {
+            this.row = 0;
+            this.col = 0;
+            this.points = 0;
+            this.piece = 0;
         }
     }
 }
