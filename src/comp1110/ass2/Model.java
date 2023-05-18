@@ -355,6 +355,32 @@ public class Model {
         }
     }
 
+    public int findIsland(int row, int col) {
+        for (int i = 0; i < board.boardSize; i++) {
+            for (int k = 0; k< board.boardSize; k++) {
+                if (board.tiles[i][k] != null) {
+                    if (i == row && k == col) {
+                        return board.tiles[i][k].island;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public boolean doesIslandHaveVillage(int island) {
+        for (int i = 0; i < board.boardSize; i++) {
+            for (int k = 0; k< board.boardSize; k++) {
+                if (board.tiles[i][k] != null) {
+                    if (board.tiles[i][k].island == island && board.tiles[i][k].village == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * @return moveString representing the optimal move decided on by the AI.
      */
@@ -368,14 +394,16 @@ public class Model {
         double dist = 100;
         System.out.println("");
         for (Model.minmaxNode node: accumulator) {
-            if (node.points > bestNode.points) {
+            if (node.piece == 0 && node.points > bestNode.points) {
                 bestNode = node;
             }
-            if (node.points == bestNode.points && node.piece == 0) {
+
+            // if island does not have a village already, places a village there
+            if (node.piece == 1 && !doesIslandHaveVillage(findIsland(node.row, node.col))) {
                 bestNode = node;
+                break;
             }
-            System.out.print(node.points + " ");
-            // tries to find a node that is closest to the centre
+
             double interNodedist =
                     Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
             if (interNodedist < dist) {
