@@ -334,7 +334,7 @@ public class Model {
      *                    with minmaxNodes representing all valid moves
      * @param statestring - stateString representing the current gamestate
      */
-    public void aiMoves (List<minmaxNode> accumulator, String statestring) {
+    public void aiMoves (int previousPoints, List<minmaxNode> accumulator, String statestring) {
         int player = this.currentPlayer;
         for (String move :  this.allValidMoves(player)){
             var split = move.split(" ");
@@ -350,9 +350,35 @@ public class Model {
             nextModel.toModel(statestring);
             nextModel.applyMove(row, col, piece);
 
-            nextnode.points += nextModel.board.countPoints(player);
+            nextnode.points += nextModel.board.countPoints(player) - previousPoints;
             accumulator.add(nextnode);
         }
+    }
+
+    public int findIsland(int row, int col) {
+        for (int i = 0; i < board.boardSize; i++) {
+            for (int k = 0; k< board.boardSize; k++) {
+                if (board.tiles[i][k] != null) {
+                    if (i == row && k == col) {
+                        return board.tiles[i][k].island;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public boolean doesIslandHaveVillage(int island) {
+        for (int i = 0; i < board.boardSize; i++) {
+            for (int k = 0; k< board.boardSize; k++) {
+                if (board.tiles[i][k] != null) {
+                    if (board.tiles[i][k].island == island && board.tiles[i][k].village == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -360,15 +386,22 @@ public class Model {
      */
     public String decisionMaker() {
         List<Model.minmaxNode> accumulator = new ArrayList<>();
-        this.aiMoves(accumulator, this.toStateString());
+        this.aiMoves(this.board.countPoints(this.currentPlayer), accumulator, this.toStateString());
 
         int centre = this.board.boardSize/2;
         Model.minmaxNode bestNode = new Model.minmaxNode();
         Model.minmaxNode closestNode = new Model.minmaxNode();
         double dist = 100;
+        System.out.println("");
         for (Model.minmaxNode node: accumulator) {
-            if (node.points > bestNode.points) {
+            if (node.piece == 0 && node.points > bestNode.points) {
                 bestNode = node;
+            }
+
+            // if island does not have a village already, places a village there
+            if (node.piece == 1 && !doesIslandHaveVillage(findIsland(node.row, node.col))) {
+                bestNode = node;
+                break;
             }
 
             double interNodedist =
@@ -378,7 +411,10 @@ public class Model {
                 dist = interNodedist;
             }
         }
+
+        // if all possible nodes yield no points, chooses a point closes to the centre
         if (bestNode.points == 0) {
+            System.out.println("centrenode");
             bestNode = closestNode;
         }
 
