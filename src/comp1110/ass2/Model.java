@@ -392,8 +392,13 @@ public class Model {
         Model.minmaxNode bestNode = new Model.minmaxNode();
         Model.minmaxNode closestNode = new Model.minmaxNode();
         double dist = 100;
-        System.out.println("");
         for (Model.minmaxNode node: accumulator) {
+            double interNodedist =
+                    Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
+            if (interNodedist < dist) {
+                closestNode = node;
+                dist = interNodedist;}
+
             if (node.piece == 0 && node.points > bestNode.points) {
                 bestNode = node;
             }
@@ -403,18 +408,10 @@ public class Model {
                 bestNode = node;
                 break;
             }
-
-            double interNodedist =
-                    Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
-            if (interNodedist < dist) {
-                closestNode = node;
-                dist = interNodedist;
-            }
         }
 
         // if all possible nodes yield no points, chooses a point closes to the centre
         if (bestNode.points == 0) {
-            System.out.println("centrenode");
             bestNode = closestNode;
         }
 
