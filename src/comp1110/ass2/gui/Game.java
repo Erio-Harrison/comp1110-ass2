@@ -208,25 +208,14 @@ public class Game extends Application {
 
     // Remake the current state as well as display when the current pahse is over.
     private void updateGUI(int num) {
-        if (model.gamestate == 0) {
-            if (num == 1) {
-                Alert endedPhase = new Alert(Alert.AlertType.INFORMATION);
-                endedPhase.setTitle("Exploration PHASE ENDED");
-                endedPhase.setHeaderText("Highest Points: PLAYER " + model.board.getIds(model.board.declareWinner()));
-                endedPhase.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
-                endedPhase.show();
-                this.model.reset();
-                this.model.changeState();
-            }
-        } else {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("PHASE OVER");
-                winner.setHeaderText("WINNER PLAYER:  " + model.board.getIds(model.board.declareWinner()));
+                winner.setHeaderText("HIGHEST POINTS PLAYER:  " + model.board.getIds(model.board.declareWinner()));
                 winner.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
                 winner.show();
             }
-        }
+
         game.getChildren().clear();
         makeState(model.gamestate);
     }
