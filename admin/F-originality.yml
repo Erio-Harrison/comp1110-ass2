@@ -19,9 +19,7 @@ declaration: >-
 #
 # Add as many "name+comment" entries as necessary
 # (or remove it altogether if you haven't collaborated with anyone)
-collaboration:
-  - name:
-    comment: >-
+
 
 # Use this to list any code that you used that you did not write,
 # aside from code provided by the lecturer.  Provide a comment
@@ -31,9 +29,9 @@ collaboration:
 # Add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
 code:
-  - comment:
-    url:
-    licence:
+  - comment: Using Comparator.comparing and thenComparing in declareWinner()
+    url: https://stackoverflow.com/a/25501226
+    licence: https://creativecommons.org/licenses/by-sa/4.0/
 
 # Use this to list any assets (artwork, sound, etc) that you used.
 # Provide a comment explaining your use of that asset and the URL
@@ -42,9 +40,9 @@ code:
 # Add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external assets)
 assets:
-  - comment:
-    url:
-    licence:
+  - comment: asset 2d images (grass.png, stone.png, water.png, settlerN.png, villageN.png)
+    url: https://opengameart.org/content/hexagon-tiles-93x
+    licence: https://creativecommons.org/publicdomain/zero/1.0/
 
 
 # Sign *your* name and uids here. (Remove entries if you have fewer
