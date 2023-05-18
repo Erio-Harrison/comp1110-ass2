@@ -334,7 +334,7 @@ public class Model {
      *                    with minmaxNodes representing all valid moves
      * @param statestring - stateString representing the current gamestate
      */
-    public void aiMoves (List<minmaxNode> accumulator, String statestring) {
+    public void aiMoves (int previousPoints, List<minmaxNode> accumulator, String statestring) {
         int player = this.currentPlayer;
         for (String move :  this.allValidMoves(player)){
             var split = move.split(" ");
@@ -350,7 +350,7 @@ public class Model {
             nextModel.toModel(statestring);
             nextModel.applyMove(row, col, piece);
 
-            nextnode.points += nextModel.board.countPoints(player);
+            nextnode.points += nextModel.board.countPoints(player) - previousPoints;
             accumulator.add(nextnode);
         }
     }
@@ -360,17 +360,22 @@ public class Model {
      */
     public String decisionMaker() {
         List<Model.minmaxNode> accumulator = new ArrayList<>();
-        this.aiMoves(accumulator, this.toStateString());
+        this.aiMoves(this.board.countPoints(this.currentPlayer), accumulator, this.toStateString());
 
         int centre = this.board.boardSize/2;
         Model.minmaxNode bestNode = new Model.minmaxNode();
         Model.minmaxNode closestNode = new Model.minmaxNode();
         double dist = 100;
+        System.out.println("");
         for (Model.minmaxNode node: accumulator) {
             if (node.points > bestNode.points) {
                 bestNode = node;
             }
-
+            if (node.points == bestNode.points && node.piece == 0) {
+                bestNode = node;
+            }
+            System.out.print(node.points + " ");
+            // tries to find a node that is closest to the centre
             double interNodedist =
                     Math.sqrt((centre - node.col) * (centre - node.col) + (centre - node.row) * (centre - node.row));
             if (interNodedist < dist) {
@@ -378,7 +383,10 @@ public class Model {
                 dist = interNodedist;
             }
         }
+
+        // if all possible nodes yield no points, chooses a point closes to the centre
         if (bestNode.points == 0) {
+            System.out.println("centrenode");
             bestNode = closestNode;
         }
 
