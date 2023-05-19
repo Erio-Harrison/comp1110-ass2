@@ -216,7 +216,7 @@ public class Model {
      *  @return hashset of all valid moves a player can make
      */
     public HashSet<String> allValidMoves(int player) {
-        HashSet<String> ms=new HashSet<String>();
+        HashSet<String> ms=new HashSet<>();
         int len;
         for (int row = 0 ;row < board.boardSize ;row ++) {
             len = 0;
