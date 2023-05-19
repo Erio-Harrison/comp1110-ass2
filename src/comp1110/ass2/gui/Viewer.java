@@ -14,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -131,7 +130,8 @@ public class Viewer extends Application {
         Rectangle backdrop = new Rectangle(1040,0, 200,210);
         root.getChildren().add(backdrop);
         backdrop.setFill(Color.BLUE);
-        String[] legend = new String[]{"Water Tile", "Island", "Stones", "Coconuts", "Bamboo", "Water", "Precious Stone", "Statuettes", "Settlers", "Villages"};
+        String[] legend = new String[]{"Water Tile", "Island", "Stones", "Coconuts",
+                "Bamboo", "Water", "Precious Stone", "Statuettes", "Settlers", "Villages"};
         int initialY = 20;
         for (int i = 0; i < legend.length; i++) {
             Text text = new Text(legend[i]);
@@ -151,7 +151,8 @@ public class Viewer extends Application {
     private void legendToPic(String legend, int x, int y, double size) {
         switch (legend) {
             case "Water Tile" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "water.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  +
+                        "water.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -160,7 +161,8 @@ public class Viewer extends Application {
                 root.getChildren().add(tileImage);
             }
             case "Island" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "grass.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  +
+                        "grass.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -170,7 +172,8 @@ public class Viewer extends Application {
             }
 
             case "Stones" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "stone.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  +
+                        "stone.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -179,7 +182,8 @@ public class Viewer extends Application {
                 root.getChildren().add(tileImage);
             }
             case "Settlers" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "settler0.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  +
+                        "settler0.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -188,7 +192,8 @@ public class Viewer extends Application {
                 root.getChildren().add(tileImage);
             }
             case "Villages" -> {
-                Image image = new Image(Game.class.getResource( URI_BASE  + "village0.png").toString());
+                Image image = new Image(Game.class.getResource( URI_BASE  +
+                        "village0.png").toString());
                 ImageView tileImage = new ImageView(image);
                 tileImage.setFitWidth(size);
                 tileImage.setFitHeight(size);
@@ -221,7 +226,8 @@ public class Viewer extends Application {
      */
     private void displayArrangement() {
 
-        Text layout = new Text("Layout: " + model.board.boardSize + " high" + " Players: " + model.board.playerList.size());
+        Text layout = new Text("Layout: " + model.board.boardSize + " high" +
+                " Players: " + model.board.playerList.size());
         layout.setLayoutX(0);
         layout.setLayoutY(20);
         root.getChildren().addAll(layout);
@@ -239,9 +245,12 @@ public class Viewer extends Application {
             Board.Tile.Resource resource = this.model.board.tiles[row][col].resource;
             if (resource != null) {
                 if (row % 2 == 0) {
-                    boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) * SIZING_RATIO + OFFSET * SIZING_RATIO+ MARGIN_X;
-                } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) * SIZING_RATIO + MARGIN_X;
-                boardY = row * TILE_SPACING_Y * SIZING_RATIO + (3*TILE_SPACING_Y/4) * SIZING_RATIO + MARGIN_Y;
+                    boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) *
+                            SIZING_RATIO + OFFSET * SIZING_RATIO+ MARGIN_X;
+                } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) + (TILE_SPACING_X/2) *
+                        SIZING_RATIO + MARGIN_X;
+                boardY = row * TILE_SPACING_Y * SIZING_RATIO + (3*TILE_SPACING_Y/4) *
+                        SIZING_RATIO + MARGIN_Y;
                 resourceToShape(boardX,boardY,resource, 20 * SIZING_RATIO);
 
             }
@@ -290,17 +299,25 @@ public class Viewer extends Application {
         List<Board.Player> players = model.board.playerList;
         for (Board.Player player : players) {
 
-            Text playerText = new Text(0,initialY + playerSpacing * players.indexOf(player), "Player: " + player.id + " Statistics");
+            Text playerText = new Text(0,initialY + playerSpacing *
+                    players.indexOf(player), "Player: " + player.id + " Statistics");
             initialY += 20;
-            Text score = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Score: " + player.getPoints());
+            Text score = new Text(0,initialY + playerSpacing *
+                    players.indexOf(player), "Score: " + player.getPoints());
             initialY += 20;
-            Text resourcesInstructions  = new Text(0,initialY + playerSpacing *  players.indexOf(player), "COCO,BBOO,WATR,STON,STAT");
+            Text resourcesInstructions  = new Text(0,initialY +
+                    playerSpacing *  players.indexOf(player), "COCO,BBOO,WATR,STON,STAT");
             initialY += 20;
-            Text resources = new Text(0,initialY + playerSpacing *  players.indexOf(player), "Resources: " + Arrays.toString(player.resources));
+            Text resources = new Text(0,initialY + playerSpacing *
+                    players.indexOf(player), "Resources: " + Arrays.toString(player.resources));
             initialY += 20;
-            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Settlers Placed Player " + player.id + ":" + toPositionString(model.board.gettiles(0,player.id,0)));
+            Text settlers = new Text(initialX,initialY2 + (playerSpacing/2) *
+                    players.indexOf(player), "Settlers Placed Player " + player.id + ":" +
+                    toPositionString(model.board.gettiles(0,player.id,0)));
             initialY2 += 8;
-            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *  players.indexOf(player), "Villages Placed Player "  + player.id + ":"  + toPositionString(model.board.gettiles(0, player.id,1)));
+            Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *
+                    players.indexOf(player), "Villages Placed Player "  + player.id + ":"  +
+                    toPositionString(model.board.gettiles(0, player.id,1)));
             settlers.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
             villages.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
 

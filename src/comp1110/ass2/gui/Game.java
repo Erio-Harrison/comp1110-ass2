@@ -107,9 +107,12 @@ public class Game extends Application {
             Board.Tile.Resource resource = this.model.board.tiles[row][col].resource;
             if (resource != null) {
                 if (row % 2 == 0) {
-                    boardX = (col * TILE_SPACING_X * SIZING_RATIO) + TILE_SPACING_X/2 * SIZING_RATIO + OFFSET * SIZING_RATIO + MARGIN_X;
-                } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) + TILE_SPACING_X/2 * SIZING_RATIO + MARGIN_X;
-                boardY = row * TILE_SPACING_Y * SIZING_RATIO + 3*TILE_SPACING_Y/4 * SIZING_RATIO + MARGIN_Y;
+                    boardX = (col * TILE_SPACING_X * SIZING_RATIO) +
+                            TILE_SPACING_X/2 * SIZING_RATIO + OFFSET * SIZING_RATIO + MARGIN_X;
+                } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) +
+                        TILE_SPACING_X/2 * SIZING_RATIO + MARGIN_X;
+                boardY = row * TILE_SPACING_Y * SIZING_RATIO +
+                        3*TILE_SPACING_Y/4 * SIZING_RATIO + MARGIN_Y;
                 resourceToShape(boardX,boardY,resource, 20 * SIZING_RATIO);
 
             }
@@ -160,21 +163,32 @@ public class Game extends Application {
         Text resourcesT = new Text(10, 120, "Total Resources:");
         Text phaseP = new Text(10, 140, "Points this phase:");
         Text totalP = new Text(10, 160, "Total Points:");
-        ArrayList<Text> textsL = new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,phaseP,totalP));
+        ArrayList<Text> textsL =
+                new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,phaseP,totalP));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
-            PlayerPointCounter pointCounter = new PlayerPointCounter(i, this.model.board.tiles, board.numOfIslands);
+            PlayerPointCounter pointCounter =
+                    new PlayerPointCounter(i, this.model.board.tiles, board.numOfIslands);
 
             // Scores
             Text scoreBoard = new Text(130/2., 20, "ScoreBoard");
-            Text player = new Text(50 * i + 120, 40, String.valueOf(i));
-            Text islands = new Text(50 * i + 120, 60, String.valueOf(pointCounter.islandsCounter()));
-            Text majorityIslands = new Text(50 * i+ 120, 80, String.valueOf(pointCounter.majorityIslandsCounter(board.islandToPoints)));
-            Text links = new Text(50 * i + 120, 100, String.valueOf(pointCounter.linkCounter()));
-            Text resources = new Text(50 * i + 120, 120, String.valueOf(board.resourcesPoints(i)));
-            Text phase = new Text(50 * i + 120, 140, String.valueOf(board.countPoints(i)));
-            Text total = new Text(50 * i + 120, 160, String.valueOf(board.playerList.get(i).points));
-            game.getChildren().addAll(new ArrayList<>(Arrays.asList(scoreBoard,player,islands,majorityIslands,links,resources,phase,total)));
+            Text player = new Text(50 * i + 120, 40,
+                    String.valueOf(i));
+            Text islands = new Text(50 * i + 120, 60,
+                    String.valueOf(pointCounter.islandsCounter()));
+            Text majorityIslands = new Text(50 * i+ 120, 80,
+                    String.valueOf(pointCounter.majorityIslandsCounter(board.islandToPoints)));
+            Text links = new Text(50 * i + 120, 100,
+                    String.valueOf(pointCounter.linkCounter()));
+            Text resources = new Text(50 * i + 120, 120,
+                    String.valueOf(board.resourcesPoints(i)));
+            Text phase = new Text(50 * i + 120, 140,
+                    String.valueOf(board.countPoints(i)));
+            Text total = new Text(50 * i + 120, 160,
+                    String.valueOf(board.playerList.get(i).points));
+            game.getChildren().addAll(new
+                    ArrayList<>(Arrays.asList(scoreBoard,player,islands,
+                    majorityIslands,links,resources,phase,total)));
         }
     }
 
@@ -195,11 +209,15 @@ public class Game extends Application {
         if (gameState == 1) gameStateText = "Settlement";
         Board board = this.model.board;
         Board.Player currentPlayer = board.getPlayer(model.currentPlayer);
-        Text title = new Text(150/2., 400, "Inventory: Player " + currentPlayer.id);
-        Text phase = new Text(150/4., 380, "PHASE: " + gameStateText);
+        Text title = new Text(150/2., 400,
+                "Inventory: Player " + currentPlayer.id);
+        Text phase = new Text(150/4., 380,
+                "PHASE: " + gameStateText);
         game.getChildren().addAll(title,phase);
-        Text settlerCount = new Text(10, 420, "Settlers: " + (30 - currentPlayer.settlers) + " Left");
-        Text villagerCount = new Text(10 + 100, 420, "Villagers: " + (5 - currentPlayer.villages) + " Left");
+        Text settlerCount = new Text(10, 420,
+                "Settlers: " + (30 - currentPlayer.settlers) + " Left");
+        Text villagerCount = new Text(10 + 100, 420,
+                "Villagers: " + (5 - currentPlayer.villages) + " Left");
 
 
         if (gameState == 0) {
@@ -212,8 +230,10 @@ public class Game extends Application {
             if (num == 1) {
                 Alert winner = new Alert(Alert.AlertType.INFORMATION);
                 winner.setTitle("PHASE OVER");
-                winner.setHeaderText("HIGHEST POINTS PLAYER:  " + model.board.getIds(model.board.declareWinner()));
-                winner.setContentText("Total Points: " + model.board.getAllPoints(model.board.declareWinner()));
+                winner.setHeaderText("HIGHEST POINTS PLAYER:  " +
+                        model.board.getIds(model.board.declareWinner()));
+                winner.setContentText("Total Points: " +
+                        model.board.getAllPoints(model.board.declareWinner()));
                 winner.show();
             }
 
@@ -289,8 +309,10 @@ public class Game extends Application {
             this.ai = ai;
 
             // Displayable images of the pieces
-            if (village == 1) {this.settler = new ImageToken("village" + currentPlayer + ".png");}
-            else {this.settler = new ImageToken("settler" + currentPlayer +  ".png");}
+            if (village == 1) {this.settler =
+                    new ImageToken("village" + currentPlayer + ".png");}
+            else {this.settler =
+                    new ImageToken("settler" + currentPlayer +  ".png");}
 
             this.getChildren().add(this.settler);
             // Event handler if the user clicks on this piece
@@ -322,7 +344,8 @@ public class Game extends Application {
                     event -> {
                         int[] pos = getSnapPosition();
                         // check if it is a valid move, if it is play the piece as well as changes the turn of the player
-                        if (model.board.isValidMove(pos[1], pos[0],model.currentPlayer,village, model.gamestate)) {
+                        if (model.board.isValidMove(pos[1],
+                                pos[0],model.currentPlayer,village, model.gamestate)) {
                             var num = model.applyMove(pos[1], pos[0], village);
                             // update the entire model to match the updated game
                             updateGUI(num);
@@ -340,11 +363,14 @@ public class Game extends Application {
         // e.g. (0,0)
         public int[] getSnapPosition() {
             int x;
-            int y = (int) Math.round((this.getLayoutY() - MARGIN_Y) / (TILE_SPACING_Y * SIZING_RATIO));
+            int y = (int) Math.round((this.getLayoutY() -
+                    MARGIN_Y) / (TILE_SPACING_Y * SIZING_RATIO));
             if (y % 2 == 0) {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X - OFFSET * SIZING_RATIO) / (TILE_SPACING_X* SIZING_RATIO));
+                x = (int) Math.round((this.getLayoutX() -
+                        MARGIN_X - OFFSET * SIZING_RATIO) / (TILE_SPACING_X* SIZING_RATIO));
             } else {
-                x = (int) Math.round((this.getLayoutX() - MARGIN_X) / (TILE_SPACING_X*SIZING_RATIO));
+                x = (int) Math.round((this.getLayoutX() -
+                        MARGIN_X) / (TILE_SPACING_X*SIZING_RATIO));
             }
 
             return new int[]{x, y};
@@ -352,14 +378,18 @@ public class Game extends Application {
         // Set the location of the piece on the game window.
         public void setLocation(int[] position, int piece) {
             // Position is not on the board
-            if (!model.board.isValidMove(position[0], position[1],model.currentPlayer, piece, model.gamestate)) {
+            if (!model.board.isValidMove(position[0],
+                    position[1],model.currentPlayer, piece, model.gamestate)) {
                 this.snapToHome();
             } else {
-                this.setLayoutY(MARGIN_Y + position[1] * TILE_SPACING_Y * SIZING_RATIO);
+                this.setLayoutY(MARGIN_Y + position[1] *
+                        TILE_SPACING_Y * SIZING_RATIO);
                 if (position[1] % 2 == 0) {
-                    this.setLayoutX(OFFSET * SIZING_RATIO + MARGIN_X + (position[0] * TILE_SPACING_X * SIZING_RATIO));
+                    this.setLayoutX(OFFSET * SIZING_RATIO +
+                            MARGIN_X + (position[0] * TILE_SPACING_X * SIZING_RATIO));
                 } else {
-                    this.setLayoutX(MARGIN_X + (position[0] * TILE_SPACING_X * SIZING_RATIO));
+                    this.setLayoutX(MARGIN_X + (position[0] *
+                            TILE_SPACING_X * SIZING_RATIO));
                 }
             }
         }
@@ -374,7 +404,8 @@ public class Game extends Application {
     // how big the game board is.
     static class ImageToken extends ImageView {
         public ImageToken(String filename) {
-            Image image = new Image(Game.class.getResource( URI_BASE  + filename).toString());
+            Image image = new Image(Game.class.getResource(
+                    URI_BASE  + filename).toString());
             this.setImage(image);
             this.setFitWidth(60 * SIZING_RATIO);
             this.setFitHeight(89 * SIZING_RATIO);
@@ -430,11 +461,14 @@ public class Game extends Application {
         Alert winner = new Alert(Alert.AlertType.INFORMATION);
         winner.setTitle("controls");
         winner.setHeaderText("Controls");
-        winner.setContentText(" \nIn game, make a move by dragging and dropping a piece onto the board " +
+        winner.setContentText(" \nIn game, make a move by dragging and " +
+                "dropping a piece onto the board " +
                 " \nIn game, quit using Q " +
                 " \nIn game create a new game using N " +
-                " \nIn game Choose different boards in game using Number Keys, there are 5 game layouts to choose " +
-                " \nIf you want the AI to choose a move do so by pressing A in the game on the current turn");
+                " \nIn game Choose different boards in game using Number Keys, " +
+                "there are 5 game layouts to choose " +
+                " \nIf you want the AI to choose a move do so by pressing " +
+                "A in the game on the current turn");
 
         winner.show();
     }
@@ -499,10 +533,12 @@ public class Game extends Application {
         button.setOnAction(event -> {
 
             // Displays our board layouts that when clicked starts a game with that board
-            Text selectGameText = new Text(WINDOW_WIDTH/2.5,WINDOW_HEIGHT/2, "CHOOSE BOARD LAYOUT");
+            Text selectGameText = new Text(WINDOW_WIDTH/2.5,
+                    WINDOW_HEIGHT/2, "CHOOSE BOARD LAYOUT");
             selectGame.getChildren().add(selectGameText);
             // default
-            String[] boards = new String[]{"DEFAULT_GAME","FACE_GAME","SIDES_GAME","SPACE_INVADERS_GAME","WHEELS_GAME"};
+            String[] boards = new String[]
+                    {"DEFAULT_GAME","FACE_GAME","SIDES_GAME","SPACE_INVADERS_GAME","WHEELS_GAME"};
             int spacing = 200;
             for (int i = 0; i < boards.length; i++) {
                 String board = boards[i];
