@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-// Authored By Jonathan Tay and Kenney Siu
+// Methods improved by Jonathan Tay and main design and structure by Kenney Siu
+// Playable game of BlueLagoon using JavaFX
 
 public class Game extends Application {
 
@@ -278,7 +279,7 @@ public class Game extends Application {
         // implements drag and drop methods and piece playing,
         // the main functionality of our game.
         public Piece(Integer village, Model model, boolean ai) {
-            // what kind of piece it is.
+            // what kind of piece it is (settler or villager)
             this.village = village;
             // default locations in the players inventory, depending on whether
             // it's a villager or settler.
@@ -335,7 +336,7 @@ public class Game extends Application {
             // set default location of piece
             this.snapToHome();
         }
-        // Translates the current piece cooridinates in the window in terms of the game board position
+        // Translates the current piece coordinates in the window in terms of the game board position
         // e.g. (0,0)
         public int[] getSnapPosition() {
             int x;
@@ -557,7 +558,7 @@ public class Game extends Application {
                 newGame(CURRENT_GAME);
             }
 
-            // switch boards
+            // switch different boards
             if (e.getCode() == KeyCode.DIGIT1) {
                 newGame(BlueLagoon.DEFAULT_GAME);
             }
