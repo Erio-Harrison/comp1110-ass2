@@ -18,6 +18,7 @@ declaration: >-
 # you want to just submit methods):
 class:
    - PlayerPointCounter
+   - PlayerPointCounterTest
    - Board
    - Model
 
