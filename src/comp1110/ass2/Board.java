@@ -3,6 +3,10 @@ package comp1110.ass2;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+/**
+ *  Authored by Tay Shao An and Wenxuan Cao
+ */
 public class Board {
     // List of players in a game
     public List<Player> playerList;

@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ *  Authored by Tay Shao An and Wenxuan Cao
+ */
 public class Model {
 
     // the num of players in the game
