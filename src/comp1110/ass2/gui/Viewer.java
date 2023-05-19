@@ -87,8 +87,10 @@ public class Viewer extends Application {
                 tileImage.setFitWidth(65 * SIZING_RATIO);
                 tileImage.setFitHeight(89 * SIZING_RATIO);
                 tileImage.setPreserveRatio(true);
-                tileImage.setLayoutX((col * TILE_SPACING_X * SIZING_RATIO) + (MARGIN_X) + var * OFFSET * SIZING_RATIO);
-                tileImage.setLayoutY((row * TILE_SPACING_Y * SIZING_RATIO) + (MARGIN_Y));
+                tileImage.setLayoutX((col * TILE_SPACING_X * SIZING_RATIO) +
+                        (MARGIN_X) + var * OFFSET * SIZING_RATIO);
+                tileImage.setLayoutY((row * TILE_SPACING_Y * SIZING_RATIO) +
+                        (MARGIN_Y));
 
 
                 root.getChildren().add(tileImage);
@@ -109,7 +111,8 @@ public class Viewer extends Application {
         root.getChildren().clear();
         root.getChildren().add(controls);
         legend();
-        if (BlueLagoon.isStateStringWellFormed(stateString) && !stateString.isBlank()) {
+        if (BlueLagoon.isStateStringWellFormed(stateString)
+                && !stateString.isBlank()) {
 
             this.model.toModel(stateString);
             makeControls();
@@ -130,7 +133,8 @@ public class Viewer extends Application {
         Rectangle backdrop = new Rectangle(1040,0, 200,210);
         root.getChildren().add(backdrop);
         backdrop.setFill(Color.BLUE);
-        String[] legend = new String[]{"Water Tile", "Island", "Stones", "Coconuts",
+        String[] legend = new String[]
+                {"Water Tile", "Island", "Stones", "Coconuts",
                 "Bamboo", "Water", "Precious Stone", "Statuettes", "Settlers", "Villages"};
         int initialY = 20;
         for (int i = 0; i < legend.length; i++) {
@@ -202,19 +206,24 @@ public class Viewer extends Application {
                 root.getChildren().add(tileImage);
             }
             case "Coconuts" -> {
-                resourceToShape(x+20,y+10, Board.Tile.Resource.COCO,size/5);
+                resourceToShape(x+20,y+10,
+                        Board.Tile.Resource.COCO,size/5);
             }
             case "Bamboo" -> {
-                resourceToShape(x+20,y+10, Board.Tile.Resource.BBOO,size/5);
+                resourceToShape(x+20,y+10,
+                        Board.Tile.Resource.BBOO,size/5);
             }
             case "Water" -> {
-                resourceToShape(x+20,y+10, Board.Tile.Resource.WATR,size/5);
+                resourceToShape(x+20,y+10,
+                        Board.Tile.Resource.WATR,size/5);
             }
             case "Precious Stone" -> {
-                resourceToShape(x+20,y+10, Board.Tile.Resource.STON,size/5);
+                resourceToShape(x+20,y+10,
+                        Board.Tile.Resource.STON,size/5);
             }
             case "Statuettes" -> {
-                resourceToShape(x+20,y+10, Board.Tile.Resource.STAT,size/5);
+                resourceToShape(x+20,y+10,
+                        Board.Tile.Resource.STAT,size/5);
             }
 
 
@@ -318,11 +327,14 @@ public class Viewer extends Application {
             Text villages = new Text(initialX,initialY2 + (playerSpacing/2) *
                     players.indexOf(player), "Villages Placed Player "  + player.id + ":"  +
                     toPositionString(model.board.gettiles(0, player.id,1)));
-            settlers.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
-            villages.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 8));
+            settlers.setFont(Font.font("verdana",
+                    FontWeight.BOLD, FontPosture.REGULAR, 8));
+            villages.setFont(Font.font("verdana",
+                    FontWeight.BOLD, FontPosture.REGULAR, 8));
 
 
-            root.getChildren().addAll(playerText,score,resources, resourcesInstructions,settlers,villages);
+            root.getChildren().addAll(playerText,score,
+                    resources, resourcesInstructions,settlers,villages);
         }
     }
 

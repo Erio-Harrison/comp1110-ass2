@@ -88,8 +88,10 @@ public class Game extends Application {
                 tileImage.setFitWidth(65 * SIZING_RATIO);
                 tileImage.setFitHeight(89 * SIZING_RATIO);
                 tileImage.setPreserveRatio(true);
-                tileImage.setLayoutX((col * TILE_SPACING_X * SIZING_RATIO) + (MARGIN_X) + var * OFFSET * SIZING_RATIO);
-                tileImage.setLayoutY((row * TILE_SPACING_Y * SIZING_RATIO) + (MARGIN_Y));
+                tileImage.setLayoutX((col * TILE_SPACING_X * SIZING_RATIO) +
+                        (MARGIN_X) + var * OFFSET * SIZING_RATIO);
+                tileImage.setLayoutY((row * TILE_SPACING_Y *
+                        SIZING_RATIO) + (MARGIN_Y));
 
                 game.getChildren().add(tileImage);
             }
@@ -98,17 +100,20 @@ public class Game extends Application {
 
     // sets resources on the board
     private void makeResources() {
-        ArrayList<int[]> stoneCoords = model.board.gettiles(1, 0, 0);
+        ArrayList<int[]> stoneCoords = model.board.
+                gettiles(1, 0, 0);
         for (int[] coords : stoneCoords) {
             int row = coords[0];
             int col = coords[1];
             double boardX;
             double boardY;
-            Board.Tile.Resource resource = this.model.board.tiles[row][col].resource;
+            Board.Tile.Resource resource = this.
+                    model.board.tiles[row][col].resource;
             if (resource != null) {
                 if (row % 2 == 0) {
                     boardX = (col * TILE_SPACING_X * SIZING_RATIO) +
-                            TILE_SPACING_X/2 * SIZING_RATIO + OFFSET * SIZING_RATIO + MARGIN_X;
+                            TILE_SPACING_X/2 * SIZING_RATIO +
+                            OFFSET * SIZING_RATIO + MARGIN_X;
                 } else boardX = (col * TILE_SPACING_X * SIZING_RATIO) +
                         TILE_SPACING_X/2 * SIZING_RATIO + MARGIN_X;
                 boardY = row * TILE_SPACING_Y * SIZING_RATIO +
@@ -164,7 +169,8 @@ public class Game extends Application {
         Text phaseP = new Text(10, 140, "Points this phase:");
         Text totalP = new Text(10, 160, "Total Points:");
         ArrayList<Text> textsL =
-                new ArrayList<>(Arrays.asList(playerT,islandsT,majoritiesT,linksT,resourcesT,phaseP,totalP));
+                new ArrayList<>(Arrays.asList(playerT,islandsT,
+                        majoritiesT,linksT,resourcesT,phaseP,totalP));
         game.getChildren().addAll(textsL);
         for (int i = 0; i < numberOfPlayers; i++) {
             PlayerPointCounter pointCounter =
@@ -177,7 +183,8 @@ public class Game extends Application {
             Text islands = new Text(50 * i + 120, 60,
                     String.valueOf(pointCounter.islandsCounter()));
             Text majorityIslands = new Text(50 * i+ 120, 80,
-                    String.valueOf(pointCounter.majorityIslandsCounter(board.islandToPoints)));
+                    String.valueOf(pointCounter.
+                            majorityIslandsCounter(board.islandToPoints)));
             Text links = new Text(50 * i + 120, 100,
                     String.valueOf(pointCounter.linkCounter()));
             Text resources = new Text(50 * i + 120, 120,
@@ -203,7 +210,8 @@ public class Game extends Application {
         } else game.getChildren().addAll(settlerToken);
     }
 
-    // Shows how many settlers and villages are left for the current players turn, as well as displays the phase.
+    // Shows how many settlers and villages are left
+    // for the current players turn, as well as displays the phase.
     private void makeCurrentInventory(int gameState) {
         String gameStateText = "Exploration";
         if (gameState == 1) gameStateText = "Settlement";
@@ -251,7 +259,8 @@ public class Game extends Application {
 
     }
 
-    // Makes the state of the Game displayable, current players, boards, resources, settlers and village pieces
+    // Makes the state of the Game displayable,
+    // current players, boards, resources, settlers and village pieces
     private void makeState(int phase) {
         makeBoard();
         makeScoreboard();
@@ -267,15 +276,14 @@ public class Game extends Application {
         Button button2 = new Button("Controls");
         button2.setLayoutX(WINDOW_WIDTH- 100);
         button2.setLayoutY(WINDOW_HEIGHT - 50);
-        button2.setOnAction(event -> {
-            controlInstructions();
-        });
+        button2.setOnAction(event -> controlInstructions());
         game.getChildren().addAll(button2,text);
     }
 
     /*
     A class defining the settler and village pieces in the front end,
-    these are draggable and droppable pieces that will update our backend when played.
+    these are draggable and droppable pieces
+    that will update our backend when played.
      */
     class Piece extends Group {
 
@@ -343,7 +351,8 @@ public class Game extends Application {
             this.setOnMouseReleased(
                     event -> {
                         int[] pos = getSnapPosition();
-                        // check if it is a valid move, if it is play the piece as well as changes the turn of the player
+                        // check if it is a valid move, if it is
+                        // play the piece as well as changes the turn of the player
                         if (model.board.isValidMove(pos[1],
                                 pos[0],model.currentPlayer,village, model.gamestate)) {
                             var num = model.applyMove(pos[1], pos[0], village);
@@ -359,7 +368,8 @@ public class Game extends Application {
             // set default location of piece
             this.snapToHome();
         }
-        // Translates the current piece coordinates in the window in terms of the game board position
+        // Translates the current piece coordinates in
+        // the window in terms of the game board position
         // e.g. (0,0)
         public int[] getSnapPosition() {
             int x;
@@ -418,25 +428,15 @@ public class Game extends Application {
     // Method that switches the board layouts
     private void chooseGame(String game) {
         switch (game) {
-            case "DEFAULT_GAME" -> {
-                newGame(BlueLagoon.DEFAULT_GAME);
-            }
+            case "DEFAULT_GAME" -> newGame(BlueLagoon.DEFAULT_GAME);
 
-            case "FACE_GAME" -> {
-                newGame(BlueLagoon.FACE_GAME);
-            }
+            case "FACE_GAME" -> newGame(BlueLagoon.FACE_GAME);
 
-            case "SIDES_GAME" -> {
-                newGame(BlueLagoon.SIDES_GAME);
-            }
+            case "SIDES_GAME" -> newGame(BlueLagoon.SIDES_GAME);
 
-            case "SPACE_INVADERS_GAME" -> {
-                newGame(BlueLagoon.SPACE_INVADERS_GAME);
-            }
+            case "SPACE_INVADERS_GAME" -> newGame(BlueLagoon.SPACE_INVADERS_GAME);
 
-            case "WHEELS_GAME" -> {
-                newGame(BlueLagoon.WHEELS_GAME);
-            }
+            case "WHEELS_GAME" -> newGame(BlueLagoon.WHEELS_GAME);
 
         }
 
@@ -466,9 +466,7 @@ public class Game extends Application {
                 " \nIn game, quit using Q " +
                 " \nIn game create a new game using N " +
                 " \nIn game Choose different boards in game using Number Keys, " +
-                "there are 5 game layouts to choose " +
-                " \nIf you want the AI to choose a move do so by pressing " +
-                "A in the game on the current turn");
+                "there are 5 game layouts to choose ");
 
         winner.show();
     }
