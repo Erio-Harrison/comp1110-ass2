@@ -40,7 +40,7 @@ code:
 # Add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external assets)
 assets:
-  - comment: asset 2d images (grass.png, stone.png, water.png, settlerN.png, villageN.png)
+  - comment: asset 2d images for game tiles (grass.png, stone.png, water.png, settlerN.png, villageN.png)
     url: https://opengameart.org/content/hexagon-tiles-93x
     licence: https://creativecommons.org/publicdomain/zero/1.0/
 
