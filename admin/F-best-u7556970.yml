@@ -29,6 +29,9 @@ collaboration:
 method:
    - noValidMoves
    - allResourcesCollected
+   - CheckEndTest
+   - ValidMoveTest
+   - checkOccupierTest
 
 # sign *your* name and uid here
 name: Wen xuan Cao
